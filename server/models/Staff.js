@@ -5,12 +5,10 @@ const StaffSchema = new Schema({
   staffType: {
     type: Schema.Types.ObjectId,
     ref: "StaffTypes",
-    required: true,
   },
   account: {
     type: Schema.Types.ObjectId,
     ref: "Accounts",
-    required: true,
   },
   name: {
     type: String,

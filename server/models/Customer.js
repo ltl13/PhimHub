@@ -5,12 +5,10 @@ const CustomerSchema = new Schema({
   customerType: {
     type: Schema.Types.ObjectId,
     ref: "CustomerTypes",
-    required: true,
   },
   account: {
     type: Schema.Types.ObjectId,
     ref: "Accounts",
-    required: true,
   },
   phoneNumber: {
     type: String,

@@ -5,7 +5,6 @@ const PaymentSchema = new Schema({
   ticket: {
     type: Schema.Types.ObjectId,
     ref: "Tickets",
-    required: true,
   },
   specialOffer: {
     type: Schema.Types.ObjectId,
@@ -14,7 +13,6 @@ const PaymentSchema = new Schema({
   staff: {
     type: Schema.Types.ObjectId,
     ref: "Staffs",
-    required: true,
   },
   paytime: {
     type: Date,
