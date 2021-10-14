@@ -12,7 +12,7 @@ const ActorSchema = new Schema({
   inMovies: [
     {
       type: Schema.Types.ObjectId,
-      ref: "DetailMovie",
+      ref: "Movies",
     },
   ],
 });
