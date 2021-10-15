@@ -22,13 +22,6 @@ const SeatSchema = new Schema({
     ref: "Rooms",
   },
 
-  customers: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Customers",
-    },
-  ],
-
   tickets: [
     {
       type: Schema.Types.ObjectId,

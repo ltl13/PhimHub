@@ -7,7 +7,7 @@ const SeatTypeSchema = new Schema({
     required: true,
   },
 
-  rooms: [
+  seats: [
     {
       type: Schema.Types.ObjectId,
       ref: "Seats",

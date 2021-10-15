@@ -12,6 +12,13 @@ const CustomerSchema = new Schema({
     ref: "Accounts",
   },
 
+  tickets: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Tickets",
+    },
+  ],
+
   phoneNumber: {
     type: String,
     required: true,
