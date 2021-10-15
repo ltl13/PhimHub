@@ -7,10 +7,12 @@ const AccountSchema = new Schema({
     require: true,
     unique: true,
   },
+
   password: {
     type: String,
     required: true,
   },
+
   createAt: {
     type: Date,
     default: Date.now(),
