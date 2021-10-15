@@ -6,6 +6,7 @@ const DirectorSchema = new Schema({
     type: String,
     required: true,
   },
+
   inMovies: [
     {
       type: Schema.Types.ObjectId,

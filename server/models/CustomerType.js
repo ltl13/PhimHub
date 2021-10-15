@@ -7,6 +7,7 @@ const CustomerTypeSchema = new Schema({
     required: true,
     unique: true,
   },
+
   customers: [
     {
       type: Schema.Types.ObjectId,

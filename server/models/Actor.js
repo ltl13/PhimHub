@@ -6,9 +6,11 @@ const ActorSchema = new Schema({
     type: String,
     required: true,
   },
+
   avatar: {
     type: String,
   },
+
   inMovies: [
     {
       type: Schema.Types.ObjectId,
