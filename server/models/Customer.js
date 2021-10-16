@@ -10,14 +10,8 @@ const CustomerSchema = new Schema({
   account: {
     type: Schema.Types.ObjectId,
     ref: "Accounts",
+    unique: true,
   },
-
-  tickets: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Tickets",
-    },
-  ],
 
   phoneNumber: {
     type: String,

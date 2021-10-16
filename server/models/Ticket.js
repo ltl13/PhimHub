@@ -34,12 +34,10 @@ const TicketSchema = new Schema({
     },
   ],
 
-  customers: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Customers",
-    },
-  ],
+  customer: {
+    type: Schema.Types.ObjectId,
+    ref: "Customers",
+  },
 });
 
 module.exports = mongoose.model("Tickets", TicketSchema);

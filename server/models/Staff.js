@@ -10,6 +10,7 @@ const StaffSchema = new Schema({
   account: {
     type: Schema.Types.ObjectId,
     ref: "Accounts",
+    unique: true,
   },
 
   name: {

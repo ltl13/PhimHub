@@ -21,20 +21,6 @@ const RoomSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "RoomTypes",
   },
-
-  movieCalendars: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "MovieCalendars",
-    },
-  ],
-
-  seats: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Seats",
-    },
-  ],
 });
 
 module.exports = mongoose.model("Rooms", RoomSchema);

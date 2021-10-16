@@ -7,13 +7,6 @@ const StaffTypeSchema = new Schema({
     required: true,
     unique: true,
   },
-
-  staffs: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Staffs",
-    },
-  ],
 });
 
 module.export = mongoose.model("StaffTypes", StaffTypeSchema);

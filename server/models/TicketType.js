@@ -6,13 +6,6 @@ const TicketTypeSchema = new Schema({
     type: String,
     required: true,
   },
-
-  tickets: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Tickets",
-    },
-  ],
 });
 
 module.exports = mongoose.model("TicketTypes", TicketTypeSchema);

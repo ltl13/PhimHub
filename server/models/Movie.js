@@ -61,20 +61,6 @@ const MovieSchema = new Schema({
       ref: "MovieTypes",
     },
   ],
-
-  listTickets: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Tickets",
-    },
-  ],
-
-  movieCalendars: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "MovieCalendars",
-    },
-  ],
 });
 
 module.exports = mongoose.model("Movies", MovieSchema);

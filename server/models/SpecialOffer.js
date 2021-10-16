@@ -17,11 +17,6 @@ const SpecialOfferSchema = new Schema({
     required: true,
   },
 
-  payment: {
-    type: Schema.Types.ObjectId,
-    ref: "Payments",
-  },
-
   specialOfferType: {
     type: Schema.Types.ObjectId,
     ref: "SpecialOfferTypes",

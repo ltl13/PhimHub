@@ -6,13 +6,6 @@ const RoomTypeSchema = new Schema({
     type: String,
     required: true,
   },
-
-  rooms: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Rooms",
-    },
-  ],
 });
 
 module.exports = mongoose.model("RoomTypes", RoomTypeSchema);
