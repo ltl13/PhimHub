@@ -11,7 +11,7 @@ app.use(cors());
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(`${process.env.connectionURI}`);
+    await mongoose.connect(`${process.env.DB_CONNECTION_URI}`);
     console.log("MongoDB connected");
   } catch (err) {
     console.log(err.message);

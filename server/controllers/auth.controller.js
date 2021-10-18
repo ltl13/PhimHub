@@ -38,7 +38,7 @@ const registerNewAccount = async (req, res) => {
 
     const account = Account.findOne({ username });
     // Check if username already existed
-    if (!account) {
+    if (account) {
       return res.status(400).json({
         success: false,
         message: "Username already existed",
@@ -70,7 +70,58 @@ const registerNewAccount = async (req, res) => {
   }
 };
 
+const login = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    // Validation
+    if (!username || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing username and/or password",
+      });
+    }
+
+    // Check for existing account
+    const account = await Account.findOne({ username });
+    if (!account) {
+      return res.status(400).json({
+        success: false,
+        message: "Incorrect username or password",
+      });
+    }
+
+    // Check for correct password
+    const correctPassword = await argon2.verify(account.password, password);
+    if (!correctPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Incorrect username or password",
+      });
+    }
+
+    // Login in
+    // Return token
+    const accessToken = jsonwebtoken.sign(
+      { userId: account._id },
+      process.env.ACCESS_TOKEN_SECRET
+    );
+    return res.status(201).json({
+      success: true,
+      message: "User logged in",
+      accessToken,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
 module.exports = {
   getAuth,
   registerNewAccount,
+  login,
 };
