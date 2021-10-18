@@ -10,7 +10,6 @@ const PaymentSchema = new Schema({
   specialOffer: {
     type: Schema.Types.ObjectId,
     ref: "SpecialOffers",
-    unique: true,
   },
 
   staff: {

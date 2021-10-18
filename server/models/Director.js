@@ -6,13 +6,13 @@ const DirectorSchema = new Schema({
     type: String,
     required: true,
   },
-  
+
   movies: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Movies",
+      ref: "movies",
     },
   ],
 });
 
-module.exports = mongoose.model("Directors", DirectorSchema);
+module.exports = mongoose.model("directors", DirectorSchema);

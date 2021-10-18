@@ -14,9 +14,9 @@ const ActorSchema = new Schema({
   movies: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Movies",
+      ref: "movies",
     },
   ],
 });
 
-module.exports = mongoose.model("Actors", ActorSchema);
+module.exports = mongoose.model("actors", ActorSchema);

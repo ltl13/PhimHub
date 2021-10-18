@@ -14,13 +14,13 @@ const MovieCalendarSchema = new Schema({
 
   room: {
     type: Schema.Types.ObjectId,
-    ref: "Rooms",
+    ref: "rooms",
   },
 
   movie: {
     type: Schema.Types.ObjectId,
-    ref: "Movies",
+    ref: "movies",
   },
 });
 
-module.exports = mongoose.model("MovieCalendars", MovieCalendarSchema);
+module.exports = mongoose.model("movie_calendars", MovieCalendarSchema);
