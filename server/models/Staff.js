@@ -10,6 +10,11 @@ const StaffSchema = new Schema({
   account: {
     type: Schema.Types.ObjectId,
     ref: "Accounts",
+  },
+
+  username: {
+    type: String,
+    required: true,
     unique: true,
   },
 

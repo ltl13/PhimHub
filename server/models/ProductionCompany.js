@@ -6,6 +6,13 @@ const ProductionCompanySchema = new Schema({
     type: String,
     required: true,
   },
+
+  movies: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Movies",
+    },
+  ],
 });
 
 module.exports = mongoose.model("ProductionCompanies", ProductionCompanySchema);

@@ -21,6 +21,13 @@ const SeatSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Rooms",
   },
+
+  tickets: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Tickets",
+    },
+  ],
 });
 
 module.exports = mongoose.model("Seats", SeatSchema);

@@ -10,6 +10,13 @@ const ActorSchema = new Schema({
   avatar: {
     type: String,
   },
+
+  movies: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Movies",
+    },
+  ],
 });
 
 module.exports = mongoose.model("Actors", ActorSchema);

@@ -10,12 +10,12 @@ const CustomerSchema = new Schema({
   account: {
     type: Schema.Types.ObjectId,
     ref: "Accounts",
-    unique: true,
   },
 
   phoneNumber: {
     type: String,
     required: true,
+    unique: true,
   },
 
   name: {
