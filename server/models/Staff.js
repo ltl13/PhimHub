@@ -4,12 +4,18 @@ const Schema = mongoose.Schema;
 const StaffSchema = new Schema({
   staffType: {
     type: Schema.Types.ObjectId,
-    ref: "StaffTypes",
+    ref: "staff_types",
   },
 
   account: {
     type: Schema.Types.ObjectId,
-    ref: "Accounts",
+    ref: "accounts",
+  },
+
+  username: {
+    type: String,
+    required: true,
+    unique: true,
   },
 
   name: {
@@ -49,4 +55,4 @@ const StaffSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model("Staffs", StaffSchema);
+module.exports = mongoose.model("staffs", StaffSchema);

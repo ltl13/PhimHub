@@ -4,24 +4,18 @@ const Schema = mongoose.Schema;
 const CustomerSchema = new Schema({
   customerType: {
     type: Schema.Types.ObjectId,
-    ref: "CustomerTypes",
+    ref: "customer_types",
   },
 
   account: {
     type: Schema.Types.ObjectId,
-    ref: "Accounts",
+    ref: "accounts",
   },
-
-  tickets: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Tickets",
-    },
-  ],
 
   phoneNumber: {
     type: String,
     required: true,
+    unique: true,
   },
 
   name: {
@@ -45,4 +39,4 @@ const CustomerSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model("Customers", CustomerSchema);
+module.exports = mongoose.model("customers", CustomerSchema);

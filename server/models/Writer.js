@@ -6,13 +6,13 @@ const WriterSchema = new Schema({
     type: String,
     required: true,
   },
-  
-  inMovies: [
+
+  movies: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Movies",
+      ref: "movies",
     },
   ],
 });
 
-module.exports = mongoose.model("Writers", WriterSchema);
+module.exports = mongoose.model("writers", WriterSchema);

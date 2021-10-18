@@ -6,13 +6,13 @@ const ProductionCompanySchema = new Schema({
     type: String,
     required: true,
   },
-  
-  inMovies: [
+
+  movies: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Movies",
+      ref: "movies",
     },
   ],
 });
 
-module.exports = mongoose.model("ProductionCompanies", ProductionCompanySchema);
+module.exports = mongoose.model("production_companies", ProductionCompanySchema);

@@ -17,15 +17,10 @@ const SpecialOfferSchema = new Schema({
     required: true,
   },
 
-  payment: {
-    type: Schema.Types.ObjectId,
-    ref: "Payments",
-  },
-
   specialOfferType: {
     type: Schema.Types.ObjectId,
-    ref: "SpecialOfferTypes",
+    ref: "special_offer_types",
   },
 });
 
-module.exports = mongoose.model("SpecialOffers", SpecialOfferSchema);
+module.exports = mongoose.model("special_offers", SpecialOfferSchema);

@@ -30,51 +30,37 @@ const MovieSchema = new Schema({
   actors: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Actors",
+      ref: "actors",
     },
   ],
 
   directors: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Directors",
+      ref: "directors",
     },
   ],
 
   productionCompanies: [
     {
       type: Schema.Types.ObjectId,
-      ref: "ProductionCompanies",
+      ref: "production_companies",
     },
   ],
 
   writers: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Writers",
+      ref: "writers",
     },
   ],
 
   movieTypes: [
     {
       type: Schema.Types.ObjectId,
-      ref: "MovieTypes",
-    },
-  ],
-
-  listTickets: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Tickets",
-    },
-  ],
-
-  movieCalendars: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "MovieCalendars",
+      ref: "movie_types",
     },
   ],
 });
 
-module.exports = mongoose.model("Movies", MovieSchema);
+module.exports = mongoose.model("movies", MovieSchema);

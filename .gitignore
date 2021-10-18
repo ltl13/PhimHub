@@ -120,3 +120,4 @@ dist
 # my project
 server/node_modules
 server/.env
+request.http

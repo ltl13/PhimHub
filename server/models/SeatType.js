@@ -6,13 +6,6 @@ const SeatTypeSchema = new Schema({
     type: String,
     required: true,
   },
-
-  seats: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Seats",
-    },
-  ],
 });
 
-module.exports = mongoose.model("SeatTypes", SeatTypeSchema);
+module.exports = mongoose.model("seat_types", SeatTypeSchema);

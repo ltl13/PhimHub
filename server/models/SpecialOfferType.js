@@ -6,13 +6,6 @@ const SpecialOfferTypeSchema = new Schema({
     type: String,
     required: true,
   },
-
-  specialOffers: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "SpecialOffers",
-    },
-  ],
 });
 
-module.exports = mongoose.model("SpecialOfferTypes", SpecialOfferTypeSchema);
+module.exports = mongoose.model("special_offer_types", SpecialOfferTypeSchema);

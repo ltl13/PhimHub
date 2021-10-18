@@ -7,12 +7,12 @@ const DirectorSchema = new Schema({
     required: true,
   },
 
-  inMovies: [
+  movies: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Movies",
+      ref: "movies",
     },
   ],
 });
 
-module.exports = mongoose.model("Directors", DirectorSchema);
+module.exports = mongoose.model("directors", DirectorSchema);
