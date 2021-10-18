@@ -14,20 +14,20 @@ const SeatSchema = new Schema({
 
   seatType: {
     type: Schema.Types.ObjectId,
-    ref: "SeatTypes",
+    ref: "seat_types",
   },
 
   room: {
     type: Schema.Types.ObjectId,
-    ref: "Rooms",
+    ref: "rooms",
   },
 
   tickets: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Tickets",
+      ref: "tickets",
     },
   ],
 });
 
-module.exports = mongoose.model("Seats", SeatSchema);
+module.exports = mongoose.model("seats", SeatSchema);

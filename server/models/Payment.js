@@ -4,17 +4,17 @@ const Schema = mongoose.Schema;
 const PaymentSchema = new Schema({
   ticket: {
     type: Schema.Types.ObjectId,
-    ref: "Tickets",
+    ref: "tickets",
   },
 
   specialOffer: {
     type: Schema.Types.ObjectId,
-    ref: "SpecialOffers",
+    ref: "special_offers",
   },
 
   staff: {
     type: Schema.Types.ObjectId,
-    ref: "Staffs",
+    ref: "staffs",
   },
 
   paytime: {
@@ -29,4 +29,4 @@ const PaymentSchema = new Schema({
   },
 });
 
-module.export = mongoose.model("Payments", PaymentSchema);
+module.export = mongoose.model("payments", PaymentSchema);

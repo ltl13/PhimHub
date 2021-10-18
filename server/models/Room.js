@@ -7,7 +7,7 @@ const RoomSchema = new Schema({
     required: true,
   },
 
-  numberSear: {
+  numberSeat: {
     type: Number,
     required: true,
   },
@@ -19,8 +19,8 @@ const RoomSchema = new Schema({
 
   roomType: {
     type: Schema.Types.ObjectId,
-    ref: "RoomTypes",
+    ref: "room_types",
   },
 });
 
-module.exports = mongoose.model("Rooms", RoomSchema);
+module.exports = mongoose.model("rooms", RoomSchema);

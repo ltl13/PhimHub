@@ -8,4 +8,4 @@ const SpecialOfferTypeSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model("SpecialOfferTypes", SpecialOfferTypeSchema);
+module.exports = mongoose.model("special_offer_types", SpecialOfferTypeSchema);

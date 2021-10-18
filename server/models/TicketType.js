@@ -8,4 +8,4 @@ const TicketTypeSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model("TicketTypes", TicketTypeSchema);
+module.exports = mongoose.model("ticket_types", TicketTypeSchema);

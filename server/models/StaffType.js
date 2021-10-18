@@ -9,4 +9,4 @@ const StaffTypeSchema = new Schema({
   },
 });
 
-module.export = mongoose.model("StaffTypes", StaffTypeSchema);
+module.export = mongoose.model("staff_types", StaffTypeSchema);

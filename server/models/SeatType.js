@@ -8,4 +8,4 @@ const SeatTypeSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model("SeatTypes", SeatTypeSchema);
+module.exports = mongoose.model("seat_types", SeatTypeSchema);
