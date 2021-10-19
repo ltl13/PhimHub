@@ -18,6 +18,12 @@ const CustomerSchema = new Schema({
     unique: true,
   },
 
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+
   name: {
     type: String,
     required: true,

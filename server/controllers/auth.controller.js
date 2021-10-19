@@ -1,11 +1,14 @@
 const argon2 = require("argon2");
 const jsonwebtoken = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+
 const Account = require("../models/Account");
+const Customer = require("../models/Customer");
 
 const getAuth = async (req, res) => {
   try {
     const account = await Account.findById(req.userId).select("-password");
-    if (!user) {
+    if (!account) {
       return res.status(400).json({
         success: false,
         message: "User not found",
@@ -13,7 +16,7 @@ const getAuth = async (req, res) => {
     }
     return res.status(200).json({
       success: true,
-      user,
+      account,
     });
   } catch (error) {
     console.log(error);
@@ -24,7 +27,7 @@ const getAuth = async (req, res) => {
   }
 };
 
-const registerNewAccount = async (req, res) => {
+const register = async (req, res) => {
   try {
     const { username, password } = req.body;
 
@@ -120,8 +123,52 @@ const login = async (req, res) => {
   }
 };
 
+const resetPassword = async (req, res) => {
+  try {
+    const { email: userEmail } = req.body;
+
+    // Send new password to user's email
+    const testUser = await nodemailer.createTestAccount();
+    const transporter = nodemailer.createTransport({
+      service: "Gmail",
+      auth: {
+        user: "thanhluan130201@gmail.com",
+        pass: "Luan130201",
+      },
+    });
+    const content = {
+      from: '"PhimHub" <phimhub@cinema.com>',
+      to: userEmail,
+      subject: "Hello",
+      text: "Testmail!!!",
+      html: "<b>Hello, this is a test email</b>",
+    };
+    transporter.sendMail(content, function (err, info) {
+      if (err) {
+        console.log(err);
+        res.status(422).json({
+          success: false,
+          message: "There is an error occurred when sending email",
+        });
+      } else {
+        res.status(200).json({
+          success: true,
+          message: "Password reset email sent",
+        });
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
 module.exports = {
   getAuth,
-  registerNewAccount,
+  register,
   login,
+  resetPassword,
 };
