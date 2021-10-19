@@ -50,7 +50,11 @@ const register = async (req, res) => {
 
     // Create account
     const hashPassword = await argon2.hash(password);
-    const newAccount = new Account({ username, password: hashPassword });
+    const newAccount = new Account({
+      username,
+      password: hashPassword,
+      isStaff: false,
+    });
     await newAccount.save();
 
     // Return access token
@@ -125,10 +129,9 @@ const login = async (req, res) => {
 
 const resetPassword = async (req, res) => {
   try {
-    const { email: userEmail } = req.body;
+    const { email } = req.body;
 
     // Send new password to user's email
-    const testUser = await nodemailer.createTestAccount();
     const transporter = nodemailer.createTransport({
       service: "Gmail",
       auth: {
@@ -136,12 +139,13 @@ const resetPassword = async (req, res) => {
         pass: "Luan130201",
       },
     });
+    const newPassword = Math.random().toString(36).slice(-8);
     const content = {
       from: '"PhimHub" <phimhub@cinema.com>',
-      to: userEmail,
+      to: email,
       subject: "Hello",
-      text: "Testmail!!!",
-      html: "<b>Hello, this is a test email</b>",
+      text: "Reset your password",
+      html: `<b>Hello, this is your new password: </b>${newPassword}`,
     };
     transporter.sendMail(content, function (err, info) {
       if (err) {
@@ -150,7 +154,11 @@ const resetPassword = async (req, res) => {
           success: false,
           message: "There is an error occurred when sending email",
         });
+        res.redirect("/");
       } else {
+        // Change user's password in database
+
+        // Return status code
         res.status(200).json({
           success: true,
           message: "Password reset email sent",
