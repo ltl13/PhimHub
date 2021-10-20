@@ -33,8 +33,10 @@ const addCustomerType = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      success: true,
+      success: false,
       message: "Internal server error",
     });
   }
 };
+
+module.exports = { addCustomerType };

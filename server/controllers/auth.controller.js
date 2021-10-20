@@ -32,12 +32,12 @@ const register = async (req, res) => {
     const {
       username,
       password,
-      customerType,
-      phoneNumber,
-      email,
-      name,
-      sex,
-      dateOfBirth,
+      // customerType,
+      // phoneNumber,
+      // email,
+      // name,
+      // sex,
+      // dateOfBirth,
     } = req.body;
 
     // Validation
@@ -67,16 +67,16 @@ const register = async (req, res) => {
     await newAccount.save();
 
     // Create new customer
-    const newCustomer = new Customer({
-      customerType,
-      phoneNumber,
-      email,
-      name,
-      sex,
-      dateOfBirth,
-      account: newAccount._id,
-    });
-    await newCustomer.save();
+    // const newCustomer = new Customer({
+    //   customerType,
+    //   phoneNumber,
+    //   email,
+    //   name,
+    //   sex,
+    //   dateOfBirth,
+    //   account: newAccount._id,
+    // });
+    // await newCustomer.save();
 
     // Return access token
     const accessToken = jsonwebtoken.sign(
