@@ -13,7 +13,7 @@ const AccountSchema = new Schema({
     required: true,
   },
 
-  isStaff: {
+  isAdmin: {
     type: Boolean,
     required: true,
   },

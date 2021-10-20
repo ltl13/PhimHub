@@ -39,7 +39,7 @@ const register = async (req, res) => {
       });
     }
 
-    const account = Account.findOne({ username });
+    const account = await Account.findOne({ username });
     // Check if username already existed
     if (account) {
       return res.status(400).json({
@@ -53,7 +53,7 @@ const register = async (req, res) => {
     const newAccount = new Account({
       username,
       password: hashPassword,
-      isStaff: false,
+      isAdmin: false,
     });
     await newAccount.save();
 
@@ -113,11 +113,18 @@ const login = async (req, res) => {
       { userId: account._id },
       process.env.ACCESS_TOKEN_SECRET
     );
-    return res.status(201).json({
+
+    res.status(201).json({
       success: true,
       message: "User logged in",
       accessToken,
     });
+
+    if (account.isAdmin) {
+      res.redirect("/manage/home");
+    } else {
+      res.redirect("/home");
+    }
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -130,6 +137,15 @@ const login = async (req, res) => {
 const resetPassword = async (req, res) => {
   try {
     const { email } = req.body;
+
+    // Check if user exists
+    const user = await Customer.findOne({ email });
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Email does not existed",
+      });
+    }
 
     // Send new password to user's email
     const transporter = nodemailer.createTransport({
@@ -157,6 +173,19 @@ const resetPassword = async (req, res) => {
         res.redirect("/");
       } else {
         // Change user's password in database
+        const hashPassword = await argon2.hash(newPassword);
+        const updatePassword = await Customer.findOneAndUpdate(
+          { email },
+          { password: hashPassword },
+          { new: true }
+        );
+        if (!updatePassword) {
+          res.status(400).json({
+            success: false,
+            message: "Update password failed due to no authorization",
+          });
+          return res.redirect("/");
+        }
 
         // Return status code
         res.status(200).json({
