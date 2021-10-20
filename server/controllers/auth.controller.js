@@ -82,7 +82,6 @@ const register = async (req, res) => {
     const accessToken = jsonwebtoken.sign(
       { id: newAccount._id },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "3600s" }
     );
 
     res.status(201).json({
@@ -134,7 +133,6 @@ const login = async (req, res) => {
     const accessToken = jsonwebtoken.sign(
       { id: account._id },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "3600s" }
     );
 
     res.status(201).json({
