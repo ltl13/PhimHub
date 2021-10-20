@@ -7,7 +7,7 @@ const Customer = require("../models/Customer");
 
 const getAuth = async (req, res) => {
   try {
-    const account = await Account.findById(req.userId).select("-password");
+    const account = await Account.findById(req.body.id).select("-password");
     if (!account) {
       return res.status(400).json({
         success: false,
@@ -29,7 +29,16 @@ const getAuth = async (req, res) => {
 
 const register = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const {
+      username,
+      password,
+      customerType,
+      phoneNumber,
+      email,
+      name,
+      sex,
+      dateOfBirth,
+    } = req.body;
 
     // Validation
     if (!username || !password) {
@@ -57,16 +66,29 @@ const register = async (req, res) => {
     });
     await newAccount.save();
 
+    // Create new customer
+    const newCustomer = new Customer({
+      customerType,
+      phoneNumber,
+      email,
+      name,
+      sex,
+      dateOfBirth,
+      account: newAccount._id,
+    });
+    await newCustomer.save();
+
     // Return access token
     const accessToken = jsonwebtoken.sign(
-      { userId: newAccount._id },
-      process.env.ACCESS_TOKEN_SECRET
+      { id: newAccount._id },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "3600s" }
     );
 
     res.status(201).json({
       success: true,
       message: "New account created successfully",
-      accessToken,
+      token: accessToken,
     });
   } catch (error) {
     console.log(error);
@@ -110,14 +132,15 @@ const login = async (req, res) => {
     // Login in
     // Return token
     const accessToken = jsonwebtoken.sign(
-      { userId: account._id },
-      process.env.ACCESS_TOKEN_SECRET
+      { id: account._id },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "3600s" }
     );
 
     res.status(201).json({
       success: true,
       message: "User logged in",
-      accessToken,
+      token: accessToken,
     });
 
     if (account.isAdmin) {
@@ -163,7 +186,7 @@ const resetPassword = async (req, res) => {
       text: "Reset your password",
       html: `<b>Hello, this is your new password: </b>${newPassword}`,
     };
-    transporter.sendMail(content, function (err, info) {
+    transporter.sendMail(content, async function (err, info) {
       if (err) {
         console.log(err);
         res.status(422).json({
