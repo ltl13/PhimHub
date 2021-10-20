@@ -13,6 +13,11 @@ const AccountSchema = new Schema({
     required: true,
   },
 
+  isAdmin: {
+    type: Boolean,
+    required: true,
+  },
+
   createAt: {
     type: Date,
     default: Date.now(),
