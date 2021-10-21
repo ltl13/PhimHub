@@ -4,7 +4,7 @@ const nodemailer = require("nodemailer");
 
 const Account = require("../models/Account");
 const Customer = require("../models/Customer");
-const CustomerType = require("../models/CustomerType");
+const { addNewCustomer } = require("../shared/functions");
 
 const getAuth = async (req, res) => {
   try {
@@ -25,37 +25,6 @@ const getAuth = async (req, res) => {
       success: false,
       message: "Internal server error",
     });
-  }
-};
-
-const addNewCustomer = async (parameters) => {
-  try {
-    const {
-      customerType,
-      phoneNumber,
-      email,
-      name,
-      sex,
-      dateOfBirth,
-      account,
-    } = parameters;
-
-    // Find customer type's id
-    const newCustomerType = await CustomerType.findOne({
-      typeName: customerType,
-    });
-    const newCustomer = new Customer({
-      customerType: newCustomerType._id,
-      phoneNumber,
-      email,
-      name,
-      sex,
-      dateOfBirth: new Date(dateOfBirth.concat("T00:00:10Z")),
-      account: account._id,
-    });
-    return newCustomer;
-  } catch (error) {
-    return null;
   }
 };
 
@@ -107,18 +76,13 @@ const register = async (req, res) => {
         dateOfBirth,
         account: newAccount,
       });
-      if (!newCustomer) {
-        return res.status(500).json({
-          success: false,
-          message: "Internal server error",
-        });
-      }
       await newCustomer.save();
       await newAccount.save();
     } catch (error) {
+      console.log(error);
       return res.status(400).json({
         success: false,
-        message: "Email or phone number has been used for register",
+        message: "Email or phone number has been used for register before",
       });
     }
 
@@ -273,4 +237,5 @@ module.exports = {
   register,
   login,
   resetPassword,
+  addNewCustomer,
 };
