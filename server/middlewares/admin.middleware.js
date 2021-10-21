@@ -19,8 +19,8 @@ const verifyAdmin = async (req, res, next) => {
     req.body.id = decoded.id;
 
     // Check user's role
-    const admin = await Account.findById(req.body.id);
-    if (!admin) {
+    const account = await Account.findById(req.body.id);
+    if (!account.isAdmin) {
       return res.status(403).json({
         success: false,
         message: "You are not allowed to access this content",

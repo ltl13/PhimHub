@@ -4,6 +4,7 @@ const nodemailer = require("nodemailer");
 
 const Account = require("../models/Account");
 const Customer = require("../models/Customer");
+const CustomerType = require("../models/CustomerType");
 
 const getAuth = async (req, res) => {
   try {
@@ -27,17 +28,48 @@ const getAuth = async (req, res) => {
   }
 };
 
+const addNewCustomer = async (parameters) => {
+  try {
+    const {
+      customerType,
+      phoneNumber,
+      email,
+      name,
+      sex,
+      dateOfBirth,
+      account,
+    } = parameters;
+
+    // Find customer type's id
+    const newCustomerType = await CustomerType.findOne({
+      typeName: customerType,
+    });
+    const newCustomer = new Customer({
+      customerType: newCustomerType._id,
+      phoneNumber,
+      email,
+      name,
+      sex,
+      dateOfBirth: new Date(dateOfBirth.concat("T00:00:10Z")),
+      account: account._id,
+    });
+    return newCustomer;
+  } catch (error) {
+    return null;
+  }
+};
+
 const register = async (req, res) => {
   try {
     const {
       username,
       password,
-      // customerType,
-      // phoneNumber,
-      // email,
-      // name,
-      // sex,
-      // dateOfBirth,
+      customerType,
+      phoneNumber,
+      email,
+      name,
+      sex,
+      dateOfBirth,
     } = req.body;
 
     // Validation
@@ -64,24 +96,36 @@ const register = async (req, res) => {
       password: hashPassword,
       isAdmin: false,
     });
-    await newAccount.save();
-
     // Create new customer
-    // const newCustomer = new Customer({
-    //   customerType,
-    //   phoneNumber,
-    //   email,
-    //   name,
-    //   sex,
-    //   dateOfBirth,
-    //   account: newAccount._id,
-    // });
-    // await newCustomer.save();
+    try {
+      const newCustomer = await addNewCustomer({
+        customerType,
+        phoneNumber,
+        email,
+        name,
+        sex,
+        dateOfBirth,
+        account: newAccount,
+      });
+      if (!newCustomer) {
+        return res.status(500).json({
+          success: false,
+          message: "Internal server error",
+        });
+      }
+      await newCustomer.save();
+      await newAccount.save();
+    } catch (error) {
+      return res.status(400).json({
+        success: false,
+        message: "Email or phone number has been used for register",
+      });
+    }
 
     // Return access token
     const accessToken = jsonwebtoken.sign(
       { id: newAccount._id },
-      process.env.ACCESS_TOKEN_SECRET,
+      process.env.ACCESS_TOKEN_SECRET
     );
 
     res.status(201).json({
@@ -132,7 +176,7 @@ const login = async (req, res) => {
     // Return token
     const accessToken = jsonwebtoken.sign(
       { id: account._id },
-      process.env.ACCESS_TOKEN_SECRET,
+      process.env.ACCESS_TOKEN_SECRET
     );
 
     res.status(201).json({
