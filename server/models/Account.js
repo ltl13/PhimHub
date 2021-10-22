@@ -18,6 +18,10 @@ const AccountSchema = new Schema({
     required: true,
   },
 
+  token: {
+    type: String,
+  },
+
   createAt: {
     type: Date,
     default: Date.now(),
