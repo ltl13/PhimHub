@@ -9,7 +9,7 @@ const verifyAdmin = async (req, res, next) => {
   if (!token) {
     return res.status(401).json({
       success: false,
-      message: "Access token not found",
+      message: "Unauthorized",
     });
   }
 
@@ -20,18 +20,23 @@ const verifyAdmin = async (req, res, next) => {
 
     // Check user's role
     const account = await Account.findById(req.body.id);
-    if (!account.isAdmin) {
-      return res.status(403).json({
+    if (!account) {
+      return res.status(401).json({
         success: false,
-        message: "You are not allowed to access this content",
+        message: "Unauthorized",
+      });
+    } else if (!account.isAdmin) {
+      res.status(403).json({
+        success: false,
+        message: "You're not allowed to access this",
       });
     }
     next();
   } catch (error) {
     console.log(error);
-    return res.status(403).json({
+    return res.status(500).json({
       success: false,
-      message: "Invalid token",
+      message: "Internal server error",
     });
   }
 };

@@ -108,18 +108,18 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { phoneNumber, password } = req.body;
+    const { username, password } = req.body;
 
     // Validation
-    if (!phoneNumber || !password) {
-      return res.status(400).json({
+    if (!username || !password) {
+      return res.status(400).send({
         success: false,
         message: "Missing phoneNumber and/or password",
       });
     }
 
     // Check for existing account
-    const account = await Account.findOne({ username: phoneNumber });
+    const account = await Account.findOne({ username });
     if (!account) {
       return res.status(400).json({
         success: false,
@@ -166,7 +166,7 @@ const resetPassword = async (req, res) => {
     if (!user) {
       return res.status(400).json({
         success: false,
-        message: "Email does not existed",
+        message: "Email does not exist",
       });
     }
 

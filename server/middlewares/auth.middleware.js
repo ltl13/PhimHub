@@ -5,7 +5,7 @@ const verifyToken = (req, res, next) => {
   if (!token) {
     return res.status(401).json({
       success: false,
-      message: "Access token not found",
+      message: "Unauthorized",
     });
   }
 
@@ -15,9 +15,9 @@ const verifyToken = (req, res, next) => {
     next();
   } catch (error) {
     console.log(error);
-    return res.status(403).json({
+    return res.status(500).json({
       success: false,
-      message: "Invalid token",
+      message: "Internal server error",
     });
   }
 };
