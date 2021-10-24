@@ -1,4 +1,5 @@
 const CustomerType = require("../models/CustomerType");
+const Customer = require("../models/Customer");
 
 const getAllCustomerTypes = async (req, res) => {
   try {
@@ -18,7 +19,7 @@ const getAllCustomerTypes = async (req, res) => {
 
 const getCustomerType = async (req, res) => {
   try {
-    const customerType = await CustomerType.findById(req.param(id));
+    const customerType = await CustomerType.findById(req.params.id);
     if (!customerType) {
       return res.status(404).json({
         success: false,
@@ -86,7 +87,7 @@ const updateCustomerType = async (req, res) => {
 
     // Update new type name
     const customerTypeUpdater = await CustomerType.findByIdAndUpdate(
-      req.param("id"),
+      req.params.id,
       {
         typeName: newTypeName,
       }
@@ -97,11 +98,48 @@ const updateCustomerType = async (req, res) => {
         message: "Invalid id",
       });
     }
-
+    customerTypeUpdater.save();
     // Updated successfully
     return res.status(200).json({
       success: true,
       message: "Customer type has been updated",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+const deleteCustomerType = async (req, res) => {
+  try {
+    // Check if there are still customers of this type
+    const customerChecker = await Customer.findOne({
+      customerType: req.params.id,
+    });
+    if (!customerChecker) {
+      return res.status(406).json({
+        success: false,
+        message:
+          "Can not delete because there are still customers of this type",
+      });
+    }
+
+    // Delete customer type
+    const deleteCustomerType = await CustomerType.findByIdAndDelete(
+      req.params.id
+    );
+    if (!deleteCustomerType) {
+      return res.status(404).json({
+        success: false,
+        message: "Customer type not found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Delete customer type successfully",
     });
   } catch (error) {
     console.log(error);
@@ -117,4 +155,5 @@ module.exports = {
   getCustomerType,
   updateCustomerType,
   getAllCustomerTypes,
+  deleteCustomerType,
 };
