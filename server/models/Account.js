@@ -13,8 +13,8 @@ const AccountSchema = new Schema({
     required: true,
   },
 
-  role: {
-    type: Number,
+  isStaff: {
+    type: Boolean,
     required: true,
   },
 

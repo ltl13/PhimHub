@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 
 const Account = require("../models/Account");
 
-const verifyAdmin = async (req, res, next) => {
+const verifyStaff = async (req, res, next) => {
   const { token } = req.body;
 
   // Check if user access with token or not
@@ -25,10 +25,10 @@ const verifyAdmin = async (req, res, next) => {
         success: false,
         message: "Unauthorized",
       });
-    } else if (account.role != 2) {
-      res.status(403).json({
+    } else if (!account.isStaff) {
+      return res.status(403).json({
         success: false,
-        message: "You're not allowed to access this",
+        message: "You're not allowed to access this content",
       });
     }
     next();
@@ -41,4 +41,4 @@ const verifyAdmin = async (req, res, next) => {
   }
 };
 
-module.exports = verifyAdmin;
+module.exports = verifyStaff;

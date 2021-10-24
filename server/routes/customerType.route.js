@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const verifyAdmin = require("../middlewares/admin.middleware");
+const verifyStaff = require("../middlewares/staff.middleware");
 
 const {
   createCustomerType,
@@ -9,9 +9,9 @@ const {
   getAllCustomerTypes,
 } = require("../controllers/customerType.controller");
 
-router.post("/create", verifyAdmin, createCustomerType);
-router.get("/get/:id", verifyAdmin, getCustomerType);
-router.put("/update/:id", verifyAdmin, updateCustomerType);
-router.get("/get", verifyAdmin, getAllCustomerTypes);
+router.post("/create", verifyStaff, createCustomerType);
+router.get("/get/:id", verifyStaff, getCustomerType);
+router.put("/update/:id", verifyStaff, updateCustomerType);
+router.get("/get", verifyStaff, getAllCustomerTypes);
 
 module.exports = router;
