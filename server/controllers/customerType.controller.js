@@ -119,7 +119,7 @@ const deleteCustomerType = async (req, res) => {
     const customerChecker = await Customer.findOne({
       customerType: req.params.id,
     });
-    if (!customerChecker) {
+    if (customerChecker) {
       return res.status(406).json({
         success: false,
         message:
@@ -153,7 +153,7 @@ const deleteCustomerType = async (req, res) => {
 module.exports = {
   createCustomerType,
   getCustomerType,
-  updateCustomerType,
   getAllCustomerTypes,
+  updateCustomerType,
   deleteCustomerType,
 };
