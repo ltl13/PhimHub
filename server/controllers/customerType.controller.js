@@ -118,6 +118,7 @@ const deleteCustomerType = async (req, res) => {
     // Check if there are still customers of this type
     const customerChecker = await Customer.findOne({
       customerType: req.params.id,
+      status: true,
     });
     if (customerChecker) {
       return res.status(406).json({

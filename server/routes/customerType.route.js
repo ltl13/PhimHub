@@ -13,7 +13,7 @@ const {
 router.post("/create", createCustomerType);
 router.get("/get/:id", getCustomerType);
 router.put("/update/:id", updateCustomerType);
-router.get("/get", getAllCustomerTypes);
+router.get("/get-all", getAllCustomerTypes);
 router.delete("/delete/:id", deleteCustomerType);
 
 module.exports = router;

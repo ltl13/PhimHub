@@ -4,7 +4,6 @@ const nodemailer = require("nodemailer");
 
 const Account = require("../models/Account");
 const Customer = require("../models/Customer");
-const { addNewCustomer } = require("../shared/functions");
 
 const getAuth = async (req, res) => {
   try {
@@ -40,12 +39,21 @@ const register = async (req, res) => {
       dateOfBirth,
     } = req.body;
 
-    const account = await Account.findOne({ username: phoneNumber });
-    // Check if account already existed
-    if (account) {
+    // Check if email or phone number has been used for register before
+    let checker = await Customer.findOne({ phoneNumber });
+    if (checker) {
       return res.status(400).json({
         success: false,
+        invalid: "phoneNumber",
         message: "This phone number has been used for register before",
+      });
+    }
+    checker = await Customer.findOne({ email });
+    if (checker) {
+      return res.status(400).json({
+        success: false,
+        invalid: "email",
+        message: "This email has been used for register before",
       });
     }
 
@@ -56,26 +64,19 @@ const register = async (req, res) => {
       password: hashPassword,
       isStaff: false,
     });
+
     // Create new customer
-    try {
-      const newCustomer = await addNewCustomer({
-        customerType,
-        phoneNumber,
-        email,
-        name,
-        sex,
-        dateOfBirth,
-        account: newAccount,
-      });
-      await newCustomer.save();
-      await newAccount.save();
-    } catch (error) {
-      console.log(error);
-      return res.status(400).json({
-        success: false,
-        message: "Email has been used for register before",
-      });
-    }
+    const newCustomer = new Customer({
+      customerType,
+      phoneNumber,
+      email,
+      name,
+      sex,
+      dateOfBirth: new Date(dateOfBirth.concat("T00:00:10Z")),
+      account: newAccount._id,
+    });
+    await newAccount.save();
+    await newCustomer.save();
 
     // Return access token
     const accessToken = jsonwebtoken.sign(
