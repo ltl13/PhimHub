@@ -1,5 +1,4 @@
 const Customer = require("../models/Customer");
-const CustomerType = require("../models/CustomerType");
 
 const getAllCustomer = async (req, res) => {
   try {
@@ -120,4 +119,62 @@ const createNewCustomer = async (req, res) => {
   }
 };
 
-module.exports = { createNewCustomer, getAllCustomer };
+const updateCustomer = async (req, res) => {
+  try {
+    const { customerType, phoneNumber, email, name, sex, dateOfBirth } =
+      req.body;
+
+    // Check if email or phone number doesn't change
+    const customer = await Customer.findById(req.params.id);
+    if (!customer) {
+      return res.status(404).json({
+        status: false,
+        message: "Customer not found",
+      });
+    }
+
+    // Check if email or phone number has been used for register before
+    let checker = await Customer.findOne({ phoneNumber });
+    if (checker && email != customer.email) {
+      return res.status(400).json({
+        success: false,
+        invalid: "phoneNumber",
+        message: "This phone number has been used for register before",
+      });
+    }
+    checker = await Customer.findOne({ email });
+    if (checker && phoneNumber != customer.phoneNumber) {
+      return res.status(400).json({
+        success: false,
+        invalid: "email",
+        message: "This email has been used for register before",
+      });
+    }
+
+    // Update customer
+    await Customer.findByIdAndUpdate(
+      req.params.id,
+      {
+        customerType,
+        phoneNumber,
+        email,
+        name,
+        sex,
+        dateOfBirth: new Date(dateOfBirth.concat("T00:00:10Z")),
+      },
+      { new: true }
+    ).then((result) => result.save());
+    return res.status(200).json({
+      success: true,
+      message: "Customer has been updated successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+module.exports = { createNewCustomer, getAllCustomer, getCustomer };
