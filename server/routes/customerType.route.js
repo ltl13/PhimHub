@@ -2,8 +2,12 @@ const express = require("express");
 const router = express.Router();
 const verifyAdmin = require("../middlewares/admin.middleware");
 
-const { addCustomerType } = require("../controllers/customerType.controller");
+const {
+  createCustomerType,
+  getCustomerType,
+} = require("../controllers/customerType.controller");
 
-router.post("/add", verifyAdmin, addCustomerType);
+router.post("/create", verifyAdmin, createCustomerType);
+router.post("/get", verifyAdmin, getCustomerType);
 
 module.exports = router;

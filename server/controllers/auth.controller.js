@@ -10,7 +10,7 @@ const getAuth = async (req, res) => {
   try {
     const account = await Account.findById(req.body.id).select("-password");
     if (!account) {
-      return res.status(400).json({
+      return res.status(404).json({
         success: false,
         message: "User not found",
       });
@@ -40,16 +40,8 @@ const register = async (req, res) => {
       dateOfBirth,
     } = req.body;
 
-    // Validation
-    if (!phoneNumber || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Missing phone number and/or password",
-      });
-    }
-
     const account = await Account.findOne({ username: phoneNumber });
-    // Check if username already existed
+    // Check if account already existed
     if (account) {
       return res.status(400).json({
         success: false,

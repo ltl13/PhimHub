@@ -1,16 +1,30 @@
 const CustomerType = require("../models/CustomerType");
 
-const addCustomerType = async (req, res) => {
+const getCustomerType = async (req, res) => {
   try {
-    const { typeName } = req.body;
-
-    // Validation
-    if (!typeName) {
-      return res.status(400).json({
+    const customerType = await CustomerType.findById(req.id);
+    if (!customerType) {
+      return res.status(404).json({
         success: false,
-        message: "The type name must not be null",
+        message: "Customer type not found",
       });
     }
+    return res.status(200).json({
+      success: true,
+      customerType,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+const createCustomerType = async (req, res) => {
+  try {
+    const { typeName } = req.body;
 
     // Check if this customer type has existed in the database
     const customerType = await CustomerType.findOne({ typeName });
@@ -39,4 +53,10 @@ const addCustomerType = async (req, res) => {
   }
 };
 
-module.exports = { addCustomerType };
+const updateCusomerType = async (req, res) => {
+  try {
+    const { typeName } = req.body;
+  } catch (error) {}
+};
+
+module.exports = { createCustomerType, getCustomerType };
