@@ -4,12 +4,13 @@ const nodemailer = require("nodemailer");
 
 const Account = require("../models/Account");
 const Customer = require("../models/Customer");
+const { addNewCustomer } = require("../shared/functions");
 
 const getAuth = async (req, res) => {
   try {
-    const account = await Account.findById(req.body.id).select("-password");
+    const account = await Account.findById(req.params.id).select("-password");
     if (!account) {
-      return res.status(400).json({
+      return res.status(404).json({
         success: false,
         message: "User not found",
       });
@@ -30,7 +31,6 @@ const getAuth = async (req, res) => {
 const register = async (req, res) => {
   try {
     const {
-      username,
       password,
       customerType,
       phoneNumber,
@@ -40,55 +40,54 @@ const register = async (req, res) => {
       dateOfBirth,
     } = req.body;
 
-    // Validation
-    if (!username || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Missing username and/or password",
-      });
-    }
-
-    const account = await Account.findOne({ username });
-    // Check if username already existed
+    const account = await Account.findOne({ username: phoneNumber });
+    // Check if account already existed
     if (account) {
       return res.status(400).json({
         success: false,
-        message: "Username already existed",
+        message: "This phone number has been used for register before",
       });
     }
 
     // Create account
     const hashPassword = await argon2.hash(password);
     const newAccount = new Account({
-      username,
+      username: phoneNumber,
       password: hashPassword,
-      isAdmin: false,
+      isStaff: false,
     });
-    await newAccount.save();
-
     // Create new customer
-    const newCustomer = new Customer({
-      customerType,
-      phoneNumber,
-      email,
-      name,
-      sex,
-      dateOfBirth,
-      account: newAccount._id,
-    });
-    await newCustomer.save();
+    try {
+      const newCustomer = await addNewCustomer({
+        customerType,
+        phoneNumber,
+        email,
+        name,
+        sex,
+        dateOfBirth,
+        account: newAccount,
+      });
+      await newCustomer.save();
+      await newAccount.save();
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({
+        success: false,
+        message: "Email has been used for register before",
+      });
+    }
 
     // Return access token
     const accessToken = jsonwebtoken.sign(
       { id: newAccount._id },
-      process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "3600s" }
+      process.env.ACCESS_TOKEN_SECRET
     );
+    newAccount.token = accessToken;
+    newAccount.save();
 
     res.status(201).json({
       success: true,
       message: "New account created successfully",
-      token: accessToken,
     });
   } catch (error) {
     console.log(error);
@@ -105,9 +104,9 @@ const login = async (req, res) => {
 
     // Validation
     if (!username || !password) {
-      return res.status(400).json({
+      return res.status(400).send({
         success: false,
-        message: "Missing username and/or password",
+        message: "Missing phoneNumber and/or password",
       });
     }
 
@@ -116,7 +115,7 @@ const login = async (req, res) => {
     if (!account) {
       return res.status(400).json({
         success: false,
-        message: "Incorrect username or password",
+        message: "Incorrect phone number or password",
       });
     }
 
@@ -125,29 +124,22 @@ const login = async (req, res) => {
     if (!correctPassword) {
       return res.status(400).json({
         success: false,
-        message: "Incorrect username or password",
+        message: "Incorrect phone number or password",
       });
     }
 
     // Login in
-    // Return token
     const accessToken = jsonwebtoken.sign(
       { id: account._id },
-      process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "3600s" }
+      process.env.ACCESS_TOKEN_SECRET
     );
-
+    account.token = accessToken;
+    account.save();
     res.status(201).json({
       success: true,
       message: "User logged in",
-      token: accessToken,
+      isAdmin: account.isAdmin,
     });
-
-    if (account.isAdmin) {
-      res.redirect("/manage/home");
-    } else {
-      res.redirect("/home");
-    }
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -166,7 +158,7 @@ const resetPassword = async (req, res) => {
     if (!user) {
       return res.status(400).json({
         success: false,
-        message: "Email does not existed",
+        message: "Email does not exist",
       });
     }
 
@@ -189,11 +181,10 @@ const resetPassword = async (req, res) => {
     transporter.sendMail(content, async function (err, info) {
       if (err) {
         console.log(err);
-        res.status(422).json({
+        return res.status(422).json({
           success: false,
           message: "There is an error occurred when sending email",
         });
-        res.redirect("/");
       } else {
         // Change user's password in database
         const hashPassword = await argon2.hash(newPassword);
@@ -203,15 +194,14 @@ const resetPassword = async (req, res) => {
           { new: true }
         );
         if (!updatePassword) {
-          res.status(400).json({
+          return res.status(400).json({
             success: false,
             message: "Update password failed due to no authorization",
           });
-          return res.redirect("/");
         }
 
         // Return status code
-        res.status(200).json({
+        return res.status(200).json({
           success: true,
           message: "Password reset email sent",
         });
@@ -226,9 +216,38 @@ const resetPassword = async (req, res) => {
   }
 };
 
+const logout = async (req, res) => {
+  try {
+    const { token } = req.body;
+    const account = await Account.findOneAndUpdate(
+      { token },
+      { token: "" },
+      { new: true }
+    );
+    if (!account) {
+      return res.status(401).json({
+        success: false,
+        message: "Logout failed due to no authorization",
+      });
+    }
+    account.save();
+    return res.status(200).json({
+      success: true,
+      message: "User logout successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
 module.exports = {
   getAuth,
   register,
   login,
   resetPassword,
+  logout,
 };

@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 const authRoute = require("./routes/auth.route");
+const customerTypeRoute = require("./routes/customerType.route");
 
 const app = express();
 app.use(express.json());
@@ -22,6 +23,7 @@ const connectDB = async () => {
 connectDB();
 
 app.use("/api/auth", authRoute);
+app.use("/api/customer-type", customerTypeRoute);
 
 app.listen(process.env.PORT, () =>
   console.log(`Server started on port ${process.env.PORT}`)

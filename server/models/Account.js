@@ -13,9 +13,13 @@ const AccountSchema = new Schema({
     required: true,
   },
 
-  isAdmin: {
+  isStaff: {
     type: Boolean,
     required: true,
+  },
+
+  token: {
+    type: String,
   },
 
   createAt: {
