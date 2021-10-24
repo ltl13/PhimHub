@@ -8,6 +8,6 @@ const {
 } = require("../controllers/customerType.controller");
 
 router.post("/create", verifyAdmin, createCustomerType);
-router.post("/get", verifyAdmin, getCustomerType);
+router.get("/:id", verifyAdmin, getCustomerType);
 
 module.exports = router;

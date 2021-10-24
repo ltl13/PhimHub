@@ -8,7 +8,7 @@ const { addNewCustomer } = require("../shared/functions");
 
 const getAuth = async (req, res) => {
   try {
-    const account = await Account.findById(req.body.id).select("-password");
+    const account = await Account.findById(req.param("id")).select("-password");
     if (!account) {
       return res.status(404).json({
         success: false,

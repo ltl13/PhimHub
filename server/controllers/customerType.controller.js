@@ -1,8 +1,12 @@
 const CustomerType = require("../models/CustomerType");
 
+const getAllCustomerType = async (req, res) => {
+  
+};
+
 const getCustomerType = async (req, res) => {
   try {
-    const customerType = await CustomerType.findById(req.id);
+    const customerType = await CustomerType.findById(req.param(id));
     if (!customerType) {
       return res.status(404).json({
         success: false,
@@ -55,8 +59,49 @@ const createCustomerType = async (req, res) => {
 
 const updateCusomerType = async (req, res) => {
   try {
-    const { typeName } = req.body;
-  } catch (error) {}
+    const { newTypeName } = req.body;
+
+    // Check if new type name has existed
+    const customerTypeChecker = await CustomerType.findOne({
+      typeName: newTypeName,
+    });
+    if (customerTypeChecker) {
+      return res.status(400).json({
+        success: false,
+        message: "This customer type has existed",
+      });
+    }
+
+    // Update new type name
+    const customerTypeUpdater = await CustomerType.findByIdAndUpdate(
+      req.param("id"),
+      {
+        typeName: newTypeName,
+      }
+    );
+    if (!customerTypeUpdater) {
+      return res.status(404).json({
+        success: false,
+        message: "Invalid id",
+      });
+    }
+
+    // Updated successfully
+    return res.status(200).json({
+      success: true,
+      message: "Customer type has been updated",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
 };
 
-module.exports = { createCustomerType, getCustomerType };
+module.exports = {
+  createCustomerType,
+  getCustomerType,
+  updateCusomerType,
+};
