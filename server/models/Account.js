@@ -13,8 +13,8 @@ const AccountSchema = new Schema({
     required: true,
   },
 
-  isAdmin: {
-    type: Boolean,
+  role: {
+    type: Number,
     required: true,
   },
 

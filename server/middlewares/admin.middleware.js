@@ -25,7 +25,7 @@ const verifyAdmin = async (req, res, next) => {
         success: false,
         message: "Unauthorized",
       });
-    } else if (!account.isAdmin) {
+    } else if (account.role != 2) {
       res.status(403).json({
         success: false,
         message: "You're not allowed to access this",

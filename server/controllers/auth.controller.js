@@ -54,7 +54,7 @@ const register = async (req, res) => {
     const newAccount = new Account({
       username: phoneNumber,
       password: hashPassword,
-      isAdmin: false,
+      role: 0,
     });
     // Create new customer
     try {

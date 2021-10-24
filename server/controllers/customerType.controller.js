@@ -1,7 +1,19 @@
 const CustomerType = require("../models/CustomerType");
 
-const getAllCustomerType = async (req, res) => {
-  
+const getAllCustomerTypes = async (req, res) => {
+  try {
+    const listCustomerTypes = await CustomerType.find();
+    return res.status(200).json({
+      success: true,
+      allCustomerTypes: listCustomerTypes,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
 };
 
 const getCustomerType = async (req, res) => {
@@ -57,7 +69,7 @@ const createCustomerType = async (req, res) => {
   }
 };
 
-const updateCusomerType = async (req, res) => {
+const updateCustomerType = async (req, res) => {
   try {
     const { newTypeName } = req.body;
 
@@ -103,5 +115,6 @@ const updateCusomerType = async (req, res) => {
 module.exports = {
   createCustomerType,
   getCustomerType,
-  updateCusomerType,
+  updateCustomerType,
+  getAllCustomerTypes,
 };
