@@ -8,6 +8,12 @@ const FunctionSchema = new Schema({
     unique: true,
   },
 
+  displayName: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+
   roles: [
     {
       type: Schema.Types.ObjectId,

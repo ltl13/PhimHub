@@ -49,14 +49,13 @@ const createRole = async (req, res) => {
     const { roleName, functions } = req.body;
 
     // Check if role name has existed in database
-    await Role.findOne({ roleName }).then((result) => {
-      if (result) {
-        return res.status(400).json({
-          success: false,
-          message: "This role has existed",
-        });
-      }
-    });
+    let checker = await Role.findOne({ roleName });
+    if (checker) {
+      return res.status(400).json({
+        success: false,
+        message: "This role has existed",
+      });
+    }
 
     // Create role
     const newRole = new Role({
@@ -65,14 +64,16 @@ const createRole = async (req, res) => {
     });
 
     // Add role to functions
-    functions.forEach((func) => {
-      await Function.findById(func).then((result) => {
-        if (result) {
-          result.roles.push(newRole._id);
-          result.save();
-        }
+    if (functions) {
+      functions.forEach(async (func) => {
+        await Function.findById(func).then((result) => {
+          if (result) {
+            result.roles.push(newRole._id);
+            result.save();
+          }
+        });
       });
-    });
+    }
 
     // Save all change and return result
     newRole.save();
@@ -89,7 +90,29 @@ const createRole = async (req, res) => {
   }
 };
 
-const updateFunctionsForRoleById = async (req, res) => {};
+const updateFunctionsForRoleById = async (req, res) => {
+  try {
+    const { functions } = req.body;
+
+    let checker = await Role.findByIdAndUpdate(req.params.id, { functions });
+    if (!checker) {
+      return res.status(404).json({
+        success: false,
+        message: "Role not found",
+      });
+    }
+    return res.status(201).json({
+      success: true,
+      message: "Functions for this role have been updated successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
 
 const updateRoleNameById = async (req, res) => {};
 
