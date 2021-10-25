@@ -64,22 +64,25 @@ const createNewCustomer = async (req, res) => {
     } = req.body;
 
     // Check if email or phone number has been used for register before
-    let checker = await Customer.findOne({ phoneNumber, status: true });
-    if (checker) {
-      return res.status(400).json({
-        success: false,
-        invalid: "phoneNumber",
-        message: "This phone number has been used for register before",
-      });
-    }
-    checker = await Customer.findOne({ email, status: true });
-    if (checker) {
-      return res.status(400).json({
-        success: false,
-        invalid: "email",
-        message: "This email has been used for register before",
-      });
-    }
+    await Customer.findOne({ phoneNumber, status: true }).then((result) => {
+      if (result) {
+        return res.status(400).json({
+          success: false,
+          invalid: "phoneNumber",
+          message: "This phone number has been used for register before",
+        });
+      }
+    });
+
+    await Customer.findOne({ email, status: true }).then((result) => {
+      if (result) {
+        return res.status(400).json({
+          success: false,
+          invalid: "email",
+          message: "This email has been used for register before",
+        });
+      }
+    });
 
     // Create account
     const hashPassword = await argon2.hash(password);
@@ -141,22 +144,24 @@ const updateCustomerById = async (req, res) => {
     }
 
     // Check if email or phone number has been used for register before
-    let checker = await Customer.findOne({ phoneNumber, status: true });
-    if (checker && email != customer.email) {
-      return res.status(400).json({
-        success: false,
-        invalid: "phoneNumber",
-        message: "This phone number has been used for register before",
-      });
-    }
-    checker = await Customer.findOne({ email, status: true });
-    if (checker && phoneNumber != customer.phoneNumber) {
-      return res.status(400).json({
-        success: false,
-        invalid: "email",
-        message: "This email has been used for register before",
-      });
-    }
+    await Customer.findOne({ phoneNumber, status: true }).then((result) => {
+      if (result && email != customer.email) {
+        return res.status(400).json({
+          success: false,
+          invalid: "phoneNumber",
+          message: "This phone number has been used for register before",
+        });
+      }
+    });
+    checker = await Customer.findOne({ email, status: true }).then((result) => {
+      if (result && phoneNumber != customer.phoneNumber) {
+        return res.status(400).json({
+          success: false,
+          invalid: "email",
+          message: "This email has been used for register before",
+        });
+      }
+    });
 
     // Update customer
     await Customer.findOneAndUpdate(
