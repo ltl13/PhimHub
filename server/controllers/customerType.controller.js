@@ -72,13 +72,23 @@ const createCustomerType = async (req, res) => {
 
 const updateCustomerType = async (req, res) => {
   try {
-    const { newTypeName } = req.body;
+    const { typeName } = req.body;
+
+    // Check if customer exists in database
+    const customerType = await CustomerType.findById(req.params.id);
+    if (!customerType) {
+      return res.status(404).json({
+        success: false,
+        message: "Customer type not found",
+      });
+    }
 
     // Check if new type name has existed
-    const customerTypeChecker = await CustomerType.findOne({
-      typeName: newTypeName,
+    const checker = await CustomerType.findOne({
+      typeName,
     });
-    if (customerTypeChecker) {
+    console.log(customerType.typeName != typeName);
+    if (checker && customerType.typeName != typeName) {
       return res.status(400).json({
         success: false,
         message: "This customer type has existed",
@@ -86,19 +96,14 @@ const updateCustomerType = async (req, res) => {
     }
 
     // Update new type name
-    const customerTypeUpdater = await CustomerType.findByIdAndUpdate(
+    await CustomerType.findByIdAndUpdate(
       req.params.id,
       {
-        typeName: newTypeName,
-      }
-    );
-    if (!customerTypeUpdater) {
-      return res.status(404).json({
-        success: false,
-        message: "Invalid id",
-      });
-    }
-    customerTypeUpdater.save();
+        typeName,
+      },
+      { new: true }
+    ).then((result) => result.save());
+
     // Updated successfully
     return res.status(200).json({
       success: true,
@@ -118,8 +123,9 @@ const deleteCustomerType = async (req, res) => {
     // Check if there are still customers of this type
     const customerChecker = await Customer.findOne({
       customerType: req.params.id,
+      status: true,
     });
-    if (!customerChecker) {
+    if (customerChecker) {
       return res.status(406).json({
         success: false,
         message:
@@ -153,7 +159,7 @@ const deleteCustomerType = async (req, res) => {
 module.exports = {
   createCustomerType,
   getCustomerType,
-  updateCustomerType,
   getAllCustomerTypes,
+  updateCustomerType,
   deleteCustomerType,
 };

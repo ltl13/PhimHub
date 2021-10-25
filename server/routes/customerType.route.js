@@ -7,11 +7,13 @@ const {
   getCustomerType,
   updateCustomerType,
   getAllCustomerTypes,
+  deleteCustomerType,
 } = require("../controllers/customerType.controller");
 
-router.post("/create", verifyStaff, createCustomerType);
-router.get("/get/:id", verifyStaff, getCustomerType);
-router.put("/update/:id", verifyStaff, updateCustomerType);
-router.get("/get", verifyStaff, getAllCustomerTypes);
+router.post("/create", createCustomerType);
+router.get("/get/:id", getCustomerType);
+router.put("/update/:id", updateCustomerType);
+router.get("/get-all", getAllCustomerTypes);
+router.delete("/delete/:id", deleteCustomerType);
 
 module.exports = router;
