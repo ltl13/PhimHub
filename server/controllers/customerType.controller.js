@@ -17,7 +17,7 @@ const getAllCustomerTypes = async (req, res) => {
   }
 };
 
-const getCustomerType = async (req, res) => {
+const getCustomerTypeById = async (req, res) => {
   try {
     const customerType = await CustomerType.findById(req.params.id);
     if (!customerType) {
@@ -70,7 +70,7 @@ const createCustomerType = async (req, res) => {
   }
 };
 
-const updateCustomerType = async (req, res) => {
+const updateCustomerTypeById = async (req, res) => {
   try {
     const { typeName } = req.body;
 
@@ -118,7 +118,7 @@ const updateCustomerType = async (req, res) => {
   }
 };
 
-const deleteCustomerType = async (req, res) => {
+const deleteCustomerTypeById = async (req, res) => {
   try {
     // Check if there are still customers of this type
     const customerChecker = await Customer.findOne({
@@ -158,8 +158,8 @@ const deleteCustomerType = async (req, res) => {
 
 module.exports = {
   createCustomerType,
-  getCustomerType,
+  getCustomerTypeById,
   getAllCustomerTypes,
-  updateCustomerType,
-  deleteCustomerType,
+  updateCustomerTypeById,
+  deleteCustomerTypeById,
 };

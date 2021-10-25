@@ -5,7 +5,7 @@ const nodemailer = require("nodemailer");
 const Account = require("../models/Account");
 const Customer = require("../models/Customer");
 
-const getAuth = async (req, res) => {
+const getAuthById = async (req, res) => {
   try {
     const account = await Account.findById(req.params.id).select("-password");
     if (!account) {
@@ -238,7 +238,7 @@ const logout = async (req, res) => {
 };
 
 module.exports = {
-  getAuth,
+  getAuthById,
   register,
   login,
   resetPassword,

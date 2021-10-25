@@ -26,7 +26,7 @@ const getAllCustomers = async (req, res) => {
   }
 };
 
-const getCustomer = async (req, res) => {
+const getCustomerById = async (req, res) => {
   try {
     const customer = await Customer.findOne({
       _id: req.params.id,
@@ -123,7 +123,7 @@ const createNewCustomer = async (req, res) => {
   }
 };
 
-const updateCustomer = async (req, res) => {
+const updateCustomerById = async (req, res) => {
   try {
     const { customerType, phoneNumber, email, name, sex, dateOfBirth } =
       req.body;
@@ -184,7 +184,7 @@ const updateCustomer = async (req, res) => {
   }
 };
 
-const deleteCustomer = async (req, res) => {
+const deleteCustomerById = async (req, res) => {
   try {
     // Delete customer
     const deleteCustomer = await Customer.findOneAndUpdate(
@@ -227,7 +227,7 @@ const deleteCustomer = async (req, res) => {
 module.exports = {
   createNewCustomer,
   getAllCustomers,
-  getCustomer,
-  updateCustomer,
-  deleteCustomer,
+  getCustomerById,
+  updateCustomerById,
+  deleteCustomerById,
 };

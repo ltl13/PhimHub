@@ -21,21 +21,41 @@ const getAllRoles = async (req, res) => {
   }
 };
 
-const getRole = async (req, res) => {};
+const getRoleById = async (req, res) => {
+  try {
+    const role = await Role.findById(req.params.id);
+    if (!role) {
+      return res.status(404).json({
+        success: false,
+        message: "Role not found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      role,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
 
 const createRole = async (req, res) => {};
 
-const updateFunctionsForRole = async (req, res) => {};
+const updateFunctionsForRoleById = async (req, res) => {};
 
-const updateRoleName = async (req, res) => {};
+const updateRoleNameById = async (req, res) => {};
 
-const deleteRole = async (req, res) => {};
+const deleteRoleById = async (req, res) => {};
 
 module.exports = {
-  getRole,
+  getRoleById,
   getAllRoles,
   createRole,
-  updateFunctionsForRole,
-  updateRoleName,
-  deleteRole,
+  updateFunctionsForRoleById,
+  updateRoleNameById,
+  deleteRoleById,
 };
