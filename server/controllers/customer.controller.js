@@ -4,17 +4,17 @@ const jsonwebtoken = require("jsonwebtoken");
 const Account = require("../models/Account");
 const Customer = require("../models/Customer");
 
-const getAllCustomer = async (req, res) => {
+const getAllCustomers = async (req, res) => {
   try {
-    const allCustomers = await Customer.find({ status: true }).populate(
-      "customerType",
-      "typeName"
-    );
+    const allCustomers = await Customer.find({ status: true }).populate({
+      path: "customerType",
+      select: "typeName",
+    });
     if (allCustomers) {
       return res.status(200).json({
         success: true,
         message: "Get all customers successfully",
-        allCustomers: allCustomers,
+        allCustomers,
       });
     }
   } catch (error) {
@@ -204,7 +204,8 @@ const deleteCustomer = async (req, res) => {
       if (!result) {
         return res.status(404).json({
           success: false,
-          message: "Found the customer but not found the account, maybe this customer has been deleted",
+          message:
+            "Found the customer but not found the account, maybe this customer has been deleted",
         });
       }
       deleteCustomer.save();
@@ -225,7 +226,7 @@ const deleteCustomer = async (req, res) => {
 
 module.exports = {
   createNewCustomer,
-  getAllCustomer,
+  getAllCustomers,
   getCustomer,
   updateCustomer,
   deleteCustomer,

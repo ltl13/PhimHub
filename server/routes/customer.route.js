@@ -3,7 +3,7 @@ const router = express.Router();
 const verifyStaff = require("../middlewares/staff.middleware");
 
 const {
-  getAllCustomer,
+  getAllCustomers,
   createNewCustomer,
   deleteCustomer,
   updateCustomer,
@@ -11,7 +11,7 @@ const {
 } = require("../controllers/customer.controller");
 
 router.post("/create", createNewCustomer);
-router.get("/get-all", getAllCustomer);
+router.get("/get-all", getAllCustomers);
 router.delete("/delete/:id", deleteCustomer);
 
 module.exports = router;
