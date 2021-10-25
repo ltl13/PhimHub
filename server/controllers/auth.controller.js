@@ -40,7 +40,7 @@ const register = async (req, res) => {
     } = req.body;
 
     // Check if email or phone number has been used for register before
-    let checker = await Customer.findOne({ phoneNumber });
+    let checker = await Customer.findOne({ phoneNumber, status: true });
     if (checker) {
       return res.status(400).json({
         success: false,
@@ -48,7 +48,7 @@ const register = async (req, res) => {
         message: "This phone number has been used for register before",
       });
     }
-    checker = await Customer.findOne({ email });
+    checker = await Customer.findOne({ email, status: true });
     if (checker) {
       return res.status(400).json({
         success: false,
@@ -72,7 +72,7 @@ const register = async (req, res) => {
       email,
       name,
       sex,
-      dateOfBirth: new Date(dateOfBirth.concat("T00:00:10Z")),
+      dateOfBirth: new Date(dateOfBirth.concat("T00:00:20Z")),
       account: newAccount._id,
     });
     await newAccount.save();
@@ -103,20 +103,12 @@ const login = async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    // Validation
-    if (!username || !password) {
-      return res.status(400).send({
-        success: false,
-        message: "Missing phoneNumber and/or password",
-      });
-    }
-
     // Check for existing account
     const account = await Account.findOne({ username });
     if (!account) {
-      return res.status(400).json({
+      return res.status(404).json({
         success: false,
-        message: "Incorrect phone number or password",
+        message: "Incorrect phone number or username",
       });
     }
 
@@ -125,7 +117,7 @@ const login = async (req, res) => {
     if (!correctPassword) {
       return res.status(400).json({
         success: false,
-        message: "Incorrect phone number or password",
+        message: "Incorrect password",
       });
     }
 
@@ -155,9 +147,9 @@ const resetPassword = async (req, res) => {
     const { email } = req.body;
 
     // Check if user exists
-    const user = await Customer.findOne({ email });
+    const user = await Customer.findOne({ email, status: true });
     if (!user) {
-      return res.status(400).json({
+      return res.status(404).json({
         success: false,
         message: "Email does not exist",
       });
@@ -190,7 +182,7 @@ const resetPassword = async (req, res) => {
         // Change user's password in database
         const hashPassword = await argon2.hash(newPassword);
         const updatePassword = await Customer.findOneAndUpdate(
-          { email },
+          { email, status: true },
           { password: hashPassword },
           { new: true }
         );
