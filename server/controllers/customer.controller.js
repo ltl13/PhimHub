@@ -177,4 +177,14 @@ const updateCustomer = async (req, res) => {
   }
 };
 
-module.exports = { createNewCustomer, getAllCustomer, getCustomer };
+const deleteCustomer = async (req, res) => {
+  try {
+  } catch (error) {}
+};
+
+module.exports = {
+  createNewCustomer,
+  getAllCustomer,
+  getCustomer,
+  updateCustomer,
+};

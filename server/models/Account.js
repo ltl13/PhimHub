@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const AccountSchema = new Schema({
   username: {
     type: String,
-    require: true,
+    required: true,
     unique: true,
   },
 
@@ -13,9 +13,9 @@ const AccountSchema = new Schema({
     required: true,
   },
 
-  isStaff: {
-    type: Boolean,
-    required: true,
+  role: {
+    type: Schema.Types.ObjectId,
+    ref: "roles",
   },
 
   token: {
