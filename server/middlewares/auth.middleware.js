@@ -3,7 +3,6 @@ const jsonwebtoken = require("jsonwebtoken");
 const verifyToken = (req, res, next) => {
   try {
     const authHeader = req.header("Authorization");
-    console.log(authHeader);
     const token = authHeader && authHeader.split(" ")[1];
     if (!token) {
       return res.status(404).json({

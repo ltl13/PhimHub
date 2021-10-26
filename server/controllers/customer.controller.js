@@ -74,7 +74,7 @@ const createNewCustomer = async (req, res) => {
     }
 
     checker = await Customer.findOne({ email, status: true });
-    if (result) {
+    if (checker) {
       return res.status(400).json({
         success: false,
         invalid: "email",

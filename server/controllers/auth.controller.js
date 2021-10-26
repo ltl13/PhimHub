@@ -4,9 +4,16 @@ const nodemailer = require("nodemailer");
 
 const Account = require("../models/Account");
 const Customer = require("../models/Customer");
+const Role = require("../models/Role");
+const { confirmAccess } = require("../shared/functions");
 
 const getAuthById = async (req, res) => {
   try {
+    const confirm = await confirmAccess({
+      role: req.body.role,
+      func: "getAuthById",
+    });
+    if (!confirm) return res.redirect("back");
     const account = await Account.findById(req.params.id).select("-password");
     if (!account) {
       return res.status(404).json({
@@ -58,11 +65,19 @@ const register = async (req, res) => {
     }
 
     // Create account
+    const role = await Role.findOne({ roleName: "customer" });
+    if (!role) {
+      return res.status(406).json({
+        success: false,
+        message:
+          "It looks like you can not create an account now due to our database's error",
+      });
+    }
     const hashPassword = await argon2.hash(password);
     const newAccount = new Account({
       username: phoneNumber,
       password: hashPassword,
-      isStaff: false,
+      role: role._id,
     });
 
     // Create new customer
@@ -87,6 +102,7 @@ const register = async (req, res) => {
     res.status(201).json({
       success: true,
       message: "New account created successfully",
+      token: accessToken,
     });
   } catch (error) {
     console.log(error);
@@ -100,7 +116,6 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { username, password } = req.body;
-    console.log(req.header("Authorization"));
 
     // Check for existing account
     const account = await Account.findOne({ username });
@@ -128,7 +143,7 @@ const login = async (req, res) => {
     res.status(201).json({
       success: true,
       message: "User logged in",
-      isAdmin: account.isAdmin,
+      token: accessToken,
     });
   } catch (error) {
     console.log(error);
