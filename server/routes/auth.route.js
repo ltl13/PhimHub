@@ -10,7 +10,7 @@ const {
   logout,
 } = require("../controllers/auth.controller");
 
-router.get("/:id", verifyToken, getAuthById);
+router.get("/get/:id", verifyToken, getAuthById);
 router.post("/register", register);
 router.post("/login", login);
 router.put("/reset-password", resetPassword);

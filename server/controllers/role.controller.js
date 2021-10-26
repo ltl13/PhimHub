@@ -1,11 +1,11 @@
 const Role = require("../models/Role");
-const Function = require("../models/Function");
+const Func = require("../models/Func");
 
 const getAllRoles = async (req, res) => {
   try {
     const allRoles = await Role.find().populate({
-      path: "functions",
-      select: "functionName",
+      path: "funcs",
+      select: "funcName",
     });
 
     return res.status(200).json({
@@ -46,7 +46,7 @@ const getRoleById = async (req, res) => {
 
 const createRole = async (req, res) => {
   try {
-    const { roleName, functions } = req.body;
+    const { roleName, funcs } = req.body;
 
     // Check if role name has existed in database
     let checker = await Role.findOne({ roleName });
@@ -60,12 +60,12 @@ const createRole = async (req, res) => {
     // Create role
     const newRole = new Role({
       roleName,
-      functions,
+      funcs,
     });
 
     // Add role to functions
-    if (functions) {
-      functions.forEach(async (func) => {
+    if (funcs) {
+      funcs.forEach(async (func) => {
         await Function.findById(func).then((result) => {
           if (result) {
             result.roles.push(newRole._id);
@@ -92,9 +92,9 @@ const createRole = async (req, res) => {
 
 const updateFunctionsForRoleById = async (req, res) => {
   try {
-    const { functions } = req.body;
+    const { funcs } = req.body;
 
-    let checker = await Role.findByIdAndUpdate(req.params.id, { functions });
+    let checker = await Role.findByIdAndUpdate(req.params.id, { funcs });
     if (!checker) {
       return res.status(404).json({
         success: false,

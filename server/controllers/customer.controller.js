@@ -103,14 +103,6 @@ const createNewCustomer = async (req, res) => {
     await newAccount.save();
     await newCustomer.save();
 
-    // Return access token
-    const accessToken = jsonwebtoken.sign(
-      { id: newAccount._id },
-      process.env.ACCESS_TOKEN_SECRET
-    );
-    newAccount.token = accessToken;
-    newAccount.save();
-
     res.status(201).json({
       success: true,
       message: "New customer created successfully",

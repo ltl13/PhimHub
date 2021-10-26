@@ -80,11 +80,9 @@ const register = async (req, res) => {
 
     // Return access token
     const accessToken = jsonwebtoken.sign(
-      { id: newAccount._id },
+      { id: newAccount._id, role: newAccount.role },
       process.env.ACCESS_TOKEN_SECRET
     );
-    newAccount.token = accessToken;
-    newAccount.save();
 
     res.status(201).json({
       success: true,
@@ -102,6 +100,7 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { username, password } = req.body;
+    console.log(req.header("Authorization"));
 
     // Check for existing account
     const account = await Account.findOne({ username });
@@ -123,11 +122,9 @@ const login = async (req, res) => {
 
     // Login in
     const accessToken = jsonwebtoken.sign(
-      { id: account._id },
+      { id: account._id, role: account.role },
       process.env.ACCESS_TOKEN_SECRET
     );
-    account.token = accessToken;
-    account.save();
     res.status(201).json({
       success: true,
       message: "User logged in",
