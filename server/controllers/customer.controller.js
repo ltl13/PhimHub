@@ -6,6 +6,13 @@ const Customer = require("../models/Customer");
 
 const getAllCustomers = async (req, res) => {
   try {
+    // Check if user can access this route
+    const confirm = await confirmAccess({
+      role: req.body.role,
+      func: "getAllCustomers",
+    });
+    if (!confirm) return res.redirect("back");
+
     const allCustomers = await Customer.find({ status: true }).populate({
       path: "customerType",
       select: "typeName",
@@ -53,6 +60,13 @@ const getCustomerById = async (req, res) => {
 
 const createNewCustomer = async (req, res) => {
   try {
+    // Check if user can access this route
+    const confirm = await confirmAccess({
+      role: req.body.role,
+      func: "createNewCustomer",
+    });
+    if (!confirm) return res.redirect("back");
+
     const {
       customerType,
       password,
@@ -118,6 +132,13 @@ const createNewCustomer = async (req, res) => {
 
 const updateCustomerById = async (req, res) => {
   try {
+    // Check if user can access this route
+    const confirm = await confirmAccess({
+      role: req.body.role,
+      func: "updateCustomerById",
+    });
+    if (!confirm) return res.redirect("back");
+
     const { customerType, phoneNumber, email, name, sex, dateOfBirth } =
       req.body;
 
@@ -179,6 +200,13 @@ const updateCustomerById = async (req, res) => {
 
 const deleteCustomerById = async (req, res) => {
   try {
+    // Check if user can access this route
+    const confirm = await confirmAccess({
+      role: req.body.role,
+      func: "deleteCustomerById",
+    });
+    if (!confirm) return res.redirect("back");
+
     // Delete customer
     const deleteCustomer = await Customer.findOneAndUpdate(
       { _id: req.params.id, status: true },

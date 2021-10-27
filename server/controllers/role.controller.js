@@ -114,9 +114,50 @@ const updateFunctionsForRoleById = async (req, res) => {
   }
 };
 
-const updateRoleNameById = async (req, res) => {};
+const updateRoleNameById = async (req, res) => {
+  try {
+    const { roleName } = req.body;
+    let checker = await Role.findByIdAndUpdate(req.params.id, { roleName });
+    if (!checker) {
+      return res.status(404).json({
+        success: false,
+        message: "Role not found",
+      });
+    }
+    return res.status(201).json({
+      success: true,
+      message: "Role's name has been updated successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
 
-const deleteRoleById = async (req, res) => {};
+const deleteRoleById = async (req, res) => {
+  try {
+    let checker = await Role.findByIdAndDelete(req.params.id);
+    if (!checker) {
+      return res.status(404).json({
+        success: false,
+        message: "Role not found",
+      });
+    }
+    return res.status(204).json({
+      success: true,
+      message: "Role has been deleted successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
 
 module.exports = {
   getRoleById,
