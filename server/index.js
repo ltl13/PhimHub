@@ -34,6 +34,7 @@ app.use("/api/staff-type", staffTypeRoute);
 app.use("/api/staff", staffRoute);
 
 // Lạy chúa, đừng thằng nào đụng vào những gì ở dưới, tao đang test thôi.
+// Nhắc thằng Dàn luôn là ĐỪNG CODE TRÙNG FILE
 const funcRoute = require("./routes/func.route");
 app.use("/api/func", funcRoute);
 
