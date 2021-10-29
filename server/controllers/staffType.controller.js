@@ -1,4 +1,5 @@
 const StaffType = require("../models/StaffType");
+const Staff = require("../models/Staff");
 const { confirmAccess } = require("../shared/functions");
 
 const getAllStaffTypes = async (req, res) => {
@@ -66,7 +67,7 @@ const createStaffType = async (req, res) => {
     // Check if this position has existed
     let checker = await StaffType.findOne({ position });
     if (position)
-      return res.status(400).json({
+      return res.status(409).json({
         success: false,
         message: "This position has existed",
       });
@@ -143,6 +144,28 @@ const deleteStaffTypeById = async (req, res) => {
   if (!confirm) return res.redirect("back");
 
   try {
+    // Check if this staff type exists
+    let checker = await StaffType.findById(req.params.id);
+    if (!checker)
+      return res.status(404).json({
+        success: false,
+        message: "Staff type not found",
+      });
+
+    // Check if this staff type is in connection with staffs
+    checker = await Staff.findOne({ staffType: req.params.id });
+    if (checker)
+      return res.status(409).json({
+        success: false,
+        message: "There is still staffs of this type so it can not be deleted",
+      });
+
+    // All good, delete staff type
+    await StaffType.findByIdAndDelete(req.params.id);
+    return res.status(200).json({
+      success: true,
+      message: "Staff type was deleted successfully",
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({

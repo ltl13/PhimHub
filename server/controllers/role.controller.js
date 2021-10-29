@@ -152,7 +152,7 @@ const deleteRoleById = async (req, res) => {
     // Check if there are still accounts of this role
     let checker = await Account.findOne({ role: req.params.id });
     if (checker) {
-      return res.status(406).json({
+      return res.status(409).json({
         success: false,
         message: "Can not delete because there are still accounts of this role",
       });
@@ -182,9 +182,9 @@ const deleteRoleById = async (req, res) => {
       });
     }
 
-    return res.status(204).json({
+    return res.status(200).json({
       success: true,
-      message: "Role has been deleted successfully",
+      message: "Role was deleted successfully",
     });
   } catch (error) {
     console.log(error);
