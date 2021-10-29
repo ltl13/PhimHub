@@ -35,6 +35,14 @@ const getAllCustomers = async (req, res) => {
 };
 
 const getCustomerById = async (req, res) => {
+  // Check if user can access this route
+  const confirm = await confirmAccess({
+    role: req.body.role,
+    func: "getCustomerById",
+  });
+  if (!confirm) return res.redirect("back");
+
+  // Passed
   try {
     const customer = await Customer.findOne({
       _id: req.params.id,
