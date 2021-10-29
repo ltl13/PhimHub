@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 const authRoute = require("./routes/auth.route");
-
+const movieRoute = require("./routes/movie.route");
 const app = express();
 app.use(express.json());
 app.use(cors());
