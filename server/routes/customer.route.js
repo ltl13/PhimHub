@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
+const { verifyToken } = require("../middlewares/auth.middleware");
 const {
   getAllCustomers,
   createNewCustomer,
@@ -9,8 +10,10 @@ const {
   getCustomerById,
 } = require("../controllers/customer.controller");
 
-router.post("/create", createNewCustomer);
-router.get("/get-all", getAllCustomers);
-router.delete("/delete/:id", deleteCustomerById);
+router.get("/get-all", verifyToken, getAllCustomers);
+router.get("/get/:id", verifyToken, getCustomerById);
+router.post("/create", verifyToken, createNewCustomer);
+router.put("/update/:id", verifyToken, updateCustomerById);
+router.delete("/delete/:id", verifyToken, deleteCustomerById);
 
 module.exports = router;
