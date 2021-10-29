@@ -1,19 +1,19 @@
 const argon2 = require("argon2");
-const jsonwebtoken = require("jsonwebtoken");
 
 const Account = require("../models/Account");
 const Customer = require("../models/Customer");
 const { confirmAccess } = require("../shared/functions");
 
 const getAllCustomers = async (req, res) => {
-  try {
-    // Check if user can access this route
-    const confirm = await confirmAccess({
-      role: req.body.role,
-      func: "getAllCustomers",
-    });
-    if (!confirm) return res.redirect("back");
+  // Check if user can access this route
+  const confirm = await confirmAccess({
+    role: req.body.role,
+    func: "getAllCustomers",
+  });
+  if (!confirm) return res.redirect("back");
 
+  // Passed
+  try {
     const allCustomers = await Customer.find({ status: true }).populate({
       path: "customerType",
       select: "typeName",
