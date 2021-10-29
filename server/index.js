@@ -8,6 +8,7 @@ const customerTypeRoute = require("./routes/customerType.route");
 const customerRoute = require("./routes/customer.route");
 const roleRoute = require("./routes/role.route");
 const staffTypeRoute = require("./routes/staffType.route");
+const staffRoute = require("./routes/staff.route");
 
 const app = express();
 app.use(express.json());
@@ -30,6 +31,7 @@ app.use("/api/customer-type", customerTypeRoute);
 app.use("/api/customer", customerRoute);
 app.use("/api/role", roleRoute);
 app.use("/api/staff-type", staffTypeRoute);
+app.use("/api/staff", staffRoute);
 
 // Lạy chúa, đừng thằng nào đụng vào những gì ở dưới, tao đang test thôi.
 const funcRoute = require("./routes/func.route");
