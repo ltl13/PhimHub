@@ -4,9 +4,18 @@ const nodemailer = require("nodemailer");
 
 const Account = require("../models/Account");
 const Customer = require("../models/Customer");
+const Role = require("../models/Role");
+const { confirmAccess } = require("../shared/functions");
 
-const getAuth = async (req, res) => {
+const getAuthById = async (req, res) => {
   try {
+    // Check if user can access this route
+    const confirm = await confirmAccess({
+      role: req.body.role,
+      func: "getAuthById",
+    });
+    if (!confirm) return res.redirect("back");
+
     const account = await Account.findById(req.params.id).select("-password");
     if (!account) {
       return res.status(404).json({
@@ -58,11 +67,19 @@ const register = async (req, res) => {
     }
 
     // Create account
+    const role = await Role.findOne({ roleName: "customer" });
+    if (!role) {
+      return res.status(406).json({
+        success: false,
+        message:
+          "It looks like you can not create an account now due to our database's error",
+      });
+    }
     const hashPassword = await argon2.hash(password);
     const newAccount = new Account({
       username: phoneNumber,
       password: hashPassword,
-      isStaff: false,
+      role: role._id,
     });
 
     // Create new customer
@@ -80,15 +97,14 @@ const register = async (req, res) => {
 
     // Return access token
     const accessToken = jsonwebtoken.sign(
-      { id: newAccount._id },
+      { id: newAccount._id, role: newAccount.role },
       process.env.ACCESS_TOKEN_SECRET
     );
-    newAccount.token = accessToken;
-    newAccount.save();
 
     res.status(201).json({
       success: true,
       message: "New account created successfully",
+      token: accessToken,
     });
   } catch (error) {
     console.log(error);
@@ -123,15 +139,13 @@ const login = async (req, res) => {
 
     // Login in
     const accessToken = jsonwebtoken.sign(
-      { id: account._id },
+      { id: account._id, role: account.role },
       process.env.ACCESS_TOKEN_SECRET
     );
-    account.token = accessToken;
-    account.save();
     res.status(201).json({
       success: true,
       message: "User logged in",
-      isAdmin: account.isAdmin,
+      token: accessToken,
     });
   } catch (error) {
     console.log(error);
@@ -223,7 +237,7 @@ const logout = async (req, res) => {
         message: "Logout failed due to no authorization",
       });
     }
-    account.save();
+    await account.save();
     return res.status(200).json({
       success: true,
       message: "User logout successfully",
@@ -238,7 +252,7 @@ const logout = async (req, res) => {
 };
 
 module.exports = {
-  getAuth,
+  getAuthById,
   register,
   login,
   resetPassword,

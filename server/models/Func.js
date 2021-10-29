@@ -1,8 +1,14 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const FunctionSchema = new Schema({
-  functionName: {
+const FuncSchema = new Schema({
+  funcName: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+
+  displayName: {
     type: String,
     required: true,
     unique: true,
@@ -16,4 +22,4 @@ const FunctionSchema = new Schema({
   ],
 });
 
-module.exports = mongoose.model("functions", FunctionSchema);
+module.exports = mongoose.model("funcs", FuncSchema);

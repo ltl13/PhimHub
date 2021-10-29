@@ -8,10 +8,10 @@ const RoleSchema = new Schema({
     unique: true,
   },
 
-  functions: [
+  funcs: [
     {
       type: Schema.Types.ObjectId,
-      ref: "functions",
+      ref: "funcs",
     },
   ],
 });

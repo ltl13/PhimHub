@@ -1,17 +1,16 @@
 const express = require("express");
 const router = express.Router();
-const verifyStaff = require("../middlewares/staff.middleware");
 
 const {
-  getAllCustomer,
+  getAllCustomers,
   createNewCustomer,
-  deleteCustomer,
-  updateCustomer,
-  getCustomer,
+  deleteCustomerById,
+  updateCustomerById,
+  getCustomerById,
 } = require("../controllers/customer.controller");
 
 router.post("/create", createNewCustomer);
-router.get("/get-all", getAllCustomer);
-router.delete("/delete/:id", deleteCustomer);
+router.get("/get-all", getAllCustomers);
+router.delete("/delete/:id", deleteCustomerById);
 
 module.exports = router;

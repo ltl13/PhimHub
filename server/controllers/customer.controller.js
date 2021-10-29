@@ -3,18 +3,26 @@ const jsonwebtoken = require("jsonwebtoken");
 
 const Account = require("../models/Account");
 const Customer = require("../models/Customer");
+const { confirmAccess } = require("../shared/functions");
 
-const getAllCustomer = async (req, res) => {
+const getAllCustomers = async (req, res) => {
   try {
-    const allCustomers = await Customer.find({ status: true }).populate(
-      "customerType",
-      "typeName"
-    );
+    // Check if user can access this route
+    const confirm = await confirmAccess({
+      role: req.body.role,
+      func: "getAllCustomers",
+    });
+    if (!confirm) return res.redirect("back");
+
+    const allCustomers = await Customer.find({ status: true }).populate({
+      path: "customerType",
+      select: "typeName",
+    });
     if (allCustomers) {
       return res.status(200).json({
         success: true,
         message: "Get all customers successfully",
-        allCustomers: allCustomers,
+        allCustomers,
       });
     }
   } catch (error) {
@@ -26,7 +34,7 @@ const getAllCustomer = async (req, res) => {
   }
 };
 
-const getCustomer = async (req, res) => {
+const getCustomerById = async (req, res) => {
   try {
     const customer = await Customer.findOne({
       _id: req.params.id,
@@ -53,6 +61,13 @@ const getCustomer = async (req, res) => {
 
 const createNewCustomer = async (req, res) => {
   try {
+    // Check if user can access this route
+    const confirm = await confirmAccess({
+      role: req.body.role,
+      func: "createNewCustomer",
+    });
+    if (!confirm) return res.redirect("back");
+
     const {
       customerType,
       password,
@@ -72,6 +87,7 @@ const createNewCustomer = async (req, res) => {
         message: "This phone number has been used for register before",
       });
     }
+
     checker = await Customer.findOne({ email, status: true });
     if (checker) {
       return res.status(400).json({
@@ -102,14 +118,6 @@ const createNewCustomer = async (req, res) => {
     await newAccount.save();
     await newCustomer.save();
 
-    // Return access token
-    const accessToken = jsonwebtoken.sign(
-      { id: newAccount._id },
-      process.env.ACCESS_TOKEN_SECRET
-    );
-    newAccount.token = accessToken;
-    newAccount.save();
-
     res.status(201).json({
       success: true,
       message: "New customer created successfully",
@@ -123,8 +131,15 @@ const createNewCustomer = async (req, res) => {
   }
 };
 
-const updateCustomer = async (req, res) => {
+const updateCustomerById = async (req, res) => {
   try {
+    // Check if user can access this route
+    const confirm = await confirmAccess({
+      role: req.body.role,
+      func: "updateCustomerById",
+    });
+    if (!confirm) return res.redirect("back");
+
     const { customerType, phoneNumber, email, name, sex, dateOfBirth } =
       req.body;
 
@@ -184,8 +199,15 @@ const updateCustomer = async (req, res) => {
   }
 };
 
-const deleteCustomer = async (req, res) => {
+const deleteCustomerById = async (req, res) => {
   try {
+    // Check if user can access this route
+    const confirm = await confirmAccess({
+      role: req.body.role,
+      func: "deleteCustomerById",
+    });
+    if (!confirm) return res.redirect("back");
+
     // Delete customer
     const deleteCustomer = await Customer.findOneAndUpdate(
       { _id: req.params.id, status: true },
@@ -200,15 +222,15 @@ const deleteCustomer = async (req, res) => {
     }
 
     // Delete account goes with that customer
-    await Account.findByIdAndDelete(deleteCustomer.account).then((result) => {
-      if (!result) {
-        return res.status(404).json({
-          success: false,
-          message: "Found the customer but not found the account, maybe this customer has been deleted",
-        });
-      }
-      deleteCustomer.save();
-    });
+    const checker = await Account.findByIdAndDelete(deleteCustomer.account);
+    if (!checker) {
+      return res.status(404).json({
+        success: false,
+        message:
+          "Found the customer but not found the account, maybe this customer has been deleted",
+      });
+    }
+    deleteCustomer.save();
 
     return res.status(200).json({
       success: true,
@@ -225,8 +247,8 @@ const deleteCustomer = async (req, res) => {
 
 module.exports = {
   createNewCustomer,
-  getAllCustomer,
-  getCustomer,
-  updateCustomer,
-  deleteCustomer,
+  getAllCustomers,
+  getCustomerById,
+  updateCustomerById,
+  deleteCustomerById,
 };
