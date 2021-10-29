@@ -251,6 +251,34 @@ const deleteStaffById = async (req, res) => {
 
   // Passed
   try {
+    // Delete customer
+    const deleteStaff = await Staff.findOneAndUpdate(
+      { _id: req.params.id, status: true },
+      { status: false },
+      { new: true }
+    );
+    if (!deleteStaff) {
+      return res.status(404).json({
+        success: false,
+        message: "Staff not found",
+      });
+    }
+
+    // Delete account goes with that customer
+    let checker = await Account.findByIdAndDelete(deleteStaff.account);
+    if (!checker) {
+      return res.status(404).json({
+        success: false,
+        message:
+          "Found the staff but not found the account, maybe this staff was deleted",
+      });
+    }
+    deleteStaff.save();
+
+    return res.status(204).json({
+      success: true,
+      message: "Delete staff successfully",
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
