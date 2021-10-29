@@ -59,6 +59,7 @@ const StaffSchema = new Schema({
   status: {
     type: Boolean,
     required: true,
+    default: true,
   },
 });
 

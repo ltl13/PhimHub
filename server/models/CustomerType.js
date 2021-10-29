@@ -9,4 +9,4 @@ const CustomerTypeSchema = new Schema({
   },
 });
 
-module.export = mongoose.model("customer_types", CustomerTypeSchema);
+module.exports = mongoose.model("customer_types", CustomerTypeSchema);
