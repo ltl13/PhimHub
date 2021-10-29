@@ -3,6 +3,7 @@ const jsonwebtoken = require("jsonwebtoken");
 
 const Account = require("../models/Account");
 const Customer = require("../models/Customer");
+const { confirmAccess } = require("../shared/functions");
 
 const getAllCustomers = async (req, res) => {
   try {
