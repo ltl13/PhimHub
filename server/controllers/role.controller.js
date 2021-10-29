@@ -67,7 +67,7 @@ const createRole = async (req, res) => {
     // Add role to functions
     if (funcs) {
       funcs.forEach(async (func) => {
-        await Function.findById(func).then((result) => {
+        await Func.findById(func).then((result) => {
           if (result) {
             result.roles.push(newRole._id);
             result.save();

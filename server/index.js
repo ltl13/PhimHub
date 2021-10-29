@@ -29,6 +29,10 @@ app.use("/api/customer-type", customerTypeRoute);
 app.use("/api/customer", customerRoute);
 app.use("/api/role", roleRoute);
 
+// Lạy chúa, đừng thằng nào đụng vào những gì ở dưới, tao đang test thôi.
+const funcRoute = require("./routes/func.route");
+app.use("/api/func", funcRoute);
+
 app.listen(process.env.PORT, () =>
   console.log(`Server started on port ${process.env.PORT}`)
 );
