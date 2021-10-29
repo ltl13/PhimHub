@@ -162,6 +162,76 @@ const updateStaffById = async (req, res) => {
 
   // Passed
   try {
+    const {
+      staffType,
+      phoneNumber,
+      email,
+      name,
+      sex,
+      dateOfBirth,
+      identityNumber,
+      salary,
+      role,
+    } = req.body;
+
+    // Check if this staff exists
+    const staff = await Staff.findOne({
+      _id: req.params.id,
+      status: true,
+    });
+    if (!staff)
+      return res.status(404).json({
+        status: false,
+        message: "Staff not found",
+      });
+
+    // Check if email or phone number doesn't change
+    // Check if the email/phone number/identify number has been used by another staff
+    let checker = await Staff.findOne({ phoneNumber, status: true });
+    if (checker && phoneNumber !== staff.phoneNumber) {
+      return res.status(400).json({
+        success: false,
+        invalid: "phoneNumber",
+        message: "This phone number has been used by another staff",
+      });
+    }
+    checker = await Staff.findOne({ email, status: true });
+    if (checker && email !== staff.email) {
+      return res.status(400).json({
+        success: false,
+        invalid: "email",
+        message: "This email has been used by another staff",
+      });
+    }
+    checker = await Staff.findOne({ identityNumber, status: true });
+    if (checker && identityNumber !== staff.identityNumber) {
+      return res.status(400).json({
+        success: false,
+        invalid: "identityNumber",
+        message: "This identity number has been used by another staff",
+      });
+    }
+
+    // Update staff's information
+    await Staff.findOneAndUpdate(
+      { _id: req.params.id, status: true },
+      {
+        staffType,
+        phoneNumber,
+        email,
+        name,
+        sex,
+        identityNumber,
+        salary,
+        role,
+        dateOfBirth: new Date(dateOfBirth.concat("T00:00:10Z")),
+      },
+      { new: true }
+    ).then((result) => result.save());
+    return res.status(200).json({
+      success: true,
+      message: "Staff's information has been updated successfully",
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({

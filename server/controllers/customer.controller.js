@@ -141,32 +141,33 @@ const createNewCustomer = async (req, res) => {
 };
 
 const updateCustomerById = async (req, res) => {
-  try {
-    // Check if user can access this route
-    const confirm = await confirmAccess({
-      role: req.body.role,
-      func: "updateCustomerById",
-    });
-    if (!confirm) return res.redirect("back");
+  // Check if user can access this route
+  const confirm = await confirmAccess({
+    role: req.body.role,
+    func: "updateCustomerById",
+  });
+  if (!confirm) return res.redirect("back");
 
+  // Passed
+  try {
     const { customerType, phoneNumber, email, name, sex, dateOfBirth } =
       req.body;
 
-    // Check if email or phone number doesn't change
+    // Check if this customer exists
     const customer = await Customer.findOne({
       _id: req.params.id,
       status: true,
     });
-    if (!customer) {
+    if (!customer)
       return res.status(404).json({
         status: false,
         message: "Customer not found",
       });
-    }
 
+    // Check if email or phone number doesn't change
     // Check if email or phone number has been used for register before
     let checker = await Customer.findOne({ phoneNumber, status: true });
-    if (checker && email != customer.email) {
+    if (checker && phoneNumber !== customer.phoneNumber) {
       return res.status(400).json({
         success: false,
         invalid: "phoneNumber",
@@ -174,7 +175,7 @@ const updateCustomerById = async (req, res) => {
       });
     }
     checker = await Customer.findOne({ email, status: true });
-    if (checker && phoneNumber != customer.phoneNumber) {
+    if (checker && email !== customer.email) {
       return res.status(400).json({
         success: false,
         invalid: "email",
@@ -197,7 +198,7 @@ const updateCustomerById = async (req, res) => {
     ).then((result) => result.save());
     return res.status(200).json({
       success: true,
-      message: "Customer has been updated successfully",
+      message: "Customer's information has been updated successfully",
     });
   } catch (error) {
     console.log(error);
