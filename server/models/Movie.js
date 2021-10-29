@@ -27,31 +27,27 @@ const MovieSchema = new Schema({
     required: true,
   },
 
-  actors: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "actors",
-    },
-  ],
-
   directors: [
     {
-      type: Schema.Types.ObjectId,
-      ref: "directors",
+      type: String,
     },
   ],
 
   productionCompanies: [
     {
-      type: Schema.Types.ObjectId,
-      ref: "production_companies",
+      type: String,
     },
   ],
 
   writers: [
     {
-      type: Schema.Types.ObjectId,
-      ref: "writers",
+      type: String,
+    },
+  ],
+
+  actors: [
+    {
+      type: String,
     },
   ],
 
