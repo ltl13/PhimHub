@@ -67,7 +67,7 @@ const createStaff = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     role: req.body.role,
-    func: "getAllCustomers",
+    func: "createStaff",
   });
   if (!confirm) return res.redirect("back");
 
