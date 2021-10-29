@@ -119,6 +119,14 @@ const updateCustomerTypeById = async (req, res) => {
 };
 
 const deleteCustomerTypeById = async (req, res) => {
+  // Check if user can access this route
+  const confirm = await confirmAccess({
+    role: req.body.role,
+    func: "deleteCustomerTypeById",
+  });
+  if (!confirm) return res.redirect("back");
+
+  // Passed
   try {
     // Check if there are still customers of this type
     const customerChecker = await Customer.findOne({

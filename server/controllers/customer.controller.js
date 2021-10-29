@@ -60,14 +60,15 @@ const getCustomerById = async (req, res) => {
 };
 
 const createNewCustomer = async (req, res) => {
-  try {
-    // Check if user can access this route
-    const confirm = await confirmAccess({
-      role: req.body.role,
-      func: "createNewCustomer",
-    });
-    if (!confirm) return res.redirect("back");
+  // Check if user can access this route
+  const confirm = await confirmAccess({
+    role: req.body.role,
+    func: "createNewCustomer",
+  });
+  if (!confirm) return res.redirect("back");
 
+  // Passed
+  try {
     const {
       customerType,
       password,
@@ -81,7 +82,7 @@ const createNewCustomer = async (req, res) => {
     // Check if email or phone number has been used for register before
     let checker = await Customer.findOne({ phoneNumber, status: true });
     if (checker) {
-      return res.status(400).json({
+      return res.status(409).json({
         success: false,
         invalid: "phoneNumber",
         message: "This phone number has been used for register before",
@@ -90,7 +91,7 @@ const createNewCustomer = async (req, res) => {
 
     checker = await Customer.findOne({ email, status: true });
     if (checker) {
-      return res.status(400).json({
+      return res.status(409).json({
         success: false,
         invalid: "email",
         message: "This email has been used for register before",
@@ -98,6 +99,14 @@ const createNewCustomer = async (req, res) => {
     }
 
     // Create account
+    const role = await Role.findOne({ roleName: "customer" });
+    if (!role) {
+      return res.status(406).json({
+        success: false,
+        message:
+          "It looks like you can not create an account now due to our database's error",
+      });
+    }
     const hashPassword = await argon2.hash(password);
     const newAccount = new Account({
       username: phoneNumber,

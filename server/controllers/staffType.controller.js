@@ -153,7 +153,10 @@ const deleteStaffTypeById = async (req, res) => {
       });
 
     // Check if this staff type is in connection with staffs
-    checker = await Staff.findOne({ staffType: req.params.id });
+    checker = await Staff.findOne({
+      staffType: req.params.id,
+      status: true,
+    });
     if (checker)
       return res.status(409).json({
         success: false,

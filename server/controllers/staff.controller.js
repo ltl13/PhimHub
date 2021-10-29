@@ -8,7 +8,7 @@ const getAllStaffs = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     role: req.body.role,
-    func: "getAllCustomers",
+    func: "getAllStaffs",
   });
   if (!confirm) return res.redirect("back");
 
@@ -35,7 +35,7 @@ const getStaffById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     role: req.body.role,
-    func: "getAllCustomers",
+    func: "getStaffById",
   });
   if (!confirm) return res.redirect("back");
 
@@ -73,6 +73,76 @@ const createStaff = async (req, res) => {
 
   // Passed
   try {
+    const {
+      staffType,
+      username,
+      password,
+      phoneNumber,
+      email,
+      name,
+      sex,
+      dateOfBirth,
+      identityNumber,
+      salary,
+      role,
+    } = req.body;
+
+    // Check if email/phone number/identity number has been used by another staff before
+    let checker = await Staff.findOne({ phoneNumber, status: true });
+    if (checker) {
+      return res.status(409).json({
+        success: false,
+        invalid: "phoneNumber",
+        message: "This phone number has been used by another staff",
+      });
+    }
+
+    checker = await Staff.findOne({ identityNumber, status: true });
+    if (checker) {
+      return res.status(409).json({
+        success: false,
+        invalid: "identityNumber",
+        message: "This identity number has been used by another staff",
+      });
+    }
+
+    checker = await Staff.findOne({ email, status: true });
+    if (checker) {
+      return res.status(409).json({
+        success: false,
+        invalid: "email",
+        message: "This email has been used by another staff",
+      });
+    }
+
+    // Create a new account for this staff
+    const hashedPassword = await argon2.hash(password);
+    const newAccount = new Account({
+      username,
+      password: hashedPassword,
+      role,
+    });
+
+    // Create new staff
+    const newStaff = new Customer({
+      staffType,
+      phoneNumber,
+      email,
+      name,
+      sex,
+      dateOfBirth: new Date(dateOfBirth.concat("T00:00:20Z")),
+      account: newAccount._id,
+      username,
+      identityNumber,
+      salary,
+    });
+    await newAccount.save();
+    await newStaff.save();
+
+    return res.status(201).json({
+      success: true,
+      message: "New staff was created successfully",
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
