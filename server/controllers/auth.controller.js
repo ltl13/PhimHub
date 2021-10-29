@@ -237,7 +237,7 @@ const logout = async (req, res) => {
         message: "Logout failed due to no authorization",
       });
     }
-    account.save();
+    await account.save();
     return res.status(200).json({
       success: true,
       message: "User logout successfully",

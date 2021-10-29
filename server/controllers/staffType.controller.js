@@ -98,6 +98,33 @@ const updateStaffTypeById = async (req, res) => {
   if (!confirm) return res.redirect("back");
 
   try {
+    const { position } = req.body;
+
+    // Check if this staff type exists
+    let checker = await StaffType.findById(req.params.id);
+    if (!checker)
+      return res.status(404).json({
+        success: false,
+        message: "Staff type not found",
+      });
+
+    // Check if this position has existed
+    checker = await StaffType.findOne({ position });
+    if (checker)
+      return res.status(400).json({
+        success: false,
+        message: "This position has existed",
+      });
+
+    // All good, update staff type's info
+    await StaffType.findByIdAndUpdate(req.params.id, { position }).then(
+      (result) => result.save()
+    );
+
+    return res.status(201).json({
+      success: true,
+      message: "Staff type has been updated successfully",
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({

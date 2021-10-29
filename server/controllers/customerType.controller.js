@@ -102,7 +102,7 @@ const updateCustomerTypeById = async (req, res) => {
         typeName,
       },
       { new: true }
-    ).then((result) => result.save());
+    ).then(async (result) => await result.save());
 
     // Updated successfully
     return res.status(200).json({

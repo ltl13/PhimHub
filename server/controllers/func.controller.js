@@ -19,15 +19,15 @@ const createFunc = async (req, res) => {
     // Add func to roles
     if (roles) {
       roles.forEach(async (role) => {
-        await Role.findById(role).then((result) => {
+        await Role.findById(role).then(async (result) => {
           if (result) {
             result.funcs.push(newFunc._id);
-            result.save();
+            await result.save();
           }
         });
       });
     }
-    newFunc.save();
+    await newFunc.save();
 
     return res.status(201).json({
       success: true,

@@ -67,17 +67,17 @@ const createRole = async (req, res) => {
     // Add role to functions
     if (funcs) {
       funcs.forEach(async (func) => {
-        await Func.findById(func).then((result) => {
+        await Func.findById(func).then(async (result) => {
           if (result) {
             result.roles.push(newRole._id);
-            result.save();
+            await result.save();
           }
         });
       });
     }
 
     // Save all change and return result
-    newRole.save();
+    await newRole.save();
     return res.status(201).json({
       success: true,
       message: "New role has been created successfully",
@@ -110,7 +110,7 @@ const updateRoleById = async (req, res) => {
         if (checkFunc) {
           await Func.findByIdAndUpdate(func, {
             roles: checkFunc.roles.filter((role) => role !== checker._id),
-          }).then((result) => result.save());
+          }).then(async (result) => await result.save());
         }
       });
     }
@@ -120,7 +120,7 @@ const updateRoleById = async (req, res) => {
       roleName,
       funcs,
     });
-    updateRole.save();
+    await updateRole.save();
 
     // Add connections of this role with funcs
     if (funcs) {
@@ -129,7 +129,7 @@ const updateRoleById = async (req, res) => {
         if (updateFunc) {
           await Func.findByIdAndUpdate(func, {
             roles: [...updateFunc.roles, updateRole._id],
-          }).then((result) => result.save());
+          }).then(async (result) => await result.save());
         }
       });
     }
@@ -178,7 +178,7 @@ const deleteRoleById = async (req, res) => {
           func,
           { roles: listRoleUpdate },
           { new: true }
-        ).then((result) => result.save());
+        ).then(async (result) => await result.save());
       });
     }
 
