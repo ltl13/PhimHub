@@ -41,6 +41,19 @@ const getStaffById = async (req, res) => {
 
   // Passed
   try {
+    const staff = await Staff.findById(req.params.id).populate({
+      path: "staffType",
+      select: "typeName",
+    });
+    if (!staff)
+      return res.status(404).json({
+        success: false,
+        message: "Staff not found",
+      });
+    return res.status(200).json({
+      success: true,
+      staff,
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
