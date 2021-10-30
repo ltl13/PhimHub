@@ -66,7 +66,7 @@ const createStaffType = async (req, res) => {
 
     // Check if this position has existed
     let checker = await StaffType.findOne({ position });
-    if (position)
+    if (checker)
       return res.status(409).json({
         success: false,
         message: "This position has existed",
@@ -79,7 +79,7 @@ const createStaffType = async (req, res) => {
     await newStaffType.save();
     return res.status(201).json({
       success: true,
-      message: "New customer type has just been added",
+      message: "New staff type has just been added",
     });
   } catch (error) {
     console.log(error);

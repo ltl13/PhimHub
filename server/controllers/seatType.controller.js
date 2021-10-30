@@ -55,6 +55,44 @@ const getSeatTypeById = async (req, res) => {
   }
 };
 
+const createSeatType = async (req, res) => {
+  // Check if user can access this route
+  const confirm = await confirmAccess({
+    role: req.body.role,
+    func: "createSeatType",
+  });
+  if (!confirm) return res.redirect("back");
+
+  // Passed
+  try {
+    const { typeName } = req.body;
+
+    // Check if this type has existed
+    let checker = await SeatType.findOne({ position });
+    if (checker)
+      return res.status(409).json({
+        success: false,
+        message: "This type has existed",
+      });
+
+    // Add new position
+    const newSeatType = new SeatType({
+      typeName,
+    });
+    await newSeatType.save();
+    return res.status(201).json({
+      success: true,
+      message: "New seat type has just been added",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
 module.exports = {
   getAllSeatTypes,
   getSeatTypeById,
