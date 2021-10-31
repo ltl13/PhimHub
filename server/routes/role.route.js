@@ -5,8 +5,7 @@ const {
   getRoleById,
   getAllRoles,
   createRole,
-  updateFunctionsForRoleById,
-  updateRoleNameById,
+  updateRoleById,
   deleteRoleById,
 } = require("../controllers/role.controller");
 
