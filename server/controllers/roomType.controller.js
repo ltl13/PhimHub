@@ -1,21 +1,21 @@
-const SeatType = require("../models/SeatType");
-const Seat = require("../models/Seat");
+const RoomType = require("../models/RoomType");
+const Room = require("../models/Room");
 const { confirmAccess } = require("../shared/functions");
 
-const getAllSeatTypes = async (req, res) => {
+const getAllRoomTypes = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     role: req.body.role,
-    func: "getAllSeatTypes",
+    func: "getAllRoomTypes",
   });
   if (!confirm) return res.redirect("back");
 
   // Passed
   try {
-    const allSeatTypes = await SeatType.find();
+    const allRoomTypes = await RoomType.find();
     return res.status(200).json({
       success: true,
-      allSeatTypes,
+      allRoomTypes,
     });
   } catch (error) {
     console.log(error);
@@ -26,25 +26,25 @@ const getAllSeatTypes = async (req, res) => {
   }
 };
 
-const getSeatTypeById = async (req, res) => {
+const getRoomTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     role: req.body.role,
-    func: "getSeatTypeById",
+    func: "getRoomTypeById",
   });
   if (!confirm) return res.redirect("back");
 
   // Passed
   try {
-    const seatType = await SeatType.findById(req.params.id);
-    if (!seatType)
+    const roomType = await RoomType.findById(req.params.id);
+    if (!roomType)
       return res.status(404).json({
         success: false,
-        message: "Seat type not found",
+        message: "Room type not found",
       });
     return res.status(200).json({
       success: true,
-      seatType,
+      roomType,
     });
   } catch (error) {
     console.log(error);
@@ -55,11 +55,11 @@ const getSeatTypeById = async (req, res) => {
   }
 };
 
-const createSeatType = async (req, res) => {
+const createRoomType = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     role: req.body.role,
-    func: "createSeatType",
+    func: "createRoomType",
   });
   if (!confirm) return res.redirect("back");
 
@@ -68,7 +68,7 @@ const createSeatType = async (req, res) => {
     const { typeName } = req.body;
 
     // Check if this type has existed
-    let checker = await SeatType.findOne({ typeName });
+    let checker = await RoomType.findOne({ typeName });
     if (checker)
       return res.status(409).json({
         success: false,
@@ -76,13 +76,13 @@ const createSeatType = async (req, res) => {
       });
 
     // Add new type
-    const newSeatType = new SeatType({
+    const newRoomType = new RoomType({
       typeName,
     });
-    await newSeatType.save();
+    await newRoomType.save();
     return res.status(201).json({
       success: true,
-      message: "New seat type has just been added",
+      message: "New room type was added successfully",
     });
   } catch (error) {
     console.log(error);
@@ -93,32 +93,32 @@ const createSeatType = async (req, res) => {
   }
 };
 
-const updateSeatTypeById = async (req, res) => {
+const updateRoomTypeById = async (req, res) => {
   try {
     const { typeName } = req.body;
 
-    // Check if Seat exists in database
-    const seatType = await SeatType.findById(req.params.id);
-    if (!seatType) {
+    // Check if Room exists in database
+    const roomType = await RoomType.findById(req.params.id);
+    if (!roomType) {
       return res.status(404).json({
         success: false,
-        message: "Seat type not found",
+        message: "Room type not found",
       });
     }
 
     // Check if new type name has existed
-    const checker = await SeatType.findOne({
+    const checker = await RoomType.findOne({
       typeName,
     });
-    if (checker && seatType.typeName != typeName) {
+    if (checker && roomType.typeName != typeName) {
       return res.status(400).json({
         success: false,
-        message: "This seat type has existed",
+        message: "This room type has existed",
       });
     }
 
     // Update new type name
-    await SeatType.findByIdAndUpdate(
+    await RoomType.findByIdAndUpdate(
       req.params.id,
       {
         typeName,
@@ -129,7 +129,7 @@ const updateSeatTypeById = async (req, res) => {
     // Updated successfully
     return res.status(200).json({
       success: true,
-      message: "Seat type has been updated",
+      message: "Room type has been updated",
     });
   } catch (error) {
     console.log(error);
@@ -140,39 +140,39 @@ const updateSeatTypeById = async (req, res) => {
   }
 };
 
-const deleteSeatTypeById = async (req, res) => {
+const deleteRoomTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     role: req.body.role,
-    func: "deleteSeatTypeById",
+    func: "deleteRoomTypeById",
   });
   if (!confirm) return res.redirect("back");
 
   // Passed
   try {
-    // Check if there are still Seats of this type
-    const seatChecker = await Seat.findOne({
-      seatType: req.params.id,
-      status: { $ne: 0 },
+    // Check if there are still Rooms of this type
+    const roomChecker = await Room.findOne({
+      RoomType: req.params.id,
+      status: true,
     });
-    if (seatChecker) {
+    if (roomChecker) {
       return res.status(406).json({
         success: false,
-        message: "Can not delete because there are still seats of this type",
+        message: "Can not delete because there are still rooms of this type",
       });
     }
 
-    // Delete Seat type
-    const deleteSeatType = await SeatType.findByIdAndDelete(req.params.id);
-    if (!deleteSeatType) {
+    // Delete Room type
+    const deleteRoomType = await RoomType.findByIdAndDelete(req.params.id);
+    if (!deleteRoomType) {
       return res.status(404).json({
         success: false,
-        message: "Seat type not found",
+        message: "Room type not found",
       });
     }
     return res.status(200).json({
       success: true,
-      message: "Delete seat type successfully",
+      message: "Delete room type successfully",
     });
   } catch (error) {
     console.log(error);
@@ -184,9 +184,9 @@ const deleteSeatTypeById = async (req, res) => {
 };
 
 module.exports = {
-  getAllSeatTypes,
-  getSeatTypeById,
-  createSeatType,
-  updateSeatTypeById,
-  deleteSeatTypeById,
+  getAllRoomTypes,
+  getRoomTypeById,
+  createRoomType,
+  updateRoomTypeById,
+  deleteRoomTypeById,
 };

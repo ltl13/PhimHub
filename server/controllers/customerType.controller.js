@@ -87,7 +87,6 @@ const updateCustomerTypeById = async (req, res) => {
     const checker = await CustomerType.findOne({
       typeName,
     });
-    console.log(customerType.typeName != typeName);
     if (checker && customerType.typeName != typeName) {
       return res.status(400).json({
         success: false,
