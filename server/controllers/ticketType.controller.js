@@ -151,10 +151,10 @@ const deleteTicketTypeById = async (req, res) => {
   // Passed
   try {
     // Check if there are still Tickets of this type
-    const TicketChecker = await Ticket.findOne({
+    const ticketChecker = await Ticket.findOne({
       ticketType: req.params.id,
     });
-    if (TicketChecker) {
+    if (ticketChecker) {
       return res.status(406).json({
         success: false,
         message: "Can not delete because there are still tickets of this type",

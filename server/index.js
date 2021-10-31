@@ -11,6 +11,7 @@ const staffTypeRoute = require("./routes/staffType.route");
 const staffRoute = require("./routes/staff.route");
 const seatTypeRoute = require("./routes/seatType.route");
 const roomTypeRoute = require("./routes/roomType.route");
+const ticketTypeRoute = require("./routes/ticketType.route");
 
 const app = express();
 app.use(express.json());
@@ -36,6 +37,7 @@ app.use("/api/staff-type", staffTypeRoute);
 app.use("/api/staff", staffRoute);
 app.use("/api/seat-type", seatTypeRoute);
 app.use("/api/room-type", roomTypeRoute);
+app.use("/api/ticket-type", ticketTypeRoute);
 
 // Lạy chúa, đừng thằng nào đụng vào những gì ở dưới, tao đang test thôi.
 // Nhắc thằng Dàn luôn là ĐỪNG CODE TRÙNG FILE
