@@ -68,7 +68,7 @@ const createSeatType = async (req, res) => {
     const { typeName } = req.body;
 
     // Check if this type has existed
-    let checker = await SeatType.findOne({ position });
+    let checker = await SeatType.findOne({ typeName });
     if (checker)
       return res.status(409).json({
         success: false,
