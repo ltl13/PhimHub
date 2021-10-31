@@ -67,11 +67,78 @@ const createMovieType = async (req, res) => {
 }
 
 const updateMovieTypeById = async (req, res) => {
+    try {
+        const {typeName} = res.body;
 
+        const movieType = await MovieType.findById(req.params.id)
+        if (!moviewType) {
+            return res.status(404).json({
+                success: false,
+                message: "Movie type not found",
+              }); 
+        }
+
+        const movieChecker  = await MovieType.findOne({typeName});
+        console.log(movieType.typeName != typeName);
+        if (movieChecker && movieType.type != typeName) {
+            return res.status(400).json({
+                success: false,
+                message: "This movie type has existed"
+            })
+        }
+
+        await MovieType.findByIdAndUpdate(
+            req.params.id, 
+            { typeName },
+            { new: true }
+        ).then(async (result) => await result.save());
+
+        return res.status(200).json({
+            success: true,
+            message: "Movie type has been updated"
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        })
+    }
 }
 
 const deleteMovieTypeById = async (req, res) => {
+    const confirm = await confirmAccess({
+        role: req.body.role,
+        func: "deleteMovieTypebyId"
+    })
+    if (!confirm) return res.rediect("back");
 
+    try {
+        const movieChecker = await Movie.findOne({
+            movieType: req.params.id,
+            status: true
+        })
+        if (movieChecker) {
+            return res.status(406).json({
+                success: false,
+                message: "Can not delete because there are still movies of this type"
+            })
+        }
+
+        const delMovieType = await MovieType.findByIdAndDelete(req.params.id);
+        if  (!delMovieType) {
+            return res.status(404).json({
+                success: false,
+                message: "Movie type not found"
+            })
+        }
+        return res.stautus(200).json({
+            success: true,
+            message: "Delete movie type successfully"
+        })
+    } catch (error) {
+        
+    }
 }
 
 module.exports = {
