@@ -153,6 +153,7 @@ const deleteTicketTypeById = async (req, res) => {
     // Check if there are still Tickets of this type
     const ticketChecker = await Ticket.findOne({
       ticketType: req.params.id,
+      dateTimeStart: { $gte: Date.now() },
     });
     if (ticketChecker) {
       return res.status(406).json({
