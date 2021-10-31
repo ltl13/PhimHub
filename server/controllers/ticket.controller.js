@@ -2,7 +2,7 @@ const Ticket = require("../models/Ticket");
 const TicketType = require("../models/TicketType");
 const { confirmAccess } = require("../shared/functions");
 
-const getAllTicketsInTime = async (req, res) => {
+const getAllTickets = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     role: req.body.role,
@@ -12,24 +12,60 @@ const getAllTicketsInTime = async (req, res) => {
 
   // Passed
   try {
-    const { fromDate, toDate } = req.body;
-    let allTickets;
+    const allTickets = await Ticket.find()
+      .populate({
+        path: "ticketType",
+        select: "typeName",
+      })
+      .populate({
+        path: "payment",
+        select: "value",
+      })
+      .populate({
+        path: "customer",
+        select: "phoneNumber",
+      });
+    return res.status(200).json({
+      success: true,
+      allTickets,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
 
-    if (!fromDate && !toDate) {
-      allTickets = await Ticket.find();
-    } else if (!fromDate && !toDate) {
-      allTickets = await Ticket.find({
-        dateTimeStart: { $gte: Date(fromDate), $lte: Date(toDate) },
+const getTicketById = async (req, res) => {
+  // Check if user can access this route
+  const confirm = await confirmAccess({
+    role: req.body.role,
+    func: "getTicketById",
+  });
+  if (!confirm) return res.redirect("back");
+
+  // Passed
+  try {
+    const ticket = await Ticket.findById(req.params.id)
+      .populate({
+        path: "ticketType",
+        select: "typeName",
+      })
+      .populate({
+        path: "payment",
+        select: "value",
+      })
+      .populate({
+        path: "customer",
+        select: "phoneNumber",
       });
-    } else if (!fromDate) {
-      allTickets = await Ticket.find({
-        dateTimeStart: { $gte: Date(fromDate) },
+    if (!ticket)
+      return res.status(404).json({
+        success: false,
+        message: "Ticket not found",
       });
-    } else if (!toDate) {
-      allTickets = await Ticket.find({
-        dateTimeStart: { $lte: Date(toDate) },
-      });
-    }
     return res.status(200).json({
       success: true,
       allTickets,
