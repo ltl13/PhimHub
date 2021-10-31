@@ -141,6 +141,52 @@ const updateSeatTypeById = async (req, res) => {
   }
 };
 
+const deleteSeatTypeById = async (req, res) => {
+  // Check if user can access this route
+  const confirm = await confirmAccess({
+    role: req.body.role,
+    func: "deleteSeatTypeById",
+  });
+  if (!confirm) return res.redirect("back");
+
+  // Passed
+  try {
+    // Check if there are still Seats of this type
+    const seatChecker = await Seat.findOne({
+      seatType: req.params.id,
+      status: true,
+    });
+    if (seatChecker) {
+      return res.status(406).json({
+        success: false,
+        message:
+          "Can not delete because there are still seats of this type",
+      });
+    }
+
+    // Delete Seat type
+    const deleteSeatType = await SeatType.findByIdAndDelete(
+      req.params.id
+    );
+    if (!deleteSeatType) {
+      return res.status(404).json({
+        success: false,
+        message: "Seat type not found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Delete seat type successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
 module.exports = {
   getAllSeatTypes,
   getSeatTypeById,
