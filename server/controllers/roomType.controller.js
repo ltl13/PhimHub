@@ -139,3 +139,54 @@ const updateRoomTypeById = async (req, res) => {
     });
   }
 };
+
+const deleteRoomTypeById = async (req, res) => {
+  // Check if user can access this route
+  const confirm = await confirmAccess({
+    role: req.body.role,
+    func: "deleteRoomTypeById",
+  });
+  if (!confirm) return res.redirect("back");
+
+  // Passed
+  try {
+    // Check if there are still Rooms of this type
+    const roomChecker = await Room.findOne({
+      RoomType: req.params.id,
+      status: true,
+    });
+    if (roomChecker) {
+      return res.status(406).json({
+        success: false,
+        message: "Can not delete because there are still rooms of this type",
+      });
+    }
+
+    // Delete Room type
+    const deleteRoomType = await RoomType.findByIdAndDelete(req.params.id);
+    if (!deleteRoomType) {
+      return res.status(404).json({
+        success: false,
+        message: "Room type not found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Delete room type successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+module.exports = {
+  getAllRoomTypes,
+  getRoomTypeById,
+  createRoomType,
+  updateRoomTypeById,
+  deleteRoomTypeById,
+};
