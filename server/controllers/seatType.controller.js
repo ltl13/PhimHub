@@ -44,7 +44,7 @@ const getSeatTypeById = async (req, res) => {
       });
     return res.status(200).json({
       success: true,
-      SeatType,
+      seatType,
     });
   } catch (error) {
     console.log(error);
