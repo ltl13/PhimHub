@@ -154,20 +154,17 @@ const deleteSeatTypeById = async (req, res) => {
     // Check if there are still Seats of this type
     const seatChecker = await Seat.findOne({
       seatType: req.params.id,
-      status: true,
+      status: { $ne: 0 },
     });
     if (seatChecker) {
       return res.status(406).json({
         success: false,
-        message:
-          "Can not delete because there are still seats of this type",
+        message: "Can not delete because there are still seats of this type",
       });
     }
 
     // Delete Seat type
-    const deleteSeatType = await SeatType.findByIdAndDelete(
-      req.params.id
-    );
+    const deleteSeatType = await SeatType.findByIdAndDelete(req.params.id);
     if (!deleteSeatType) {
       return res.status(404).json({
         success: false,
