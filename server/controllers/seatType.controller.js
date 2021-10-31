@@ -110,7 +110,6 @@ const updateSeatTypeById = async (req, res) => {
     const checker = await SeatType.findOne({
       typeName,
     });
-    console.log(seatType.typeName != typeName);
     if (checker && seatType.typeName != typeName) {
       return res.status(400).json({
         success: false,

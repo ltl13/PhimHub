@@ -92,3 +92,50 @@ const createRoomType = async (req, res) => {
     });
   }
 };
+
+const updateRoomTypeById = async (req, res) => {
+  try {
+    const { typeName } = req.body;
+
+    // Check if Room exists in database
+    const roomType = await RoomType.findById(req.params.id);
+    if (!roomType) {
+      return res.status(404).json({
+        success: false,
+        message: "Room type not found",
+      });
+    }
+
+    // Check if new type name has existed
+    const checker = await RoomType.findOne({
+      typeName,
+    });
+    if (checker && roomType.typeName != typeName) {
+      return res.status(400).json({
+        success: false,
+        message: "This room type has existed",
+      });
+    }
+
+    // Update new type name
+    await RoomType.findByIdAndUpdate(
+      req.params.id,
+      {
+        typeName,
+      },
+      { new: true }
+    ).then(async (result) => await result.save());
+
+    // Updated successfully
+    return res.status(200).json({
+      success: true,
+      message: "Room type has been updated",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
