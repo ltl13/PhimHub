@@ -9,7 +9,9 @@ const customerRoute = require("./routes/customer.route");
 const roleRoute = require("./routes/role.route");
 const staffTypeRoute = require("./routes/staffType.route");
 const staffRoute = require("./routes/staff.route");
+
 const movieTypeRoute = require("./routes/movieType.route");
+const movieRoute = require("./routes/movie.route");
 
 const app = express();
 app.use(express.json());
@@ -33,7 +35,9 @@ app.use("/api/customer", customerRoute);
 app.use("/api/role", roleRoute);
 app.use("/api/staff-type", staffTypeRoute);
 app.use("/api/staff", staffRoute);
+
 app.use("/api/movie-type", movieTypeRoute);
+app.use("/api/movie", movieRoute);
 
 // Lạy chúa, đừng thằng nào đụng vào những gì ở dưới, tao đang test thôi.
 // Nhắc thằng Dàn luôn là ĐỪNG CODE TRÙNG FILE
