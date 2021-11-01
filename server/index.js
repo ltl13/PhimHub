@@ -16,6 +16,8 @@ const ticketRoute = require("./routes/ticket.route");
 
 const movieTypeRoute = require("./routes/movieType.route");
 const movieRoute = require("./routes/movie.route");
+const roomRoute = require("./routes/room.route");
+
 
 const app = express();
 app.use(express.json());
@@ -46,6 +48,7 @@ app.use("/api/ticket", ticketRoute);
 
 app.use("/api/movie-type", movieTypeRoute);
 app.use("/api/movie", movieRoute);
+app.use("/api/room", roomRoute);
 
 // Lạy chúa, đừng thằng nào đụng vào những gì ở dưới, tao đang test thôi.
 // Nhắc thằng Dàn luôn là ĐỪNG CODE TRÙNG FILE
