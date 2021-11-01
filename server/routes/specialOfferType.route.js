@@ -11,8 +11,8 @@ const {
 } = require("../controllers/specialOfferType.controller");
 
 router.post("/create", verifyToken, createSpecialOfferType);
-router.get("/get/:id", verifyToken, getSpecialOfferTypeById);
 router.get("/get-all", verifyToken, getAllSpecialOfferTypes);
+router.get("/get/:id", verifyToken, getSpecialOfferTypeById);
 router.put("/update/:id", verifyToken, updateSpecialOfferTypeById);
 router.delete("/delete/:id", verifyToken, deleteSpecialOfferTypeById);
 
