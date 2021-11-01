@@ -109,11 +109,81 @@ const createMovie = async (req,res) => {
 }
 
 const updateMovieById = async (req, res) => {
+    // Check if user can access this route
+    // const confirm = await confirmAccess({
+    //     role: req.body.role,
+    //     func: "getAllCustomers",
+    // });
+    // if (!confirm) return res.redirect("back");
 
+    try {
+        const {
+            name,
+            duration,
+            premiereDate,
+            poster,
+            description,
+            directors,
+            productionCompanies,
+            writers,
+            actors,
+            movieTypes
+        } = req.body;
+
+        const movie = await Movie.findOne({ _id: req.params.id })
+        if (!movie) {
+            return res.status(404).json({
+                success: false,
+                message: "Movie not found"
+            })
+        }
+
+        await Movie.findOneAndUpdate(
+            { _id: req.params.id},
+            {
+                name,
+                duration,
+                premiereDate: new Date(premiereDate.concat("T00:00:10Z")),
+                poster,
+                description,
+                directors,
+                productionCompanies,
+                writers,
+                actors,
+                movieTypes 
+            },
+            { new: true }
+        ).then((result) => result.save());
+        return res.status(200).json({
+            success: true,
+            message: "Movie's information has been updated successfully"
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+          success: false,
+          message: "Internal server error"
+        })  
+    }
 }
 
 const deleteMovieById = async (req, res) => {
+    // Check if user can access this route
+    // const confirm = await confirmAccess({
+    //     role: req.body.role,
+    //     func: "getAllCustomers",
+    // });
+    // if (!confirm) return res.redirect("back");
 
+    try {
+        // Nghĩ lại thì chức năng này không nên có
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error",
+        });
+    }
 }
 
 module.exports = {
@@ -122,4 +192,4 @@ module.exports = {
     createMovie,
     updateMovieById,
     deleteMovieById
-}
+};
