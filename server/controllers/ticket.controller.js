@@ -12,19 +12,20 @@ const getAllTickets = async (req, res) => {
 
   // Passed
   try {
-    const allTickets = await Ticket.find()
+    const allTickets = await Ticket.find({}, { payment: 0 })
       .populate({
         path: "ticketType",
         select: "typeName",
       })
       .populate({
-        path: "payment",
-        select: "value",
-      })
-      .populate({
         path: "customer",
         select: "phoneNumber",
-      });
+      })
+      .populate({
+        path: "payment",
+        select: "paytime",
+      })
+      .select("-seats");
     return res.status(200).json({
       success: true,
       allTickets,
@@ -54,13 +55,14 @@ const getTicketById = async (req, res) => {
         select: "typeName",
       })
       .populate({
-        path: "payment",
-        select: "value",
-      })
-      .populate({
         path: "customer",
         select: "phoneNumber",
-      });
+      })
+      .populate({
+        path: "payment",
+        select: "paytime",
+      })
+      .select("-seats");
     if (!ticket)
       return res.status(404).json({
         success: false,
@@ -69,6 +71,51 @@ const getTicketById = async (req, res) => {
     return res.status(200).json({
       success: true,
       allTickets,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+const createTicket = async (req, res) => {
+  // Check if user can access this route
+  const confirm = await confirmAccess({
+    role: req.body.role,
+    func: "createTicket",
+  });
+  if (!confirm) return res.redirect("back");
+
+  // Passed
+  try {
+    const {
+      price,
+      dateTimeStart,
+      movie,
+      ticketType,
+      payment,
+      seats,
+      customer,
+    } = req.body;
+
+    // Create a new ticket
+    const newTicket = new Ticket({
+      price,
+      dateTimeStart: new Date(dateTimeStart),
+      movie,
+      ticketType,
+      payment,
+      seats,
+      customer,
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "New ticket was created successfully",
+      newTicket,
     });
   } catch (error) {
     console.log(error);
