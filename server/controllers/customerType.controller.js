@@ -2,6 +2,14 @@ const CustomerType = require("../models/CustomerType");
 const Customer = require("../models/Customer");
 
 const getAllCustomerTypes = async (req, res) => {
+  // Check if user can access this route
+  const confirm = await confirmAccess({
+    role: req.body.role,
+    func: "getAllCustomerTypes",
+  });
+  if (!confirm) return res.redirect("back");
+
+  // Passed
   try {
     const listCustomerTypes = await CustomerType.find();
     return res.status(200).json({
@@ -18,6 +26,14 @@ const getAllCustomerTypes = async (req, res) => {
 };
 
 const getCustomerTypeById = async (req, res) => {
+  // Check if user can access this route
+  const confirm = await confirmAccess({
+    role: req.body.role,
+    func: "getCustomerTypeById",
+  });
+  if (!confirm) return res.redirect("back");
+
+  // Passed
   try {
     const customerType = await CustomerType.findById(req.params.id);
     if (!customerType) {
@@ -40,6 +56,14 @@ const getCustomerTypeById = async (req, res) => {
 };
 
 const createCustomerType = async (req, res) => {
+  // Check if user can access this route
+  const confirm = await confirmAccess({
+    role: req.body.role,
+    func: "createCustomerType",
+  });
+  if (!confirm) return res.redirect("back");
+
+  // Passed
   try {
     const { typeName } = req.body;
 
@@ -71,6 +95,14 @@ const createCustomerType = async (req, res) => {
 };
 
 const updateCustomerTypeById = async (req, res) => {
+  // Check if user can access this route
+  const confirm = await confirmAccess({
+    role: req.body.role,
+    func: "updateCustomerTypeById",
+  });
+  if (!confirm) return res.redirect("back");
+
+  // Passed
   try {
     const { typeName } = req.body;
 
