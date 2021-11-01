@@ -125,3 +125,5 @@ const createTicket = async (req, res) => {
     });
   }
 };
+
+module.exports = { getAllTickets, getTicketById, createTicket };
