@@ -4,12 +4,21 @@ const nodemailer = require("nodemailer");
 
 const Account = require("../models/Account");
 const Customer = require("../models/Customer");
+const Role = require("../models/Role");
+const { confirmAccess } = require("../shared/functions");
 
-const getAuth = async (req, res) => {
+const getAuthById = async (req, res) => {
   try {
-    const account = await Account.findById(req.body.id).select("-password");
+    // Check if user can access this route
+    const confirm = await confirmAccess({
+      role: req.body.role,
+      func: "getAuthById",
+    });
+    if (!confirm) return res.redirect("back");
+
+    const account = await Account.findById(req.params.id).select("-password");
     if (!account) {
-      return res.status(400).json({
+      return res.status(404).json({
         success: false,
         message: "User not found",
       });
@@ -30,7 +39,6 @@ const getAuth = async (req, res) => {
 const register = async (req, res) => {
   try {
     const {
-      username,
       password,
       customerType,
       phoneNumber,
@@ -40,31 +48,39 @@ const register = async (req, res) => {
       dateOfBirth,
     } = req.body;
 
-    // Validation
-    if (!username || !password) {
+    // Check if email or phone number has been used for register before
+    let checker = await Customer.findOne({ phoneNumber, status: true });
+    if (checker) {
       return res.status(400).json({
         success: false,
-        message: "Missing username and/or password",
+        invalid: "phoneNumber",
+        message: "This phone number has been used for register before",
       });
     }
-
-    const account = await Account.findOne({ username });
-    // Check if username already existed
-    if (account) {
+    checker = await Customer.findOne({ email, status: true });
+    if (checker) {
       return res.status(400).json({
         success: false,
-        message: "Username already existed",
+        invalid: "email",
+        message: "This email has been used for register before",
       });
     }
 
     // Create account
+    const role = await Role.findOne({ roleName: "customer" });
+    if (!role) {
+      return res.status(406).json({
+        success: false,
+        message:
+          "It looks like you can not create an account now due to our database's error",
+      });
+    }
     const hashPassword = await argon2.hash(password);
     const newAccount = new Account({
-      username,
+      username: phoneNumber,
       password: hashPassword,
-      isAdmin: false,
+      role: role._id,
     });
-    await newAccount.save();
 
     // Create new customer
     const newCustomer = new Customer({
@@ -73,16 +89,16 @@ const register = async (req, res) => {
       email,
       name,
       sex,
-      dateOfBirth,
+      dateOfBirth: new Date(dateOfBirth.concat("T00:00:20Z")),
       account: newAccount._id,
     });
+    await newAccount.save();
     await newCustomer.save();
 
     // Return access token
     const accessToken = jsonwebtoken.sign(
-      { id: newAccount._id },
-      process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "3600s" }
+      { id: newAccount._id, role: newAccount.role },
+      process.env.ACCESS_TOKEN_SECRET
     );
 
     res.status(201).json({
@@ -103,20 +119,12 @@ const login = async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    // Validation
-    if (!username || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Missing username and/or password",
-      });
-    }
-
     // Check for existing account
     const account = await Account.findOne({ username });
     if (!account) {
-      return res.status(400).json({
+      return res.status(404).json({
         success: false,
-        message: "Incorrect username or password",
+        message: "Incorrect phone number or username",
       });
     }
 
@@ -125,29 +133,20 @@ const login = async (req, res) => {
     if (!correctPassword) {
       return res.status(400).json({
         success: false,
-        message: "Incorrect username or password",
+        message: "Incorrect password",
       });
     }
 
     // Login in
-    // Return token
     const accessToken = jsonwebtoken.sign(
-      { id: account._id },
-      process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "3600s" }
+      { id: account._id, role: account.role },
+      process.env.ACCESS_TOKEN_SECRET
     );
-
     res.status(201).json({
       success: true,
       message: "User logged in",
       token: accessToken,
     });
-
-    if (account.isAdmin) {
-      res.redirect("/manage/home");
-    } else {
-      res.redirect("/home");
-    }
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -162,11 +161,11 @@ const resetPassword = async (req, res) => {
     const { email } = req.body;
 
     // Check if user exists
-    const user = await Customer.findOne({ email });
+    const user = await Customer.findOne({ email, status: true });
     if (!user) {
-      return res.status(400).json({
+      return res.status(404).json({
         success: false,
-        message: "Email does not existed",
+        message: "Email does not exist",
       });
     }
 
@@ -189,29 +188,27 @@ const resetPassword = async (req, res) => {
     transporter.sendMail(content, async function (err, info) {
       if (err) {
         console.log(err);
-        res.status(422).json({
+        return res.status(422).json({
           success: false,
           message: "There is an error occurred when sending email",
         });
-        res.redirect("/");
       } else {
         // Change user's password in database
         const hashPassword = await argon2.hash(newPassword);
         const updatePassword = await Customer.findOneAndUpdate(
-          { email },
+          { email, status: true },
           { password: hashPassword },
           { new: true }
         );
         if (!updatePassword) {
-          res.status(400).json({
+          return res.status(400).json({
             success: false,
             message: "Update password failed due to no authorization",
           });
-          return res.redirect("/");
         }
 
         // Return status code
-        res.status(200).json({
+        return res.status(200).json({
           success: true,
           message: "Password reset email sent",
         });
@@ -226,9 +223,38 @@ const resetPassword = async (req, res) => {
   }
 };
 
+const logout = async (req, res) => {
+  try {
+    const { token } = req.body;
+    const account = await Account.findOneAndUpdate(
+      { token },
+      { token: "" },
+      { new: true }
+    );
+    if (!account) {
+      return res.status(401).json({
+        success: false,
+        message: "Logout failed due to no authorization",
+      });
+    }
+    await account.save();
+    return res.status(200).json({
+      success: true,
+      message: "User logout successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
 module.exports = {
-  getAuth,
+  getAuthById,
   register,
   login,
   resetPassword,
+  logout,
 };

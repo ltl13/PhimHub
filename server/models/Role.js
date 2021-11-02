@@ -1,18 +1,19 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const ProductionCompanySchema = new Schema({
-  name: {
+const RoleSchema = new Schema({
+  roleName: {
     type: String,
     required: true,
+    unique: true,
   },
 
-  movies: [
+  funcs: [
     {
       type: Schema.Types.ObjectId,
-      ref: "movies",
+      ref: "funcs",
     },
   ],
 });
 
-module.exports = mongoose.model("production_companies", ProductionCompanySchema);
+module.exports = mongoose.model("roles", RoleSchema);

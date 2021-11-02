@@ -1,20 +1,21 @@
-const CustomerType = require("../models/CustomerType");
-const Customer = require("../models/Customer");
+const SeatType = require("../models/SeatType");
+const Seat = require("../models/Seat");
+const { confirmAccess } = require("../shared/functions");
 
-const getAllCustomerTypes = async (req, res) => {
+const getAllSeatTypes = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     role: req.body.role,
-    func: "getAllCustomerTypes",
+    func: "getAllSeatTypes",
   });
   if (!confirm) return res.redirect("back");
 
   // Passed
   try {
-    const listCustomerTypes = await CustomerType.find();
+    const allSeatTypes = await SeatType.find();
     return res.status(200).json({
       success: true,
-      allCustomerTypes: listCustomerTypes,
+      allSeatTypes,
     });
   } catch (error) {
     console.log(error);
@@ -25,26 +26,25 @@ const getAllCustomerTypes = async (req, res) => {
   }
 };
 
-const getCustomerTypeById = async (req, res) => {
+const getSeatTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     role: req.body.role,
-    func: "getCustomerTypeById",
+    func: "getSeatTypeById",
   });
   if (!confirm) return res.redirect("back");
 
   // Passed
   try {
-    const customerType = await CustomerType.findById(req.params.id);
-    if (!customerType) {
+    const seatType = await SeatType.findById(req.params.id);
+    if (!seatType)
       return res.status(404).json({
         success: false,
-        message: "Customer type not found",
+        message: "Seat type not found",
       });
-    }
     return res.status(200).json({
       success: true,
-      customerType,
+      seatType,
     });
   } catch (error) {
     console.log(error);
@@ -55,11 +55,11 @@ const getCustomerTypeById = async (req, res) => {
   }
 };
 
-const createCustomerType = async (req, res) => {
+const createSeatType = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     role: req.body.role,
-    func: "createCustomerType",
+    func: "createSeatType",
   });
   if (!confirm) return res.redirect("back");
 
@@ -67,67 +67,58 @@ const createCustomerType = async (req, res) => {
   try {
     const { typeName } = req.body;
 
-    // Check if this customer type has existed in the database
-    const customerType = await CustomerType.findOne({ typeName });
-    if (customerType) {
-      return res.status(400).json({
+    // Check if this type has existed
+    let checker = await SeatType.findOne({ typeName });
+    if (checker)
+      return res.status(409).json({
         success: false,
-        message: "This customer type has existed",
+        message: "This type has existed",
       });
-    }
 
-    // Add new customer type
-    const newCustomerType = new CustomerType({
+    // Add new type
+    const newSeatType = new SeatType({
       typeName,
     });
-    await newCustomerType.save();
+    await newSeatType.save();
     return res.status(201).json({
       success: true,
-      message: "New customer type has just been added",
+      message: "New seat type has just been added",
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Internal server error",
     });
   }
 };
 
-const updateCustomerTypeById = async (req, res) => {
-  // Check if user can access this route
-  const confirm = await confirmAccess({
-    role: req.body.role,
-    func: "updateCustomerTypeById",
-  });
-  if (!confirm) return res.redirect("back");
-
-  // Passed
+const updateSeatTypeById = async (req, res) => {
   try {
     const { typeName } = req.body;
 
-    // Check if customer exists in database
-    const customerType = await CustomerType.findById(req.params.id);
-    if (!customerType) {
+    // Check if Seat exists in database
+    const seatType = await SeatType.findById(req.params.id);
+    if (!seatType) {
       return res.status(404).json({
         success: false,
-        message: "Customer type not found",
+        message: "Seat type not found",
       });
     }
 
     // Check if new type name has existed
-    const checker = await CustomerType.findOne({
+    const checker = await SeatType.findOne({
       typeName,
     });
-    if (checker && customerType.typeName != typeName) {
+    if (checker && seatType.typeName != typeName) {
       return res.status(400).json({
         success: false,
-        message: "This customer type has existed",
+        message: "This seat type has existed",
       });
     }
 
     // Update new type name
-    await CustomerType.findByIdAndUpdate(
+    await SeatType.findByIdAndUpdate(
       req.params.id,
       {
         typeName,
@@ -138,7 +129,7 @@ const updateCustomerTypeById = async (req, res) => {
     // Updated successfully
     return res.status(200).json({
       success: true,
-      message: "Customer type has been updated",
+      message: "Seat type has been updated",
     });
   } catch (error) {
     console.log(error);
@@ -149,42 +140,39 @@ const updateCustomerTypeById = async (req, res) => {
   }
 };
 
-const deleteCustomerTypeById = async (req, res) => {
+const deleteSeatTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     role: req.body.role,
-    func: "deleteCustomerTypeById",
+    func: "deleteSeatTypeById",
   });
   if (!confirm) return res.redirect("back");
 
   // Passed
   try {
-    // Check if there are still customers of this type
-    const customerChecker = await Customer.findOne({
-      customerType: req.params.id,
-      status: true,
+    // Check if there are still Seats of this type
+    const seatChecker = await Seat.findOne({
+      seatType: req.params.id,
+      status: { $ne: 0 },
     });
-    if (customerChecker) {
+    if (seatChecker) {
       return res.status(406).json({
         success: false,
-        message:
-          "Can not delete because there are still customers of this type",
+        message: "Can not delete because there are still seats of this type",
       });
     }
 
-    // Delete customer type
-    const deleteCustomerType = await CustomerType.findByIdAndDelete(
-      req.params.id
-    );
-    if (!deleteCustomerType) {
+    // Delete Seat type
+    const deleteSeatType = await SeatType.findByIdAndDelete(req.params.id);
+    if (!deleteSeatType) {
       return res.status(404).json({
         success: false,
-        message: "Customer type not found",
+        message: "Seat type not found",
       });
     }
     return res.status(200).json({
       success: true,
-      message: "Delete customer type successfully",
+      message: "Delete seat type successfully",
     });
   } catch (error) {
     console.log(error);
@@ -196,9 +184,9 @@ const deleteCustomerTypeById = async (req, res) => {
 };
 
 module.exports = {
-  createCustomerType,
-  getCustomerTypeById,
-  getAllCustomerTypes,
-  updateCustomerTypeById,
-  deleteCustomerTypeById,
+  getAllSeatTypes,
+  getSeatTypeById,
+  createSeatType,
+  updateSeatTypeById,
+  deleteSeatTypeById,
 };

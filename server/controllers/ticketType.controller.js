@@ -1,20 +1,21 @@
-const CustomerType = require("../models/CustomerType");
-const Customer = require("../models/Customer");
+const TicketType = require("../models/TicketType");
+const Ticket = require("../models/Ticket");
+const { confirmAccess } = require("../shared/functions");
 
-const getAllCustomerTypes = async (req, res) => {
+const getAllTicketTypes = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     role: req.body.role,
-    func: "getAllCustomerTypes",
+    func: "getAllTicketTypes",
   });
   if (!confirm) return res.redirect("back");
 
   // Passed
   try {
-    const listCustomerTypes = await CustomerType.find();
+    const allTicketTypes = await TicketType.find();
     return res.status(200).json({
       success: true,
-      allCustomerTypes: listCustomerTypes,
+      allTicketTypes,
     });
   } catch (error) {
     console.log(error);
@@ -25,26 +26,25 @@ const getAllCustomerTypes = async (req, res) => {
   }
 };
 
-const getCustomerTypeById = async (req, res) => {
+const getTicketTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     role: req.body.role,
-    func: "getCustomerTypeById",
+    func: "getTicketTypeById",
   });
   if (!confirm) return res.redirect("back");
 
   // Passed
   try {
-    const customerType = await CustomerType.findById(req.params.id);
-    if (!customerType) {
+    const ticketType = await TicketType.findById(req.params.id);
+    if (!ticketType)
       return res.status(404).json({
         success: false,
-        message: "Customer type not found",
+        message: "Ticket type not found",
       });
-    }
     return res.status(200).json({
       success: true,
-      customerType,
+      ticketType,
     });
   } catch (error) {
     console.log(error);
@@ -55,11 +55,11 @@ const getCustomerTypeById = async (req, res) => {
   }
 };
 
-const createCustomerType = async (req, res) => {
+const createTicketType = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     role: req.body.role,
-    func: "createCustomerType",
+    func: "createTicketType",
   });
   if (!confirm) return res.redirect("back");
 
@@ -67,67 +67,58 @@ const createCustomerType = async (req, res) => {
   try {
     const { typeName } = req.body;
 
-    // Check if this customer type has existed in the database
-    const customerType = await CustomerType.findOne({ typeName });
-    if (customerType) {
-      return res.status(400).json({
+    // Check if this type has existed
+    let checker = await TicketType.findOne({ typeName });
+    if (checker)
+      return res.status(409).json({
         success: false,
-        message: "This customer type has existed",
+        message: "This type has existed",
       });
-    }
 
-    // Add new customer type
-    const newCustomerType = new CustomerType({
+    // Add new type
+    const newTicketType = new TicketType({
       typeName,
     });
-    await newCustomerType.save();
+    await newTicketType.save();
     return res.status(201).json({
       success: true,
-      message: "New customer type has just been added",
+      message: "New ticket type was added successfully",
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Internal server error",
     });
   }
 };
 
-const updateCustomerTypeById = async (req, res) => {
-  // Check if user can access this route
-  const confirm = await confirmAccess({
-    role: req.body.role,
-    func: "updateCustomerTypeById",
-  });
-  if (!confirm) return res.redirect("back");
-
-  // Passed
+const updateTicketTypeById = async (req, res) => {
   try {
     const { typeName } = req.body;
 
-    // Check if customer exists in database
-    const customerType = await CustomerType.findById(req.params.id);
-    if (!customerType) {
+    // Check if ticket type exists in database
+    const ticketType = await TicketType.findById(req.params.id);
+    if (!ticketType) {
       return res.status(404).json({
         success: false,
-        message: "Customer type not found",
+        message: "Ticket type not found",
       });
     }
 
     // Check if new type name has existed
-    const checker = await CustomerType.findOne({
+    const checker = await TicketType.findOne({
       typeName,
     });
-    if (checker && customerType.typeName != typeName) {
+    if (checker && ticketType.typeName != typeName) {
       return res.status(400).json({
         success: false,
-        message: "This customer type has existed",
+        message: "This ticket type has existed",
       });
     }
 
     // Update new type name
-    await CustomerType.findByIdAndUpdate(
+    await TicketType.findByIdAndUpdate(
       req.params.id,
       {
         typeName,
@@ -138,7 +129,7 @@ const updateCustomerTypeById = async (req, res) => {
     // Updated successfully
     return res.status(200).json({
       success: true,
-      message: "Customer type has been updated",
+      message: "Ticket type has been updated",
     });
   } catch (error) {
     console.log(error);
@@ -149,42 +140,39 @@ const updateCustomerTypeById = async (req, res) => {
   }
 };
 
-const deleteCustomerTypeById = async (req, res) => {
+const deleteTicketTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     role: req.body.role,
-    func: "deleteCustomerTypeById",
+    func: "deleteTicketTypeById",
   });
   if (!confirm) return res.redirect("back");
 
   // Passed
   try {
-    // Check if there are still customers of this type
-    const customerChecker = await Customer.findOne({
-      customerType: req.params.id,
-      status: true,
+    // Check if there are still Tickets of this type
+    const ticketChecker = await Ticket.findOne({
+      ticketType: req.params.id,
+      dateTimeStart: { $gte: Date.now() },
     });
-    if (customerChecker) {
+    if (ticketChecker) {
       return res.status(406).json({
         success: false,
-        message:
-          "Can not delete because there are still customers of this type",
+        message: "Can not delete because there are still tickets of this type",
       });
     }
 
-    // Delete customer type
-    const deleteCustomerType = await CustomerType.findByIdAndDelete(
-      req.params.id
-    );
-    if (!deleteCustomerType) {
+    // Delete Ticket type
+    const deleteTicketType = await TicketType.findByIdAndDelete(req.params.id);
+    if (!deleteTicketType) {
       return res.status(404).json({
         success: false,
-        message: "Customer type not found",
+        message: "Ticket type not found",
       });
     }
     return res.status(200).json({
       success: true,
-      message: "Delete customer type successfully",
+      message: "Delete ticket type successfully",
     });
   } catch (error) {
     console.log(error);
@@ -196,9 +184,9 @@ const deleteCustomerTypeById = async (req, res) => {
 };
 
 module.exports = {
-  createCustomerType,
-  getCustomerTypeById,
-  getAllCustomerTypes,
-  updateCustomerTypeById,
-  deleteCustomerTypeById,
+  getAllTicketTypes,
+  getTicketTypeById,
+  createTicketType,
+  updateTicketTypeById,
+  deleteTicketTypeById,
 };
