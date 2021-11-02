@@ -74,14 +74,7 @@ const getPaymentById = async (req, res) => {
   }
 };
 
-const createPayment = async (req, res) => {
-  // Check if user can access this route
-  const confirm = await confirmAccess({
-    role: req.body.role,
-    func: "createPayment",
-  });
-  if (!confirm) return res.redirect("back");
-
+const makePayment = async (req, res) => {
   // Passed
   try {
     const {
@@ -99,6 +92,7 @@ const createPayment = async (req, res) => {
     // Check if special offer is valid
     const applySpecialOffer = await SpecialOffer.findOne({
       code: specialOffer,
+      status: true,
     });
     if (!applySpecialOffer)
       return res.status(406).json({
@@ -107,14 +101,14 @@ const createPayment = async (req, res) => {
         message: "Invalid special offer code",
       });
 
-    // Create a new payment
+    // Create new payment
     const newPayment = new Payment({
       specialOffer: applySpecialOffer,
       staff,
       value,
     });
 
-    // Create a new ticket
+    // Create new ticket
     const newTicket = await createTicket({
       payment: newPayment._id,
       price,
