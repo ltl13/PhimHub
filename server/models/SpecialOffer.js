@@ -5,7 +5,6 @@ const SpecialOfferSchema = new Schema({
   code: {
     type: String,
     required: true,
-    unique: true,
   },
 
   expire: {
@@ -21,6 +20,7 @@ const SpecialOfferSchema = new Schema({
   status: {
     type: Boolean,
     required: true,
+    default: true,
   },
 
   specialOfferType: {
