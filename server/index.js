@@ -14,6 +14,7 @@ const roomTypeRoute = require("./routes/roomType.route");
 const ticketTypeRoute = require("./routes/ticketType.route");
 const ticketRoute = require("./routes/ticket.route");
 const specialOfferTypeRoute = require("./routes/specialOfferType.route");
+const specialOfferRoute = require("./routes/specialOffer.route");
 
 const app = express();
 app.use(express.json());
@@ -42,6 +43,7 @@ app.use("/api/room-type", roomTypeRoute);
 app.use("/api/ticket-type", ticketTypeRoute);
 app.use("/api/ticket", ticketRoute);
 app.use("/api/special-offer-type", specialOfferTypeRoute);
+app.use("/api/special-offer", specialOfferRoute);
 
 // Lạy chúa, đừng thằng nào đụng vào những gì ở dưới, tao đang test thôi.
 // Nhắc thằng Dàn luôn là ĐỪNG CODE TRÙNG FILE

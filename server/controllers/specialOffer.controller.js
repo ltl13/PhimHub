@@ -105,7 +105,7 @@ const updateSpecialOfferById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     role: req.body.role,
-    func: "getAllPayments",
+    func: "updateSpecialOfferById",
   });
   if (!confirm) return res.redirect("back");
 
@@ -114,7 +114,7 @@ const updateSpecialOfferById = async (req, res) => {
     const { code, expire, value, specialOfferType } = req.body;
 
     // Check if this special offer exists
-    const oldSpecialOffer = await SpecialOffer.findById(req.params.id);
+    const oldSpecialOffer = await SpecialOffer.findOne(req.params.id);
     if (!oldSpecialOffer)
       return res.status(404).json({
         success: false,
@@ -131,12 +131,16 @@ const updateSpecialOfferById = async (req, res) => {
     }
 
     // Update special offer
-    const updateSpecialOffer = await SpecialOffer.findByIdAndUpdate({
-      code,
-      expire: new Date(expire),
-      value,
-      specialOfferType,
-    });
+    const updateSpecialOffer = await SpecialOffer.findByIdAndUpdate(
+      req.params.id,
+      {
+        code,
+        expire: new Date(expire),
+        value,
+        specialOfferType,
+      },
+      { new: true }
+    );
     await updateSpecialOffer.save();
 
     return res.status(201).json({
@@ -153,16 +157,35 @@ const updateSpecialOfferById = async (req, res) => {
   }
 };
 
-const getAllSpecialOffer = async (req, res) => {
+const deleteSpecialOfferById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     role: req.body.role,
-    func: "getAllPayments",
+    func: "deleteSpecialOfferById",
   });
   if (!confirm) return res.redirect("back");
 
   // Passed
   try {
+    // Check if this special offer exists
+    let checker = await SpecialOffer.findById(req.params.id);
+    if (!checker)
+      return res.status(404).json({
+        success: false,
+        message: "Special offer not found",
+      });
+
+    // Delete special offer
+    await SpecialOffer.findByIdAndUpdate(
+      req.params.id,
+      { status: false },
+      { new: true }
+    ).then(async (result) => await result.save());
+
+    return res.status(204).json({
+      success: true,
+      message: "Special offer was deleted successfully",
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -170,4 +193,12 @@ const getAllSpecialOffer = async (req, res) => {
       message: "Internal server error",
     });
   }
+};
+
+module.exports = {
+  getAllSpecialOffers,
+  getSpecialOfferById,
+  createSpecialOffer,
+  updateSpecialOfferById,
+  deleteSpecialOfferById,
 };
