@@ -81,26 +81,16 @@ const getTicketById = async (req, res) => {
   }
 };
 
-const createTicket = async (req, res) => {
-  // Check if user can access this route
-  const confirm = await confirmAccess({
-    role: req.body.role,
-    func: "createTicket",
-  });
-  if (!confirm) return res.redirect("back");
-
-  // Passed
+const createTicket = async ({
+  price,
+  dateTimeStart,
+  movie,
+  ticketType,
+  payment,
+  seats,
+  customer,
+}) => {
   try {
-    const {
-      price,
-      dateTimeStart,
-      movie,
-      ticketType,
-      payment,
-      seats,
-      customer,
-    } = req.body;
-
     // Create a new ticket
     const newTicket = new Ticket({
       price,
@@ -111,18 +101,18 @@ const createTicket = async (req, res) => {
       seats,
       customer,
     });
+    await newTicket.save();
 
-    return res.status(201).json({
+    return {
       success: true,
-      message: "New ticket was created successfully",
-      newTicket,
-    });
+      ticket: newTicket,
+    };
   } catch (error) {
     console.log(error);
-    return res.status(500).json({
+    return {
       success: false,
-      message: "Internal server error",
-    });
+      ticket: null,
+    };
   }
 };
 
