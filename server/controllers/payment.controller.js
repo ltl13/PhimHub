@@ -1,5 +1,6 @@
-const Payment = require("../models/Payment");
 const SpecialOffer = require("../models/SpecialOffer");
+const Payment = require("../models/Payment");
+const Ticket = require("../models/Ticket");
 const { createTicket } = require("./ticket.controller");
 const { confirmAccess } = require("../shared/functions");
 
@@ -74,7 +75,7 @@ const getPaymentById = async (req, res) => {
   }
 };
 
-const makePayment = async (req, res) => {
+const createPayment = async (req, res) => {
   // Passed
   try {
     const {
@@ -142,16 +143,45 @@ const makePayment = async (req, res) => {
   }
 };
 
-const updatePaymentById = async (req, res) => {
-  // Check if user can access this route
-  const confirm = await confirmAccess({
-    role: req.body.role,
-    func: "updatePaymentById",
-  });
-  if (!confirm) return res.redirect("back");
-
-  // Passed
+const refundPaymentByTicketId = async (req, res) => {
   try {
+    // Check if the ticket exists
+    const ticket = Ticket.findOne({ _id: req.params.id, status: true });
+    if (!ticket)
+      return res.status(404).json({
+        success: false,
+        message: "Ticket not found",
+      });
+
+    // Get payment's information
+    const payment = await Payment.findOne({ ticket: ticket._id });
+
+    // If ticket is found, start to make a refund
+    const refund = new Payment({
+      ticket: payment.ticket,
+      value: -payment.value * 0.7,
+    });
+    refund.save();
+
+    // Update ticket's status to false
+    await Ticket.findOneAndUpdate(
+      { _id: ticket._id, status: true },
+      { status: false },
+      { new: true }
+    ).then((result) => result.save());
+
+    // Update special offer's status to true, means that it haven't been used
+    await SpecialOffer.findOne(
+      { _id: ticket.specialOffer, status: false },
+      { status: true },
+      { new: true }
+    ).then((result) => result.save());
+
+    return res.status(201).json({
+      success: true,
+      message: "Refund was made successfully",
+      refund,
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -161,21 +191,9 @@ const updatePaymentById = async (req, res) => {
   }
 };
 
-const deletePaymentById = async (req, res) => {
-  // Check if user can access this route
-  const confirm = await confirmAccess({
-    role: req.body.role,
-    func: "deletePaymentById",
-  });
-  if (!confirm) return res.redirect("back");
-
-  // Passed
-  try {
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
-  }
+module.exports = {
+  getAllPayments,
+  getPaymentById,
+  createPayment,
+  refundPaymentByTicketId,
 };

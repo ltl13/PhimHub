@@ -12,7 +12,7 @@ const getAllTickets = async (req, res) => {
 
   // Passed
   try {
-    const allTickets = await Ticket.find({}, { payment: 0 })
+    const allTickets = await Ticket.find()
       .populate({
         path: "ticketType",
         select: "typeName",
