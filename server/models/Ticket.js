@@ -7,6 +7,12 @@ const TicketSchema = new Schema({
     required: true,
   },
 
+  status: {
+    type: Boolean,
+    required: true,
+    default: true,
+  },
+
   dateTimeStart: {
     type: Date,
     required: true,
