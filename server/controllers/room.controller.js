@@ -1,5 +1,5 @@
 const argon2 = require("argon2");
-const { confirmAccess } = require("../shared/functions");
+//const { confirmAccess } = require("../shared/functions");
 
 const Room = require("../models/Room");
 
@@ -29,10 +29,10 @@ const getAllRooms = async (req, res) => {
 }
 
 const getRoomById = async (req, res) => {
-    const confirm = await confirmAccess({
-        role: req.body.role,
-        func: "getRoomById",
-    });
+    // const confirm = await confirmAccess({
+    //     role: req.body.role,
+    //     func: "getRoomById",
+    // });
 
     try {
         const room = await Room.findById(req.params.id).populate({
@@ -62,14 +62,15 @@ const getRoomById = async (req, res) => {
 
 const createRoom = async (req, res) => {
     // Check if user can access this route
-    const confirm = await confirmAccess({
-        role: req.body.role,
-        func: "createRoom",
-    });
-    if (!confirm) return res.redirect("back");
+    // const confirm = await confirmAccess({
+    //     role: req.body.role,
+    //     func: "createRoom",
+    // });
+    // if (!confirm) return res.redirect("back");
 
     try {
         const {
+            name,
             status,
             numberSeat,
             capacity,
@@ -77,6 +78,7 @@ const createRoom = async (req, res) => {
         } = req.body;
 
         const newRoom = new Room({
+            name,
             status,
             numberSeat,
             capacity,
@@ -99,14 +101,15 @@ const createRoom = async (req, res) => {
 
 const updateRoomById = async (req, res) => {
     // Check if user can access this route
-    const confirm = await confirmAccess({
-        role: req.body.role,
-        func: "updateRoomById",
-    });
-    if (!confirm) return res.redirect("back");
+    // const confirm = await confirmAccess({
+    //     role: req.body.role,
+    //     func: "updateRoomById",
+    // });
+    // if (!confirm) return res.redirect("back");
 
     try {
         const {
+            name,
             status,
             numberSeat,
             capacity,
@@ -125,8 +128,9 @@ const updateRoomById = async (req, res) => {
         }
 
         await Room.findOneAndUpdate(
-            { _id: res.params.id},
+            { _id: req.params.id},
             {
+                name,
                 status,
                 numberSeat,
                 capacity,
@@ -150,11 +154,11 @@ const updateRoomById = async (req, res) => {
 
 const deleteRoomById = async (req, res) => {
     // Check if user can access this route
-    const confirm = await confirmAccess({
-        role: req.body.role,
-        func: "getAllCustomers",
-    });
-    if (!confirm) return res.redirect("back");
+    // const confirm = await confirmAccess({
+    //     role: req.body.role,
+    //     func: "getAllCustomers",
+    // });
+    // if (!confirm) return res.redirect("back");
 
     try {
         const delRoom = await Room.findByIdAndUpdate(

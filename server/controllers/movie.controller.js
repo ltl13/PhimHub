@@ -112,7 +112,7 @@ const updateMovieById = async (req, res) => {
     // Check if user can access this route
     // const confirm = await confirmAccess({
     //     role: req.body.role,
-    //     func: "getAllCustomers",
+    //     func: "updateMovieById",
     // });
     // if (!confirm) return res.redirect("back");
 
@@ -171,7 +171,7 @@ const deleteMovieById = async (req, res) => {
     // Check if user can access this route
     // const confirm = await confirmAccess({
     //     role: req.body.role,
-    //     func: "getAllCustomers",
+    //     func: "deleteMovieById",
     // });
     // if (!confirm) return res.redirect("back");
 

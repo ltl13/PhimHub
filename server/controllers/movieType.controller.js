@@ -51,7 +51,7 @@ const createMovieType = async (req, res) => {
             });
         }
 
-        const newMovieType = new MovieType({ typeName});
+        const newMovieType = new MovieType({ typeName });
         await newMovieType.save();
         return res.status(201).json({
             success: true,
@@ -68,10 +68,10 @@ const createMovieType = async (req, res) => {
 
 const updateMovieTypeById = async (req, res) => {
     try {
-        const {typeName} = res.body;
+        const {typeName} = req.body;
 
         const movieType = await MovieType.findById(req.params.id)
-        if (!moviewType) {
+        if (!movieType) {
             return res.status(404).json({
                 success: false,
                 message: "Movie type not found",
@@ -107,18 +107,18 @@ const updateMovieTypeById = async (req, res) => {
 }
 
 const deleteMovieTypeById = async (req, res) => {
-    const confirm = await confirmAccess({
-        role: req.body.role,
-        func: "deleteMovieTypebyId"
-    })
-    if (!confirm) return res.rediect("back");
+    // const confirm = await confirmAccess({
+    //     role: req.body.role,
+    //     func: "deleteMovieTypebyId"
+    // })
+    // if (!confirm) return res.rediect("back");
 
     try {
         const movieChecker = await Movie.findOne({
             movieType: req.params.id,
             status: true
         })
-        if (movieChecker) {
+        if (movieChecker == null) {
             return res.status(406).json({
                 success: false,
                 message: "Can not delete because there are still movies of this type"
