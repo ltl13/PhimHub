@@ -2,6 +2,7 @@ const argon2 = require("argon2");
 
 const Account = require("../models/Account");
 const Customer = require("../models/Customer");
+const Role = require("../models/Role");
 const { confirmAccess } = require("../shared/functions");
 
 const getAllCustomers = async (req, res) => {
@@ -251,7 +252,7 @@ const deleteCustomerById = async (req, res) => {
     }
     deleteCustomer.save();
 
-    return res.status(204).json({
+    return res.status(200).json({
       success: true,
       message: "Delete customer successfully",
     });
