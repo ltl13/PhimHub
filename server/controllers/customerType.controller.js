@@ -1,5 +1,6 @@
 const CustomerType = require("../models/CustomerType");
 const Customer = require("../models/Customer");
+const { confirmAccess } = require("../shared/functions");
 
 const getAllCustomerTypes = async (req, res) => {
   // Check if user can access this route
@@ -11,7 +12,7 @@ const getAllCustomerTypes = async (req, res) => {
 
   // Passed
   try {
-    const listCustomerTypes = await CustomerType.find();
+    const listCustomerTypes = await CustomerType.find({});
     return res.status(200).json({
       success: true,
       allCustomerTypes: listCustomerTypes,

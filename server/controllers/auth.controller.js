@@ -5,7 +5,6 @@ const nodemailer = require("nodemailer");
 const Account = require("../models/Account");
 const Customer = require("../models/Customer");
 const Role = require("../models/Role");
-const { confirmAccess } = require("../shared/functions");
 
 const getAuthById = async (req, res) => {
   try {
