@@ -25,7 +25,11 @@ const getAllRoles = async (req, res) => {
 
 const getRoleById = async (req, res) => {
   try {
-    const role = await Role.findById(req.params.id);
+    const role = await Role.findById(req.params.id).populate({
+      path: "funcs",
+      select: "funcName",
+    });
+
     if (!role) {
       return res.status(404).json({
         success: false,
