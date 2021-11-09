@@ -5,18 +5,12 @@ const nodemailer = require("nodemailer");
 const Account = require("../models/Account");
 const Customer = require("../models/Customer");
 const Role = require("../models/Role");
-const { confirmAccess } = require("../shared/functions");
 
 const getAuthById = async (req, res) => {
   try {
-    // Check if user can access this route
-    const confirm = await confirmAccess({
-      role: req.body.role,
-      func: "getAuthById",
-    });
-    if (!confirm) return res.redirect("back");
-
-    const account = await Account.findById(req.params.id).select("-password");
+    const account = await Account.findById(req.params.id)
+      .populate({ path: "role", select: "roleName" })
+      .select("-password");
     if (!account) {
       return res.status(404).json({
         success: false,

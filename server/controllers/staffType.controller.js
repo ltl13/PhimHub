@@ -1,6 +1,6 @@
+const { confirmAccess } = require("../shared/functions");
 const StaffType = require("../models/StaffType");
 const Staff = require("../models/Staff");
-const { confirmAccess } = require("../shared/functions");
 
 const getAllStaffTypes = async (req, res) => {
   // Check if user can access this route

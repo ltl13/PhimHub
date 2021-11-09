@@ -16,7 +16,7 @@ const getAllStaffs = async (req, res) => {
   try {
     const allStaffs = await Staff.find({ status: true }).populate({
       path: "staffType",
-      select: "typeName",
+      select: "position",
     });
     return res.status(200).json({
       success: true,
@@ -43,7 +43,7 @@ const getStaffById = async (req, res) => {
   try {
     const staff = await Staff.findById(req.params.id).populate({
       path: "staffType",
-      select: "typeName",
+      select: "position",
     });
     if (!staff)
       return res.status(404).json({
@@ -124,7 +124,7 @@ const createStaff = async (req, res) => {
     });
 
     // Create new staff
-    const newStaff = new Customer({
+    const newStaff = new Staff({
       staffType,
       phoneNumber,
       email,
@@ -275,7 +275,7 @@ const deleteStaffById = async (req, res) => {
     }
     deleteStaff.save();
 
-    return res.status(204).json({
+    return res.status(200).json({
       success: true,
       message: "Delete staff successfully",
     });

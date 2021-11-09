@@ -18,10 +18,6 @@ const AccountSchema = new Schema({
     ref: "roles",
   },
 
-  token: {
-    type: String,
-  },
-
   createAt: {
     type: Date,
     default: Date.now(),
