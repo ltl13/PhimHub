@@ -100,7 +100,7 @@ const updateRoleById = async (req, res) => {
     const { roleName, funcs } = req.body;
 
     // Check if role exists
-    let checker = await Role.findById(req.params.id);
+    const checker = await Role.findById(req.params.id);
     if (!checker)
       return res.status(406).json({
         success: false,
@@ -110,11 +110,15 @@ const updateRoleById = async (req, res) => {
     // Delete all connections of this role with funcs before updating
     if (checker.funcs) {
       checker.funcs.forEach(async (func) => {
-        const checkFunc = await Func.findById(func);
-        if (checkFunc) {
-          await Func.findByIdAndUpdate(func, {
-            roles: checkFunc.roles.filter((role) => role !== checker._id),
-          }).then(async (result) => await result.save());
+        const findFunc = await Func.findById(func);
+        if (findFunc) {
+          const listRoleUpdate = findFunc.roles;
+          listRoleUpdate.splice(listRoleUpdate.indexOf(checker._id));
+          await Func.findByIdAndUpdate(
+            func,
+            { roles: listRoleUpdate },
+            { new: true }
+          ).then(async (result) => await result.save());
         }
       });
     }
@@ -154,7 +158,7 @@ const updateRoleById = async (req, res) => {
 const deleteRoleById = async (req, res) => {
   try {
     // Check if there are still accounts of this role
-    let checker = await Account.findOne({ role: req.params.id });
+    const checker = await Account.findOne({ role: req.params.id });
     if (checker) {
       return res.status(409).json({
         success: false,
@@ -163,8 +167,8 @@ const deleteRoleById = async (req, res) => {
     }
 
     // Delete role
-    checker = await Role.findByIdAndDelete(req.params.id);
-    if (!checker) {
+    const deleteRole = await Role.findByIdAndDelete(req.params.id);
+    if (!deleteRole) {
       return res.status(406).json({
         success: false,
         message: "Role not found",
@@ -172,17 +176,18 @@ const deleteRoleById = async (req, res) => {
     }
 
     // Delete role's id in funcs
-    if (checker.funcs) {
-      checker.funcs.forEach(async (func) => {
+    if (deleteRole.funcs) {
+      deleteRole.funcs.forEach(async (func) => {
         const findFunc = await Func.findById(func);
-        const listRoleUpdate = findFunc.roles.filter(
-          (role) => role !== checker._id
-        );
-        await Func.findByIdAndUpdate(
-          func,
-          { roles: listRoleUpdate },
-          { new: true }
-        ).then(async (result) => await result.save());
+        if (findFunc) {
+          const listRoleUpdate = findFunc.roles;
+          listRoleUpdate.splice(listRoleUpdate.indexOf(deleteRole._id));
+          await Func.findByIdAndUpdate(
+            func,
+            { roles: listRoleUpdate },
+            { new: true }
+          ).then(async (result) => await result.save());
+        }
       });
     }
 
