@@ -51,3 +51,52 @@ const getSeatById = async (req, res) => {
     });
   }
 };
+
+const createSeat = async (req, res) => {
+  try {
+    const {
+      code,
+
+      status,
+
+      seatType,
+
+      room,
+    } = req.body;
+
+    // Check informantion
+    let checker = await Seat.findOne({
+      code,
+      room,
+      status: { $ne: 0 },
+    });
+    if (checker)
+      return res.status(400).json({
+        success: false,
+        invalid: "code",
+        message: "Seats code in one room can not be duplicated",
+      });
+
+    // Create new seat
+    const newSeat = new Seat({
+      code,
+      status,
+      seatType,
+      room,
+      tickets: [],
+    });
+    newSeat.save();
+
+    return res.status(201).json({
+      success: true,
+      message: "New seat has been created successfully",
+      newSeat,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
