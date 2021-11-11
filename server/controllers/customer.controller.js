@@ -50,7 +50,7 @@ const getCustomerById = async (req, res) => {
       status: true,
     }).populate("customerType", "typeName");
     if (!customer) {
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Customer not found",
       });
@@ -168,7 +168,7 @@ const updateCustomerById = async (req, res) => {
       status: true,
     });
     if (!customer)
-      return res.status(404).json({
+      return res.status(406).json({
         status: false,
         message: "Customer not found",
       });
@@ -235,7 +235,7 @@ const deleteCustomerById = async (req, res) => {
       { new: true }
     );
     if (!deleteCustomer) {
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Customer not found",
       });
@@ -244,7 +244,7 @@ const deleteCustomerById = async (req, res) => {
     // Delete account goes with that customer
     const checker = await Account.findByIdAndDelete(deleteCustomer.account);
     if (!checker) {
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message:
           "Found the customer but not found the account, maybe this customer was deleted",

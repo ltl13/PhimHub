@@ -21,7 +21,7 @@ const getMovieTypeById = async(req, res) => {
     try {
         const movieType = await MovieType.findById(req.params.id);
         if (!movieType) {
-            return res.status(404).json({
+            return res.status(406).json({
                 success: false,
                 message: "Movie type not found"
             });
@@ -72,10 +72,10 @@ const updateMovieTypeById = async (req, res) => {
 
         const movieType = await MovieType.findById(req.params.id)
         if (!movieType) {
-            return res.status(404).json({
+            return res.status(406).json({
                 success: false,
                 message: "Movie type not found",
-              }); 
+              });
         }
 
         const movieChecker  = await MovieType.findOne({typeName});
@@ -88,7 +88,7 @@ const updateMovieTypeById = async (req, res) => {
         }
 
         await MovieType.findByIdAndUpdate(
-            req.params.id, 
+            req.params.id,
             { typeName },
             { new: true }
         ).then(async (result) => await result.save());
@@ -127,7 +127,7 @@ const deleteMovieTypeById = async (req, res) => {
 
         const delMovieType = await MovieType.findByIdAndDelete(req.params.id);
         if  (!delMovieType) {
-            return res.status(404).json({
+            return res.status(406).json({
                 success: false,
                 message: "Movie type not found"
             })
@@ -137,7 +137,7 @@ const deleteMovieTypeById = async (req, res) => {
             message: "Delete movie type successfully"
         })
     } catch (error) {
-        
+
     }
 }
 

@@ -38,7 +38,7 @@ const getTicketTypeById = async (req, res) => {
   try {
     const ticketType = await TicketType.findById(req.params.id);
     if (!ticketType)
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Ticket type not found",
       });
@@ -100,7 +100,7 @@ const updateTicketTypeById = async (req, res) => {
     // Check if ticket type exists in database
     const ticketType = await TicketType.findById(req.params.id);
     if (!ticketType) {
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Ticket type not found",
       });
@@ -165,7 +165,7 @@ const deleteTicketTypeById = async (req, res) => {
     // Delete Ticket type
     const deleteTicketType = await TicketType.findByIdAndDelete(req.params.id);
     if (!deleteTicketType) {
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Ticket type not found",
       });

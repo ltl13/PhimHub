@@ -41,7 +41,7 @@ const getRoomById = async (req, res) => {
         })
 
         if (!room) {
-            return res.status(404).json({
+            return res.status(406).json({
                 success: false,
                 message: "Room not found"
             })
@@ -121,7 +121,7 @@ const updateRoomById = async (req, res) => {
         })
 
         if (!room) {
-            return res.status(404).json({
+            return res.status(406).json({
                 status: false,
                 message: "Room not found"
             })
@@ -167,13 +167,13 @@ const deleteRoomById = async (req, res) => {
             { new: true }
         )
         if (!delRoom) {
-            return res.status(404).json({
+            return res.status(406).json({
                 success: false,
                 message: "Room not found"
             })
         }
         delRoom.save();
-        return res.status(204).json({
+        return res.status(200).json({
             success: true,
             message: "Delete room successfully"
         })

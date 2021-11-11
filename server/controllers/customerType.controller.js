@@ -38,7 +38,7 @@ const getCustomerTypeById = async (req, res) => {
   try {
     const customerType = await CustomerType.findById(req.params.id);
     if (!customerType) {
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Customer type not found",
       });
@@ -110,7 +110,7 @@ const updateCustomerTypeById = async (req, res) => {
     // Check if customer exists in database
     const customerType = await CustomerType.findById(req.params.id);
     if (!customerType) {
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Customer type not found",
       });
@@ -178,7 +178,7 @@ const deleteCustomerTypeById = async (req, res) => {
       req.params.id
     );
     if (!deleteCustomerType) {
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Customer type not found",
       });
