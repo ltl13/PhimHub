@@ -10,6 +10,7 @@ const roleRoute = require("./routes/role.route");
 const staffTypeRoute = require("./routes/staffType.route");
 const staffRoute = require("./routes/staff.route");
 const seatTypeRoute = require("./routes/seatType.route");
+const seatRoute = require("./routes/seat.route");
 const roomTypeRoute = require("./routes/roomType.route");
 const ticketTypeRoute = require("./routes/ticketType.route");
 const ticketRoute = require("./routes/ticket.route");
@@ -18,7 +19,6 @@ const movieTypeRoute = require("./routes/movieType.route");
 const movieRoute = require("./routes/movie.route");
 const roomRoute = require("./routes/room.route");
 const movieCalendar = require("./routes/movieCalendar.route");
-
 
 const app = express();
 app.use(express.json());
@@ -43,6 +43,7 @@ app.use("/api/role", roleRoute);
 app.use("/api/staff-type", staffTypeRoute);
 app.use("/api/staff", staffRoute);
 app.use("/api/seat-type", seatTypeRoute);
+app.use("/api/seat", seatRoute);
 app.use("/api/room-type", roomTypeRoute);
 app.use("/api/ticket-type", ticketTypeRoute);
 app.use("/api/ticket", ticketRoute);

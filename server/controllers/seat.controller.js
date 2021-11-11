@@ -79,7 +79,7 @@ const createSeat = async (req, res) => {
       room,
       tickets: [],
     });
-    newSeat.save();
+    await newSeat.save();
 
     return res.status(201).json({
       success: true,
@@ -135,6 +135,7 @@ const updateSeatById = async (req, res) => {
       },
       { new: true }
     );
+    await updateSeat.save();
 
     return res.status(201).json({
       success: true,
@@ -148,4 +149,51 @@ const updateSeatById = async (req, res) => {
       message: "Internal server error",
     });
   }
+};
+
+const deleteSeatById = async (req, res) => {
+  try {
+    let checker = await Seat.findOne({
+      _id: req.params.id,
+      status: { $ne: 0 },
+    });
+    if (!checker)
+      return res.status(406).json({
+        success: false,
+        message: "Seat not found",
+      });
+
+    if (checker.tickets != null)
+      return res.status(405).json({
+        success: false,
+        message: "Can not delete because this seat is being booked",
+      });
+
+    await Seat.findByIdAndUpdate(
+      req.params.id,
+      { status: 0 },
+      { new: true }
+    ).then(async (result) => {
+      await result.save();
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Seat has been deleted successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+module.exports = {
+  getAllSeats,
+  getSeatById,
+  createSeat,
+  updateSeatById,
+  deleteSeatById,
 };
