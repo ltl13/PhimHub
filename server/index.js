@@ -13,9 +13,7 @@ const seatTypeRoute = require("./routes/seatType.route");
 const roomTypeRoute = require("./routes/roomType.route");
 const ticketTypeRoute = require("./routes/ticketType.route");
 const ticketRoute = require("./routes/ticket.route");
-const specialOfferTypeRoute = require("./routes/specialOfferType.route");
 const specialOfferRoute = require("./routes/specialOffer.route");
-
 const movieTypeRoute = require("./routes/movieType.route");
 const movieRoute = require("./routes/movie.route");
 const roomRoute = require("./routes/room.route");
@@ -48,9 +46,7 @@ app.use("/api/seat-type", seatTypeRoute);
 app.use("/api/room-type", roomTypeRoute);
 app.use("/api/ticket-type", ticketTypeRoute);
 app.use("/api/ticket", ticketRoute);
-app.use("/api/special-offer-type", specialOfferTypeRoute);
 app.use("/api/special-offer", specialOfferRoute);
-
 app.use("/api/movie-type", movieTypeRoute);
 app.use("/api/movie", movieRoute);
 app.use("/api/room", roomRoute);

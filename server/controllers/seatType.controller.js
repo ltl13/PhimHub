@@ -38,7 +38,7 @@ const getSeatTypeById = async (req, res) => {
   try {
     const seatType = await SeatType.findById(req.params.id);
     if (!seatType)
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Seat type not found",
       });
@@ -100,7 +100,7 @@ const updateSeatTypeById = async (req, res) => {
     // Check if Seat exists in database
     const seatType = await SeatType.findById(req.params.id);
     if (!seatType) {
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Seat type not found",
       });
@@ -165,7 +165,7 @@ const deleteSeatTypeById = async (req, res) => {
     // Delete Seat type
     const deleteSeatType = await SeatType.findByIdAndDelete(req.params.id);
     if (!deleteSeatType) {
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Seat type not found",
       });

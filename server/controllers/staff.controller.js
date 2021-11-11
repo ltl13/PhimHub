@@ -46,7 +46,7 @@ const getStaffById = async (req, res) => {
       select: "position",
     });
     if (!staff)
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Staff not found",
       });
@@ -180,7 +180,7 @@ const updateStaffById = async (req, res) => {
       status: true,
     });
     if (!staff)
-      return res.status(404).json({
+      return res.status(406).json({
         status: false,
         message: "Staff not found",
       });
@@ -258,7 +258,7 @@ const deleteStaffById = async (req, res) => {
       { new: true }
     );
     if (!deleteStaff) {
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Staff not found",
       });
@@ -267,7 +267,7 @@ const deleteStaffById = async (req, res) => {
     // Delete account goes with that customer
     let checker = await Account.findByIdAndDelete(deleteStaff.account);
     if (!checker) {
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message:
           "Found the staff but not found the account, maybe this staff was deleted",

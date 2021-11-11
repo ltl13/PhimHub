@@ -38,7 +38,7 @@ const getRoomTypeById = async (req, res) => {
   try {
     const roomType = await RoomType.findById(req.params.id);
     if (!roomType)
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Room type not found",
       });
@@ -100,7 +100,7 @@ const updateRoomTypeById = async (req, res) => {
     // Check if Room exists in database
     const roomType = await RoomType.findById(req.params.id);
     if (!roomType) {
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Room type not found",
       });
@@ -165,7 +165,7 @@ const deleteRoomTypeById = async (req, res) => {
     // Delete Room type
     const deleteRoomType = await RoomType.findByIdAndDelete(req.params.id);
     if (!deleteRoomType) {
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Room type not found",
       });

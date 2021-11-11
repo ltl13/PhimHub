@@ -12,7 +12,7 @@ const getAuthById = async (req, res) => {
       .populate({ path: "role", select: "roleName" })
       .select("-password");
     if (!account) {
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "User not found",
       });
@@ -116,7 +116,7 @@ const login = async (req, res) => {
     // Check for existing account
     const account = await Account.findOne({ username });
     if (!account) {
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Incorrect phone number or username",
       });
@@ -157,7 +157,7 @@ const resetPassword = async (req, res) => {
     // Check if user exists
     const user = await Customer.findOne({ email, status: true });
     if (!user) {
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Email does not exist",
       });

@@ -31,7 +31,7 @@ const getRoleById = async (req, res) => {
     });
 
     if (!role) {
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Role not found",
       });
@@ -102,7 +102,7 @@ const updateRoleById = async (req, res) => {
     // Check if role exists
     let checker = await Role.findById(req.params.id);
     if (!checker)
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Role not found",
       });
@@ -165,7 +165,7 @@ const deleteRoleById = async (req, res) => {
     // Delete role
     checker = await Role.findByIdAndDelete(req.params.id);
     if (!checker) {
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Role not found",
       });

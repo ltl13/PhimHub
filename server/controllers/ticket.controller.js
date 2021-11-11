@@ -64,7 +64,7 @@ const getTicketById = async (req, res) => {
       })
       .select("-seats");
     if (!ticket)
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Ticket not found",
       });

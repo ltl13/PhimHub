@@ -8,7 +8,7 @@ const createFunc = async (req, res) => {
     // Check if funcName has already existed in database
     let checker = await Func.findOne({ funcName });
     if (checker)
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "This func has already existed",
       });

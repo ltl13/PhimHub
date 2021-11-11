@@ -58,7 +58,7 @@ const getPaymentById = async (req, res) => {
       });
 
     if (!payment)
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Payment not found",
       });
@@ -148,7 +148,7 @@ const refundPaymentByTicketId = async (req, res) => {
     // Check if the ticket exists
     const ticket = Ticket.findOne({ _id: req.params.id, status: true });
     if (!ticket)
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Ticket not found",
       });

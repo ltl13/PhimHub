@@ -11,10 +11,7 @@ const getAllSpecialOffers = async (req, res) => {
 
   // Passed
   try {
-    const allSpecialOffers = await SpecialOffer.find().populate({
-      path: "specialOfferType",
-      select: "typeName",
-    });
+    const allSpecialOffers = await SpecialOffer.find();
     return res.status(200).json({
       success: true,
       allSpecialOffers,
@@ -67,7 +64,7 @@ const createSpecialOffer = async (req, res) => {
 
   // Passed
   try {
-    const { code, expire, value, specialOfferType } = req.body;
+    const { code, expire, value, type } = req.body;
 
     // Check if code has already existed
     let checker = await SpecialOffer.findOne({ code, status: true });
@@ -83,7 +80,7 @@ const createSpecialOffer = async (req, res) => {
       code,
       expire: new Date(expire),
       value,
-      specialOfferType,
+      type,
     });
     newSpecialOffer.save();
 
@@ -111,7 +108,7 @@ const updateSpecialOfferById = async (req, res) => {
 
   // Passed
   try {
-    const { code, expire, value, specialOfferType } = req.body;
+    const { code, expire, value, type } = req.body;
 
     // Check if this special offer exists
     const oldSpecialOffer = await SpecialOffer.findOne(req.params.id);
@@ -137,7 +134,7 @@ const updateSpecialOfferById = async (req, res) => {
         code,
         expire: new Date(expire),
         value,
-        specialOfferType,
+        type,
       },
       { new: true }
     );

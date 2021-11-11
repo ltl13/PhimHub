@@ -41,7 +41,7 @@ const getMovieById = async (req, res) => {
             select: "typeName"
         })
         if (!movie) {
-            return res.status(404).json({
+            return res.status(406).json({
                 success: false,
                 message: "Movie not found"
             })
@@ -132,7 +132,7 @@ const updateMovieById = async (req, res) => {
 
         const movie = await Movie.findOne({ _id: req.params.id })
         if (!movie) {
-            return res.status(404).json({
+            return res.status(406).json({
                 success: false,
                 message: "Movie not found"
             })
@@ -150,7 +150,7 @@ const updateMovieById = async (req, res) => {
                 productionCompanies,
                 writers,
                 actors,
-                movieTypes 
+                movieTypes
             },
             { new: true }
         ).then((result) => result.save());
@@ -163,7 +163,7 @@ const updateMovieById = async (req, res) => {
         return res.status(500).json({
           success: false,
           message: "Internal server error"
-        })  
+        })
     }
 }
 

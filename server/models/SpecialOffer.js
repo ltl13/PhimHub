@@ -23,9 +23,9 @@ const SpecialOfferSchema = new Schema({
     default: true,
   },
 
-  specialOfferType: {
-    type: Schema.Types.ObjectId,
-    ref: "special_offer_types",
+  type: {
+    type: String,
+    enum: ["STATIC", "DYNAMIC"],
   },
 });
 

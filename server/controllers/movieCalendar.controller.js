@@ -5,7 +5,7 @@ const movieCalendar = require("../models/MovieCalendar");
 //const { confirmAccess } = require("../shared/functions");
 
 const getAllMovieCalendars = async (req, res) => {
-    
+
     try {
         const allMovieCalendars = await MovieCalendar.find().populate({
                 path: "room",
@@ -29,7 +29,7 @@ const getAllMovieCalendars = async (req, res) => {
 }
 
 const getMovieCalendarById = async (req, res) => {
-    
+
     try {
         const movieCalendar = await MovieCalendar.findById(req.params.id).populate({
             path: "room",
@@ -39,7 +39,7 @@ const getMovieCalendarById = async (req, res) => {
             select: "name"
         });
         if (!movieCalendar) {
-            return res.status(404).json({
+            return res.status(406).json({
                 success: false,
                 message: "Movie not found"
             })
@@ -88,7 +88,7 @@ const createMovieCalendar = async (req,res) => {
 }
 
 const updateMovieCalendarById = async (req, res) => {
-        
+
     try {
         const {
             dateTimeStart,
@@ -99,7 +99,7 @@ const updateMovieCalendarById = async (req, res) => {
 
         const movieCalendar = await MovieCalendar.findOne({ _id: req.params.id })
         if (!movieCalendar) {
-            return res.status(404).json({
+            return res.status(406).json({
                 success: false,
                 message: "Movie calendar not found"
             })
@@ -111,7 +111,7 @@ const updateMovieCalendarById = async (req, res) => {
                 dateTimeStart: new Date(dateTimeStart.concat("T00:00:10Z")),
                 price,
                 room,
-                movie 
+                movie
             },
             { new: true }
         ).then((result) => result.save());
@@ -124,17 +124,17 @@ const updateMovieCalendarById = async (req, res) => {
         return res.status(500).json({
           success: false,
           message: "Internal server error"
-        })  
+        })
     }
 }
 
 const deleteMovieCalendarById = async (req, res) => {
     try {
-        
+
 
         const delMovieCalendar = await MovieCalendar.findByIdAndDelete(req.params.id);
         if  (!delMovieCalendar) {
-            return res.status(404).json({
+            return res.status(406).json({
                 success: false,
                 message: "Movie calendar not found"
             })
