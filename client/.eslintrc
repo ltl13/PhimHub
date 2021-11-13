@@ -17,7 +17,7 @@
         "printWidth": 80,
         "endOfLine": "auto"
       }
-    ],
-    "no-console": "warn"
+    ]
+    // "no-console": "warn"
   }
 }

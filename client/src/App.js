@@ -1,10 +1,15 @@
+import React from 'react';
+import Router from 'routes';
+import ThemeConfig from 'theme';
+import GlobalStyles from 'theme/globalStyles';
 import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <h1>Đặt vé</h1>
-    </div>
+    <ThemeConfig>
+      <GlobalStyles />
+      <Router />
+    </ThemeConfig>
   );
 }
 
