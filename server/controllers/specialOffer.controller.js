@@ -3,18 +3,15 @@ const { confirmAccess } = require("../shared/functions");
 
 const getAllSpecialOffers = async (req, res) => {
   // Check if user can access this route
-  const confirm = await confirmAccess({
-    role: req.body.role,
-    func: "getAllSpecialOffers",
-  });
-  if (!confirm) return res.redirect("back");
+  // const confirm = await confirmAccess({
+  //   role: req.body.role,
+  //   func: "getAllSpecialOffers",
+  // });
+  // if (!confirm) return res.redirect("back");
 
   // Passed
   try {
-    const allSpecialOffers = await SpecialOffer.find().populate({
-      path: "specialOfferType",
-      select: "typeName",
-    });
+    const allSpecialOffers = await SpecialOffer.find();
     return res.status(200).json({
       success: true,
       allSpecialOffers,
@@ -30,11 +27,11 @@ const getAllSpecialOffers = async (req, res) => {
 
 const getSpecialOfferById = async (req, res) => {
   // Check if user can access this route
-  const confirm = await confirmAccess({
-    role: req.body.role,
-    func: "getSpecialOfferById",
-  });
-  if (!confirm) return res.redirect("back");
+  // const confirm = await confirmAccess({
+  //   role: req.body.role,
+  //   func: "getSpecialOfferById",
+  // });
+  // if (!confirm) return res.redirect("back");
 
   // Passed
   try {
@@ -59,15 +56,15 @@ const getSpecialOfferById = async (req, res) => {
 
 const createSpecialOffer = async (req, res) => {
   // Check if user can access this route
-  const confirm = await confirmAccess({
-    role: req.body.role,
-    func: "createSpecialOffer",
-  });
-  if (!confirm) return res.redirect("back");
+  // const confirm = await confirmAccess({
+  //   role: req.body.role,
+  //   func: "createSpecialOffer",
+  // });
+  // if (!confirm) return res.redirect("back");
 
   // Passed
   try {
-    const { code, expire, value, specialOfferType } = req.body;
+    const { code, expire, value, type } = req.body;
 
     // Check if code has already existed
     let checker = await SpecialOffer.findOne({ code, status: true });
@@ -83,7 +80,7 @@ const createSpecialOffer = async (req, res) => {
       code,
       expire: new Date(expire),
       value,
-      specialOfferType,
+      type,
     });
     newSpecialOffer.save();
 
@@ -103,15 +100,15 @@ const createSpecialOffer = async (req, res) => {
 
 const updateSpecialOfferById = async (req, res) => {
   // Check if user can access this route
-  const confirm = await confirmAccess({
-    role: req.body.role,
-    func: "updateSpecialOfferById",
-  });
-  if (!confirm) return res.redirect("back");
+  // const confirm = await confirmAccess({
+  //   role: req.body.role,
+  //   func: "updateSpecialOfferById",
+  // });
+  // if (!confirm) return res.redirect("back");
 
   // Passed
   try {
-    const { code, expire, value, specialOfferType } = req.body;
+    const { code, expire, value, type } = req.body;
 
     // Check if this special offer exists
     const oldSpecialOffer = await SpecialOffer.findOne(req.params.id);
@@ -137,7 +134,7 @@ const updateSpecialOfferById = async (req, res) => {
         code,
         expire: new Date(expire),
         value,
-        specialOfferType,
+        type,
       },
       { new: true }
     );
@@ -159,11 +156,11 @@ const updateSpecialOfferById = async (req, res) => {
 
 const deleteSpecialOfferById = async (req, res) => {
   // Check if user can access this route
-  const confirm = await confirmAccess({
-    role: req.body.role,
-    func: "deleteSpecialOfferById",
-  });
-  if (!confirm) return res.redirect("back");
+  // const confirm = await confirmAccess({
+  //   role: req.body.role,
+  //   func: "deleteSpecialOfferById",
+  // });
+  // if (!confirm) return res.redirect("back");
 
   // Passed
   try {
@@ -182,7 +179,7 @@ const deleteSpecialOfferById = async (req, res) => {
       { new: true }
     ).then(async (result) => await result.save());
 
-    return res.status(204).json({
+    return res.status(200).json({
       success: true,
       message: "Special offer was deleted successfully",
     });

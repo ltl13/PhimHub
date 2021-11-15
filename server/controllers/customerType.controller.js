@@ -1,5 +1,6 @@
 const CustomerType = require("../models/CustomerType");
 const Customer = require("../models/Customer");
+const { confirmAccess } = require("../shared/functions");
 
 const getAllCustomerTypes = async (req, res) => {
   // Check if user can access this route
@@ -11,7 +12,7 @@ const getAllCustomerTypes = async (req, res) => {
 
   // Passed
   try {
-    const listCustomerTypes = await CustomerType.find();
+    const listCustomerTypes = await CustomerType.find({});
     return res.status(200).json({
       success: true,
       allCustomerTypes: listCustomerTypes,
@@ -37,7 +38,7 @@ const getCustomerTypeById = async (req, res) => {
   try {
     const customerType = await CustomerType.findById(req.params.id);
     if (!customerType) {
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Customer type not found",
       });
@@ -109,7 +110,7 @@ const updateCustomerTypeById = async (req, res) => {
     // Check if customer exists in database
     const customerType = await CustomerType.findById(req.params.id);
     if (!customerType) {
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Customer type not found",
       });
@@ -177,7 +178,7 @@ const deleteCustomerTypeById = async (req, res) => {
       req.params.id
     );
     if (!deleteCustomerType) {
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Customer type not found",
       });

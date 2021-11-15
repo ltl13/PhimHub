@@ -12,5 +12,7 @@ const {
 router.get("/get/:id", getRoleById);
 router.get("/get-all", getAllRoles);
 router.post("/create", createRole);
+router.put("/update/:id", updateRoleById);
+router.delete("/delete/:id", deleteRoleById);
 
 module.exports = router;

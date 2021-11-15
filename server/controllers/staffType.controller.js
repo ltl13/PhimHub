@@ -1,6 +1,6 @@
+const { confirmAccess } = require("../shared/functions");
 const StaffType = require("../models/StaffType");
 const Staff = require("../models/Staff");
-const { confirmAccess } = require("../shared/functions");
 
 const getAllStaffTypes = async (req, res) => {
   // Check if user can access this route
@@ -36,7 +36,7 @@ const getStaffTypeById = async (req, res) => {
   try {
     const staffType = await StaffType.findById(req.params.id);
     if (!staffType)
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Staff type not found",
       });
@@ -104,7 +104,7 @@ const updateStaffTypeById = async (req, res) => {
     // Check if this staff type exists
     let checker = await StaffType.findById(req.params.id);
     if (!checker)
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Staff type not found",
       });
@@ -147,7 +147,7 @@ const deleteStaffTypeById = async (req, res) => {
     // Check if this staff type exists
     let checker = await StaffType.findById(req.params.id);
     if (!checker)
-      return res.status(404).json({
+      return res.status(406).json({
         success: false,
         message: "Staff type not found",
       });
