@@ -6,17 +6,21 @@ export const login = createAsyncThunk('users/login', async payload => {
   try {
     const response = await userApi.login(payload);
     localStorage.setItem(StorageKeys.access, response.data.token);
+
     return response;
   } catch (error) {
-    if (error.response) return { ...error.response };
+    if (error.response) return error.response;
     else return { success: false, message: error.message };
   }
 });
 
+export const getAuth = createAsyncThunk('user/getAuth', async () => {});
+
 const userSlice = createSlice({
   name: 'user',
   initialState: {
-    current: {},
+    current: null,
+    isLoggedIn: false,
   },
   reducers: {
     logout(state) {
@@ -28,6 +32,12 @@ const userSlice = createSlice({
   extraReducers: {
     [login.fulfilled]: (state, action) => {
       state.current = action.payload;
+      console.log(action.payload.data);
+      state.isLoggedIn = true;
+    },
+    [login.rejected]: (state, action) => {
+      state.current = null;
+      state.isLoggedIn = false;
     },
   },
 });

@@ -12,12 +12,14 @@ import {
 import InputField from 'custom-fields/InputField';
 import PasswordField from 'custom-fields/PasswordField';
 import { useNavigate } from 'react-router-dom';
+import { login } from 'app/userSlice';
+import { useDispatch } from 'react-redux';
 
 LoginForm.propTypes = {};
 
 function LoginForm(props) {
   let navigate = useNavigate();
-  const { onSubmit } = props;
+  const dispatch = useDispatch();
 
   const schema = yup.object().shape({
     username: yup.string().required('Tên đăng nhập không được để trống'),
@@ -38,18 +40,17 @@ function LoginForm(props) {
   } = form;
 
   const handleSubmit = async data => {
-    if (onSubmit) {
-      const response = await onSubmit(data);
-      if (response.status === 200) {
-        navigate('/', { replace: true });
-      } else if (response.status === 401) {
-        setError('login', {
-          type: 'manual',
-          message: 'Tên đăng nhập hoặc mật khẩu không đúng',
-        });
-      } else {
-        navigate('/500', { replace: true });
-      }
+    const actions = login(data);
+    const response = await dispatch(actions);
+    if (response.payload.status === 200) {
+      navigate('/', { replace: true });
+    } else if (response.payload.status === 401) {
+      setError('login', {
+        type: 'manual',
+        message: 'Tên đăng nhập hoặc mật khẩu không đúng',
+      });
+    } else {
+      navigate('/500', { replace: true });
     }
   };
 
