@@ -16,7 +16,7 @@ InputField.defaultProps = {
 };
 
 function InputField(props) {
-  const { form, name, label, disable } = props;
+  const { form, name, label, disable, ...other } = props;
   const {
     formState: { errors },
   } = form;
@@ -30,6 +30,7 @@ function InputField(props) {
         render={({ field }) => (
           <TextField
             {...field}
+            {...other}
             variant="outlined"
             margin="normal"
             label={label}

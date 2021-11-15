@@ -5,12 +5,11 @@ import StorageKeys from 'constants/storage-keys';
 export const login = createAsyncThunk('users/login', async payload => {
   try {
     const response = await userApi.login(payload);
-    localStorage.setItem(StorageKeys.access, response.token);
-    localStorage.setItem(StorageKeys.user, response.user._id);
+    localStorage.setItem(StorageKeys.access, response.data.token);
     return response;
-  } catch (err) {
-    console.log(err);
-    return err.message;
+  } catch (error) {
+    if (error.response) return { ...error.response };
+    else return { success: false, message: error.message };
   }
 });
 

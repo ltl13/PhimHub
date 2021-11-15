@@ -19,9 +19,7 @@ const Router = () => {
           path: 'booking',
           element: (
             <PrivateRoute>
-              <Typography variant="h1" color="text.secondary">
-                Booking
-              </Typography>
+              <Typography variant="h3">Booking</Typography>
             </PrivateRoute>
           ),
         },
@@ -29,9 +27,7 @@ const Router = () => {
           path: 'waiting-ticket',
           element: (
             <PrivateRoute>
-              <Typography variant="h1" color="text.secondary">
-                Waiting Ticket
-              </Typography>
+              <Typography variant="h3">Waiting Ticket</Typography>
             </PrivateRoute>
           ),
         },
@@ -39,9 +35,7 @@ const Router = () => {
           path: 'statistic',
           element: (
             <PrivateRoute>
-              <Typography variant="h1" color="text.secondary">
-                Statistic
-              </Typography>
+              <Typography variant="h3">Statistic</Typography>
             </PrivateRoute>
           ),
         },
@@ -56,9 +50,7 @@ const Router = () => {
               path: 'movie',
               element: (
                 <PrivateRoute>
-                  <Typography variant="h1" color="text.secondary">
-                    Movie
-                  </Typography>
+                  <Typography variant="h3">Movie</Typography>
                 </PrivateRoute>
               ),
             },
@@ -66,9 +58,7 @@ const Router = () => {
               path: 'staff',
               element: (
                 <PrivateRoute>
-                  <Typography variant="h1" color="text.secondary">
-                    Staff
-                  </Typography>
+                  <Typography variant="h3">Staff</Typography>
                 </PrivateRoute>
               ),
             },
@@ -76,9 +66,7 @@ const Router = () => {
               path: 'showtime',
               element: (
                 <PrivateRoute>
-                  <Typography variant="h1" color="text.secondary">
-                    Showtime
-                  </Typography>
+                  <Typography variant="h3">Showtime</Typography>
                 </PrivateRoute>
               ),
             },
@@ -86,9 +74,7 @@ const Router = () => {
               path: 'cinema-room',
               element: (
                 <PrivateRoute>
-                  <Typography variant="h1" color="text.secondary">
-                    Cinema room
-                  </Typography>
+                  <Typography variant="h3">Cinema room</Typography>
                 </PrivateRoute>
               ),
             },
@@ -96,9 +82,7 @@ const Router = () => {
               path: 'customer',
               element: (
                 <PrivateRoute>
-                  <Typography variant="h1" color="text.secondary">
-                    Customer
-                  </Typography>
+                  <Typography variant="h3">Customer</Typography>
                 </PrivateRoute>
               ),
             },
@@ -117,9 +101,7 @@ const Router = () => {
               path: 'authorization',
               element: (
                 <PrivateRoute>
-                  <Typography variant="h1" color="text.secondary">
-                    Authorization
-                  </Typography>
+                  <Typography variant="h3">Authorization</Typography>
                 </PrivateRoute>
               ),
             },
@@ -127,9 +109,7 @@ const Router = () => {
               path: 'discount',
               element: (
                 <PrivateRoute>
-                  <Typography variant="h1" color="text.secondary">
-                    Discount
-                  </Typography>
+                  <Typography variant="h3">Discount</Typography>
                 </PrivateRoute>
               ),
             },
@@ -137,9 +117,7 @@ const Router = () => {
               path: 'type-of-seat',
               element: (
                 <PrivateRoute>
-                  <Typography variant="h1" color="text.secondary">
-                    Type of seat
-                  </Typography>
+                  <Typography variant="h3">Type of seat</Typography>
                 </PrivateRoute>
               ),
             },
@@ -147,9 +125,7 @@ const Router = () => {
               path: 'type-of-payment',
               element: (
                 <PrivateRoute>
-                  <Typography variant="h1" color="text.secondary">
-                    Type of payment
-                  </Typography>
+                  <Typography variant="h3">Type of payment</Typography>
                 </PrivateRoute>
               ),
             },
@@ -170,6 +146,10 @@ const Router = () => {
           ),
         },
         { path: '404', element: <Typography>Not Found</Typography> },
+        {
+          path: '500',
+          element: <Typography>Internal server error</Typography>,
+        },
         { path: '*', element: <Navigate to="/404" /> },
       ],
     },
@@ -192,7 +172,7 @@ function Loading() {
 }
 
 function PrivateRoute({ children }) {
-  const loginInUser = localStorage.getItem(StorageKeys.user);
+  const loginInUser = localStorage.getItem(StorageKeys.access);
   return !!loginInUser ? children : <Navigate to="/login" />;
 }
 

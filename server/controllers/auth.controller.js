@@ -116,7 +116,11 @@ const login = async (req, res) => {
         // Check for existing account
         const account = await Account.findOne({ username });
         if (!account) {
+<<<<<<< HEAD
             return res.status(406).json({
+=======
+            return res.status(401).json({
+>>>>>>> b337cc0e4c4262176abd67e0130919f88f0cdeb1
                 success: false,
                 message: 'Incorrect phone number or username',
             });
@@ -125,7 +129,7 @@ const login = async (req, res) => {
         // Check for correct password
         const correctPassword = await argon2.verify(account.password, password);
         if (!correctPassword) {
-            return res.status(400).json({
+            return res.status(401).json({
                 success: false,
                 message: 'Incorrect password',
             });
@@ -137,15 +141,10 @@ const login = async (req, res) => {
             process.env.ACCESS_TOKEN_SECRET
         );
 
-        const { ...info } = account._doc;
-        delete info.password;
-        delete info.createAt;
-
-        res.status(201).json({
+        res.status(200).json({
             success: true,
             message: 'User logged in',
             token: accessToken,
-            user: info,
         });
     } catch (error) {
         console.log(error);

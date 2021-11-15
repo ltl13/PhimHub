@@ -9,27 +9,28 @@ const axiosClient = axios.create({
   paramsSerializer: params => queryString.stringify(params),
 });
 
-axiosClient.interceptors.request.use(async config => {
-  // const token = await getFirebaseToken();
-  // if (token) {
-  //   config.headers.Authorization = `Bearer ${token}`;
-  // }
+// axiosClient.interceptors.request.use(async config => {
+//   // const token = await getFirebaseToken();
+//   // if (token) {
+//   //   config.headers.Authorization = `Bearer ${token}`;
+//   // }
 
-  return config;
-});
+//   return config;
+// });
 
-axiosClient.interceptors.response.use(
-  response => {
-    if (response && response.data) {
-      return response.data;
-    }
-
-    return response;
-  },
-  error => {
-    // Handle errors
-    throw error;
-  },
-);
+// axiosClient.interceptors.response.use(
+//   response => {
+//     // if (response && response.data) {
+//     //   return response.data;
+//     // }
+//     console.log(response);
+//     return response;
+//   },
+//   error => {
+//     // Handle errors
+//     console.log(error);
+//     throw error;
+//   },
+// );
 
 export default axiosClient;
