@@ -16,7 +16,7 @@ router.put("/login", loginStaff);
 router.put("/reset-password", resetPasswordStaff);
 router.get("/get-all", verifyToken, getAllStaffs);
 router.get("/get/:id", verifyToken, getStaffById);
-router.post("/create", verifyToken, createStaff);
+router.post("/create", createStaff);
 router.put("/update/:id", verifyToken, updateStaffById);
 router.delete("/delete/:id", verifyToken, deleteStaffById);
 

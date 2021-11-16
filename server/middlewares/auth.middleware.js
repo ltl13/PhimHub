@@ -18,7 +18,7 @@ const verifyToken = (req, res, next) => {
       });
     }
     req.body.id = verify.id;
-    req.body.role = verify.role;
+    req.body.staffType = verify.staffType;
     next();
   } catch (error) {
     console.log(error);

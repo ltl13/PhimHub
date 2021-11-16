@@ -12,7 +12,7 @@ const {
 
 router.get("/get-all", verifyToken, getAllStaffTypes);
 router.get("/get/:id", verifyToken, getStaffTypeById);
-router.post("/create", verifyToken, createStaffType);
+router.post("/create", createStaffType);
 router.put("/update/:id", verifyToken, updateStaffTypeById);
 router.delete("/delete/:id", verifyToken, deleteStaffTypeById);
 

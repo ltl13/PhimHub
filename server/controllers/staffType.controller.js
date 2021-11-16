@@ -103,12 +103,13 @@ const createStaffType = async (req, res) => {
 
 const updateStaffTypeById = async (req, res) => {
   // Check if user can access this route
-  const confirm = await confirmAccess({
-    typeName: req.body.staffType,
-    func: "updateStaffTypeById",
-  });
-  if (!confirm) return res.redirect("back");
+  // const confirm = await confirmAccess({
+  //   typeName: req.body.staffType,
+  //   func: "updateStaffTypeById",
+  // });
+  // if (!confirm) return res.redirect("back");
 
+  // Passed
   try {
     const { typeName, funcs } = req.body;
 

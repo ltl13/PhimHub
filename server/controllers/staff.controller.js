@@ -1,6 +1,6 @@
 const argon2 = require("argon2");
+const jsonwebtoken = require("jsonwebtoken");
 
-const Account = require("../models/Account");
 const Staff = require("../models/Staff");
 const { confirmAccess } = require("../shared/functions");
 
@@ -150,10 +150,10 @@ const createStaff = async (req, res) => {
 
 const loginStaff = async (req, res) => {
   try {
-    const { phoneNumber, password } = req.body;
+    const { username, password } = req.body;
 
     // Check for existing account
-    const staff = await Staff.findOne({ phoneNumber, status: true });
+    const staff = await Staff.findOne({ username, status: true });
     if (!staff) {
       return res.status(406).json({
         success: false,
@@ -163,7 +163,7 @@ const loginStaff = async (req, res) => {
     }
 
     // Check for correct password
-    const correctPassword = await argon2.verify(customer.password, password);
+    const correctPassword = await argon2.verify(staff.password, password);
     if (!correctPassword) {
       return res.status(400).json({
         success: false,
@@ -372,16 +372,6 @@ const deleteStaffById = async (req, res) => {
       return res.status(406).json({
         success: false,
         message: "Staff not found",
-      });
-    }
-
-    // Delete account goes with that customer
-    let checker = await Account.findByIdAndDelete(deleteStaff.account);
-    if (!checker) {
-      return res.status(406).json({
-        success: false,
-        message:
-          "Found the staff but not found the account, maybe this staff was deleted",
       });
     }
     deleteStaff.save();
