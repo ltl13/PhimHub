@@ -17,7 +17,7 @@ const FuncSchema = new Schema({
   staffTypes: [
     {
       type: Schema.Types.ObjectId,
-      ref: "roles",
+      ref: "staff_types",
     },
   ],
 });

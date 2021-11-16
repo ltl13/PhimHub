@@ -5,7 +5,7 @@ const { confirmAccess } = require("../shared/functions");
 const getAllRoomTypes = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    role: req.body.role,
+    staffType: req.body.staffType,
     func: "getAllRoomTypes",
   });
   if (!confirm) return res.redirect("back");
@@ -29,7 +29,7 @@ const getAllRoomTypes = async (req, res) => {
 const getRoomTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    role: req.body.role,
+    staffType: req.body.staffType,
     func: "getRoomTypeById",
   });
   if (!confirm) return res.redirect("back");
@@ -58,7 +58,7 @@ const getRoomTypeById = async (req, res) => {
 const createRoomType = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    role: req.body.role,
+    staffType: req.body.staffType,
     func: "createRoomType",
   });
   if (!confirm) return res.redirect("back");
@@ -143,7 +143,7 @@ const updateRoomTypeById = async (req, res) => {
 const deleteRoomTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    role: req.body.role,
+    staffType: req.body.staffType,
     func: "deleteRoomTypeById",
   });
   if (!confirm) return res.redirect("back");

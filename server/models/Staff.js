@@ -7,14 +7,18 @@ const StaffSchema = new Schema({
     ref: "staff_types",
   },
 
-  account: {
-    type: Schema.Types.ObjectId,
-    ref: "accounts",
-  },
-
   username: {
     type: String,
     required: true,
+  },
+
+  password: {
+    type: String,
+    required: true,
+  },
+
+  token: {
+    type: String,
   },
 
   name: {
@@ -56,6 +60,12 @@ const StaffSchema = new Schema({
     type: Boolean,
     required: true,
     default: true,
+  },
+
+  createAt: {
+    type: Date,
+    required: true,
+    default: Date.now(),
   },
 });
 

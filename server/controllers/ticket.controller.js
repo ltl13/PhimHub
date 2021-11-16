@@ -5,7 +5,7 @@ const { confirmAccess } = require("../shared/functions");
 const getAllTickets = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    role: req.body.role,
+    staffType: req.body.staffType,
     func: "getAllTickets",
   });
   if (!confirm) return res.redirect("back");
@@ -42,7 +42,7 @@ const getAllTickets = async (req, res) => {
 const getTicketById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    role: req.body.role,
+    staffType: req.body.staffType,
     func: "getTicketById",
   });
   if (!confirm) return res.redirect("back");

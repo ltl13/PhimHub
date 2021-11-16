@@ -108,7 +108,7 @@ const updateMovieTypeById = async (req, res) => {
 
 const deleteMovieTypeById = async (req, res) => {
     // const confirm = await confirmAccess({
-    //     role: req.body.role,
+    //     staffType: req.body.staffType,
     //     func: "deleteMovieTypebyId"
     // })
     // if (!confirm) return res.rediect("back");

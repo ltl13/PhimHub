@@ -3,6 +3,8 @@ const router = express.Router();
 
 const verifyToken = require("../middlewares/auth.middleware");
 const {
+  loginStaff,
+  resetPasswordStaff,
   getAllStaffs,
   getStaffById,
   createStaff,
@@ -10,6 +12,8 @@ const {
   deleteStaffById,
 } = require("../controllers/staff.controller");
 
+router.put("/login", loginStaff);
+router.put("/reset-password", resetPasswordStaff);
 router.get("/get-all", verifyToken, getAllStaffs);
 router.get("/get/:id", verifyToken, getStaffById);
 router.post("/create", verifyToken, createStaff);

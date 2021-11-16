@@ -4,7 +4,7 @@ const { confirmAccess } = require("../shared/functions");
 const getAllSpecialOffers = async (req, res) => {
   // Check if user can access this route
   // const confirm = await confirmAccess({
-  //   role: req.body.role,
+  //   staffType: req.body.staffType,
   //   func: "getAllSpecialOffers",
   // });
   // if (!confirm) return res.redirect("back");
@@ -28,7 +28,7 @@ const getAllSpecialOffers = async (req, res) => {
 const getSpecialOfferById = async (req, res) => {
   // Check if user can access this route
   // const confirm = await confirmAccess({
-  //   role: req.body.role,
+  //   staffType: req.body.staffType,
   //   func: "getSpecialOfferById",
   // });
   // if (!confirm) return res.redirect("back");
@@ -57,7 +57,7 @@ const getSpecialOfferById = async (req, res) => {
 const createSpecialOffer = async (req, res) => {
   // Check if user can access this route
   // const confirm = await confirmAccess({
-  //   role: req.body.role,
+  //   staffType: req.body.staffType,
   //   func: "createSpecialOffer",
   // });
   // if (!confirm) return res.redirect("back");
@@ -101,7 +101,7 @@ const createSpecialOffer = async (req, res) => {
 const updateSpecialOfferById = async (req, res) => {
   // Check if user can access this route
   // const confirm = await confirmAccess({
-  //   role: req.body.role,
+  //   staffType: req.body.staffType,
   //   func: "updateSpecialOfferById",
   // });
   // if (!confirm) return res.redirect("back");
@@ -157,7 +157,7 @@ const updateSpecialOfferById = async (req, res) => {
 const deleteSpecialOfferById = async (req, res) => {
   // Check if user can access this route
   // const confirm = await confirmAccess({
-  //   role: req.body.role,
+  //   staffType: req.body.staffType,
   //   func: "deleteSpecialOfferById",
   // });
   // if (!confirm) return res.redirect("back");

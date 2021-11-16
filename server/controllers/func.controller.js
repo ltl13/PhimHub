@@ -1,9 +1,9 @@
 const Func = require("../models/Func");
-const Role = require("../models/Role");
+const StaffType = require("../models/StaffType");
 
 const createFunc = async (req, res) => {
   try {
-    const { funcName, roles, displayName } = req.body;
+    const { funcName, staffTypes, displayName } = req.body;
 
     // Check if funcName has already existed in database
     let checker = await Func.findOne({ funcName });
@@ -14,12 +14,12 @@ const createFunc = async (req, res) => {
       });
 
     // Create func
-    const newFunc = new Func({ funcName, roles, displayName });
+    const newFunc = new Func({ funcName, staffTypes, displayName });
 
-    // Add func to roles
-    if (roles) {
-      roles.forEach(async (role) => {
-        await Role.findById(role).then(async (result) => {
+    // Add func to staff types
+    if (staffTypes) {
+      staffTypes.forEach(async (staffType) => {
+        await StaffType.findById(staffType).then(async (result) => {
           if (result) {
             result.funcs.push(newFunc._id);
             await result.save();
@@ -51,13 +51,13 @@ const deleteFuncById = async (req, res) => {
         message: "Func not found",
       });
 
-    if (deleteFunc.roles) {
-      deleteFunc.roles.forEach(async (role) => {
-        const findRole = await Role.findById(role);
-        const listFuncUpdate = findRole.funcs;
+    if (deleteFunc.staffTypes) {
+      deleteFunc.staffTypes.forEach(async (staffType) => {
+        const findStaffType = await StaffType.findById(staffType);
+        const listFuncUpdate = findStaffType.funcs;
         listFuncUpdate.splice(listFuncUpdate.indexOf(deleteFunc._id), 1);
-        await Role.findByIdAndUpdate(
-          role,
+        await staffType.findByIdAndUpdate(
+          staffType,
           { funcs: listFuncUpdate },
           { new: true }
         ).then(async (result) => await result.save());
