@@ -14,7 +14,7 @@ const FuncSchema = new Schema({
     unique: true,
   },
 
-  roles: [
+  staffTypes: [
     {
       type: Schema.Types.ObjectId,
       ref: "roles",

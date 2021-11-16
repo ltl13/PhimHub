@@ -15,7 +15,6 @@ const StaffSchema = new Schema({
   username: {
     type: String,
     required: true,
-    unique: true,
   },
 
   name: {
@@ -26,19 +25,16 @@ const StaffSchema = new Schema({
   phoneNumber: {
     type: String,
     required: true,
-    unique: true,
   },
 
   email: {
     type: String,
     required: true,
-    unique: true,
   },
 
   identityNumber: {
     type: String,
     required: true,
-    unique: true,
   },
 
   sex: {
