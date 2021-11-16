@@ -3,10 +3,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 
-const authRoute = require("./routes/auth.route");
 const customerTypeRoute = require("./routes/customerType.route");
 const customerRoute = require("./routes/customer.route");
-const roleRoute = require("./routes/role.route");
 const staffTypeRoute = require("./routes/staffType.route");
 const staffRoute = require("./routes/staff.route");
 const seatTypeRoute = require("./routes/seatType.route");
@@ -36,10 +34,8 @@ const connectDB = async () => {
 
 connectDB();
 
-app.use("/api/auth", authRoute);
 app.use("/api/customer-type", customerTypeRoute);
 app.use("/api/customer", customerRoute);
-app.use("/api/role", roleRoute);
 app.use("/api/staff-type", staffTypeRoute);
 app.use("/api/staff", staffRoute);
 app.use("/api/seat-type", seatTypeRoute);

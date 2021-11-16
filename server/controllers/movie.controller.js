@@ -5,7 +5,7 @@ const { confirmAccess } = require("../shared/functions");
 
 const getAllMovies = async (req, res) => {
     // const confirm = await confirmAccess({
-    //     role: req.body.role,
+    //     staffType: req.body.staffType,
     //     func: "getAllMovies",
     // });
     //if (!confirm) return res.redirect("back");
@@ -30,7 +30,7 @@ const getAllMovies = async (req, res) => {
 
 const getMovieById = async (req, res) => {
     // const confirm = await confirmAccess({
-    //     role: req.body.role,
+    //     staffType: req.body.staffType,
     //     func: "getMovieById",
     // });
     // if (!confirm) return res.redirect("back");
@@ -61,7 +61,7 @@ const getMovieById = async (req, res) => {
 
 const createMovie = async (req,res) => {
     // const confirm = await confirmAccess({
-    //     role: req.body.role,
+    //     staffType: req.body.staffType,
     //     func: "createMovie"
     // })
 
@@ -111,7 +111,7 @@ const createMovie = async (req,res) => {
 const updateMovieById = async (req, res) => {
     // Check if user can access this route
     // const confirm = await confirmAccess({
-    //     role: req.body.role,
+    //     staffType: req.body.staffType,
     //     func: "updateMovieById",
     // });
     // if (!confirm) return res.redirect("back");
@@ -170,7 +170,7 @@ const updateMovieById = async (req, res) => {
 const deleteMovieById = async (req, res) => {
     // Check if user can access this route
     // const confirm = await confirmAccess({
-    //     role: req.body.role,
+    //     staffType: req.body.staffType,
     //     func: "deleteMovieById",
     // });
     // if (!confirm) return res.redirect("back");

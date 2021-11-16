@@ -7,15 +7,18 @@ const StaffSchema = new Schema({
     ref: "staff_types",
   },
 
-  account: {
-    type: Schema.Types.ObjectId,
-    ref: "accounts",
-  },
-
   username: {
     type: String,
     required: true,
-    unique: true,
+  },
+
+  password: {
+    type: String,
+    required: true,
+  },
+
+  token: {
+    type: String,
   },
 
   name: {
@@ -26,19 +29,16 @@ const StaffSchema = new Schema({
   phoneNumber: {
     type: String,
     required: true,
-    unique: true,
   },
 
   email: {
     type: String,
     required: true,
-    unique: true,
   },
 
   identityNumber: {
     type: String,
     required: true,
-    unique: true,
   },
 
   sex: {
@@ -60,6 +60,12 @@ const StaffSchema = new Schema({
     type: Boolean,
     required: true,
     default: true,
+  },
+
+  createAt: {
+    type: Date,
+    required: true,
+    default: Date.now(),
   },
 });
 

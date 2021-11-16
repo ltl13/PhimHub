@@ -7,21 +7,23 @@ const CustomerSchema = new Schema({
     ref: "customer_types",
   },
 
-  account: {
-    type: Schema.Types.ObjectId,
-    ref: "accounts",
-  },
-
   phoneNumber: {
     type: String,
     required: true,
-    unique: true,
+  },
+
+  password: {
+    type: String,
+    required: true,
   },
 
   email: {
     type: String,
     required: true,
-    unique: true,
+  },
+
+  token: {
+    type: String,
   },
 
   name: {
@@ -31,7 +33,7 @@ const CustomerSchema = new Schema({
 
   sex: {
     type: Number,
-    requried: true,
+    required: true,
   },
 
   dateOfBirth: {
@@ -43,6 +45,12 @@ const CustomerSchema = new Schema({
     type: Boolean,
     required: true,
     default: true,
+  },
+
+  createAt: {
+    type: Date,
+    required: true,
+    default: Date.now(),
   },
 });
 
