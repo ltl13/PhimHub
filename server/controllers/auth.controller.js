@@ -4,7 +4,6 @@ const nodemailer = require("nodemailer");
 
 const Account = require("../models/Account");
 const Customer = require("../models/Customer");
-const Role = require("../models/Role");
 
 const getAuthById = async (req, res) => {
   try {
