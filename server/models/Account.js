@@ -12,12 +12,7 @@ const AccountSchema = new Schema({
     type: String,
     required: true,
   },
-
-  role: {
-    type: Schema.Types.ObjectId,
-    ref: "roles",
-  },
-
+  
   createAt: {
     type: Date,
     default: Date.now(),

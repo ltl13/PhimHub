@@ -61,19 +61,10 @@ const register = async (req, res) => {
     }
 
     // Create account
-    const role = await Role.findOne({ roleName: "customer" });
-    if (!role) {
-      return res.status(406).json({
-        success: false,
-        message:
-          "It looks like you can not create an account now due to our database's error",
-      });
-    }
     const hashPassword = await argon2.hash(password);
     const newAccount = new Account({
       username: phoneNumber,
       password: hashPassword,
-      role: role._id,
     });
 
     // Create new customer
@@ -91,7 +82,7 @@ const register = async (req, res) => {
 
     // Return access token
     const accessToken = jsonwebtoken.sign(
-      { id: newAccount._id, role: newAccount.role },
+      { id: newAccount._id },
       process.env.ACCESS_TOKEN_SECRET
     );
 
@@ -109,7 +100,50 @@ const register = async (req, res) => {
   }
 };
 
-const login = async (req, res) => {
+const loginForCustomer = async (req, res) => {
+  try {
+    const { phoneNumber, password } = req.body;
+
+    // Check for existing account
+    const account = await Account.findOne({ username: phoneNumber });
+    if (!account) {
+      return res.status(406).json({
+        success: false,
+        invalid: "phoneNumber",
+        message: "Incorrect phone number",
+      });
+    }
+
+    // Check for correct password
+    const correctPassword = await argon2.verify(account.password, password);
+    if (!correctPassword) {
+      return res.status(400).json({
+        success: false,
+        invalid: "password",
+        message: "Incorrect password",
+      });
+    }
+
+    // Login in
+    const accessToken = jsonwebtoken.sign(
+      { id: account._id },
+      process.env.ACCESS_TOKEN_SECRET
+    );
+    res.status(201).json({
+      success: true,
+      message: "User logged in",
+      token: accessToken,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+const loginForStaff = async (req, res) => {
   try {
     const { username, password } = req.body;
 
@@ -133,7 +167,7 @@ const login = async (req, res) => {
 
     // Login in
     const accessToken = jsonwebtoken.sign(
-      { id: account._id, role: account.role },
+      { id: account._id },
       process.env.ACCESS_TOKEN_SECRET
     );
     res.status(201).json({
