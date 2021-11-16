@@ -5,7 +5,7 @@ const { confirmAccess } = require("../shared/functions");
 const getAllCustomerTypes = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    role: req.body.role,
+    staffType: req.body.staffType,
     func: "getAllCustomerTypes",
   });
   if (!confirm) return res.redirect("back");
@@ -29,7 +29,7 @@ const getAllCustomerTypes = async (req, res) => {
 const getCustomerTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    role: req.body.role,
+    staffType: req.body.staffType,
     func: "getCustomerTypeById",
   });
   if (!confirm) return res.redirect("back");
@@ -59,7 +59,7 @@ const getCustomerTypeById = async (req, res) => {
 const createCustomerType = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    role: req.body.role,
+    staffType: req.body.staffType,
     func: "createCustomerType",
   });
   if (!confirm) return res.redirect("back");
@@ -98,7 +98,7 @@ const createCustomerType = async (req, res) => {
 const updateCustomerTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    role: req.body.role,
+    staffType: req.body.staffType,
     func: "updateCustomerTypeById",
   });
   if (!confirm) return res.redirect("back");
@@ -153,7 +153,7 @@ const updateCustomerTypeById = async (req, res) => {
 const deleteCustomerTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    role: req.body.role,
+    staffType: req.body.staffType,
     func: "deleteCustomerTypeById",
   });
   if (!confirm) return res.redirect("back");

@@ -5,7 +5,7 @@ const Room = require("../models/Room");
 
 const getAllRooms = async (req, res) => {
     // const confirm = await confirmAccess({
-    //     role: req.body.role,
+    //     staffType: req.body.staffType,
     //     func: "getAllRooms",
     // });
     // if (!confirm) return res.redirect("back");
@@ -30,7 +30,7 @@ const getAllRooms = async (req, res) => {
 
 const getRoomById = async (req, res) => {
     // const confirm = await confirmAccess({
-    //     role: req.body.role,
+    //     staffType: req.body.staffType,
     //     func: "getRoomById",
     // });
 
@@ -63,7 +63,7 @@ const getRoomById = async (req, res) => {
 const createRoom = async (req, res) => {
     // Check if user can access this route
     // const confirm = await confirmAccess({
-    //     role: req.body.role,
+    //     staffType: req.body.staffType,
     //     func: "createRoom",
     // });
     // if (!confirm) return res.redirect("back");
@@ -102,7 +102,7 @@ const createRoom = async (req, res) => {
 const updateRoomById = async (req, res) => {
     // Check if user can access this route
     // const confirm = await confirmAccess({
-    //     role: req.body.role,
+    //     staffType: req.body.staffType,
     //     func: "updateRoomById",
     // });
     // if (!confirm) return res.redirect("back");
@@ -155,7 +155,7 @@ const updateRoomById = async (req, res) => {
 const deleteRoomById = async (req, res) => {
     // Check if user can access this route
     // const confirm = await confirmAccess({
-    //     role: req.body.role,
+    //     staffType: req.body.staffType,
     //     func: "getAllCustomers",
     // });
     // if (!confirm) return res.redirect("back");

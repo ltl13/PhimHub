@@ -218,7 +218,7 @@ const deleteStaffTypeById = async (req, res) => {
       deleteStaffType.funcs.forEach(async (func) => {
         const findFunc = await Func.findById(func);
         if (findFunc) {
-          const listStaffTypeUpdate = findFunc.roles;
+          const listStaffTypeUpdate = findFunc.staffTypes;
           listStaffTypeUpdate.splice(
             listStaffTypeUpdate.indexOf(deleteStaffType._id)
           );

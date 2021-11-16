@@ -35,11 +35,11 @@ const getAllStaffs = async (req, res) => {
 
 const getStaffById = async (req, res) => {
   // Check if user can access this route
-  const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: "getStaffById",
-  });
-  if (!confirm) return res.redirect("back");
+  // const confirm = await confirmAccess({
+  //   staffType: req.body.staffType,
+  //   func: "getStaffById",
+  // });
+  // if (!confirm) return res.redirect("back");
 
   // Passed
   try {
@@ -69,11 +69,11 @@ const getStaffById = async (req, res) => {
 
 const createStaff = async (req, res) => {
   // Check if user can access this route
-  const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: "createStaff",
-  });
-  if (!confirm) return res.redirect("back");
+  // const confirm = await confirmAccess({
+  //   staffType: req.body.staffType,
+  //   func: "createStaff",
+  // });
+  // if (!confirm) return res.redirect("back");
 
   // Passed
   try {
@@ -354,11 +354,11 @@ const updateStaffById = async (req, res) => {
 
 const deleteStaffById = async (req, res) => {
   // Check if user can access this route
-  const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: "getAllCustomers",
-  });
-  if (!confirm) return res.redirect("back");
+  // const confirm = await confirmAccess({
+  //   staffType: req.body.staffType,
+  //   func: "getAllCustomers",
+  // });
+  // if (!confirm) return res.redirect("back");
 
   // Passed
   try {
