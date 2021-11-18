@@ -1,24 +1,25 @@
 const jsonwebtoken = require("jsonwebtoken");
 
-const verifyToken = (req, res, next) => {
+const verifyChangePasswordToken = (req, res, next) => {
   try {
     const authHeader = req.header("Authorization");
-    const token = authHeader && authHeader.split(" ")[1];
-    if (!token) {
+    const headerToken = authHeader && authHeader.split(" ")[1];
+    if (!headerToken)
       return res.status(406).json({
         success: false,
-        message: "Access token not found",
+        message: "Token not found",
       });
-    }
-    const verify = jsonwebtoken.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    if (!verify) {
+    const verify = jsonwebtoken.verify(
+      headerToken,
+      process.env.ACCESS_TOKEN_SECRET
+    );
+    if (!verify)
       return res.status(401).json({
         success: false,
         message: "Invalid token",
       });
-    }
     req.body.id = verify.id;
-    req.body.staffType = verify.staffType;
+    req.body.token = verify.token;
     next();
   } catch (error) {
     console.log(error);
@@ -29,4 +30,4 @@ const verifyToken = (req, res, next) => {
   }
 };
 
-module.exports = verifyToken;
+module.exports = verifyChangePasswordToken;
