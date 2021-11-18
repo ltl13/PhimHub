@@ -6,11 +6,11 @@ const { confirmAccess } = require('../shared/functions');
 
 const getAllStaffs = async (req, res) => {
   // Check if user can access this route
-  // const confirm = await confirmAccess({
-  //   staffType: req.body.staffType,
-  //   func: "getAllStaffs",
-  // });
-  // if (!confirm) return res.redirect("back");
+  const confirm = await confirmAccess({
+    staffType: req.body.staffType,
+    func: 'getAllStaffs',
+  });
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -35,11 +35,11 @@ const getAllStaffs = async (req, res) => {
 
 const getStaffById = async (req, res) => {
   // Check if user can access this route
-  // const confirm = await confirmAccess({
-  //   staffType: req.body.staffType,
-  //   func: "getStaffById",
-  // });
-  // if (!confirm) return res.redirect("back");
+  const confirm = await confirmAccess({
+    staffType: req.body.staffType,
+    func: 'getStaffById',
+  });
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -69,11 +69,11 @@ const getStaffById = async (req, res) => {
 
 const createStaff = async (req, res) => {
   // Check if user can access this route
-  // const confirm = await confirmAccess({
-  //   staffType: req.body.staffType,
-  //   func: "createStaff",
-  // });
-  // if (!confirm) return res.redirect("back");
+  const confirm = await confirmAccess({
+    staffType: req.body.staffType,
+    func: 'createStaff',
+  });
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -197,16 +197,17 @@ const loginStaff = async (req, res) => {
   }
 };
 
-const resetPasswordStaff = async (req, res) => {
+const sendChangePasswordTokenStaff = async (req, res) => {
   try {
     const { email } = req.body;
 
     // Check if user exists
-    const user = await Staff.findOne({ email, status: true });
-    if (!user) {
+    const staff = await Staff.findOne({ email, status: true });
+    if (!staff) {
       return res.status(406).json({
         success: false,
-        message: 'Email does not exist',
+        invalid: 'email',
+        message: 'Email has not been registered yet',
       });
     }
 
@@ -218,14 +219,19 @@ const resetPasswordStaff = async (req, res) => {
         pass: 'Luan130201',
       },
     });
-    const newPassword = Math.random().toString(36).slice(-8);
+    const changePasswordToken = Math.random().toString().slice(-6);
     const content = {
       from: '"PhimHub" <phimhub@cinema.com>',
       to: email,
       subject: 'Hello',
       text: 'Reset your password',
-      html: `<b>Hello, this is your new password: </b>${newPassword}`,
+      html: `<b>Hello, this is your change password token, please do not share it to anyone. Please note that token will expire after 15 minutes: </b>${changePasswordToken}`,
     };
+    const respondToken = jsonwebtoken.sign(
+      { id: customer._id, token: changePasswordToken },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: '900s' }
+    );
     transporter.sendMail(content, async function (err, info) {
       if (err) {
         console.log(err);
@@ -234,25 +240,11 @@ const resetPasswordStaff = async (req, res) => {
           message: 'There is an error occurred when sending email',
         });
       } else {
-        // Change user's password in database
-        const hashedPassword = await argon2.hash(newPassword);
-        const updatePassword = await Staff.findOneAndUpdate(
-          { email, status: true },
-          { password: hashedPassword },
-          { new: true }
-        );
-        await updatePassword.save();
-        if (!updatePassword) {
-          return res.status(400).json({
-            success: false,
-            message: 'Update password failed due to no authorization',
-          });
-        }
-
         // Return status code
         return res.status(200).json({
           success: true,
-          message: 'Password reset email sent',
+          message: 'Change password token was sent to user',
+          token: respondToken,
         });
       }
     });
@@ -265,13 +257,51 @@ const resetPasswordStaff = async (req, res) => {
   }
 };
 
+const changePasswordStaff = async (req, res) => {
+  try {
+    const { token, id, inputToken, newPassword } = req.body;
+    if (token != inputToken)
+      return res.status(400).json({
+        success: false,
+        invalid: 'inputToken',
+        message: 'Wrong token!!!',
+      });
+
+    // Change user's password in database
+    const hashedPassword = await argon2.hash(newPassword);
+    const updatePassword = await Staff.findOneAndUpdate(
+      { _id: id, status: true },
+      { password: hashedPassword },
+      { new: true }
+    );
+    await updatePassword.save();
+    if (!updatePassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Update password failed due to no authorization',
+      });
+    }
+
+    return res.status(201).json({
+      success: true,
+      message: 'Change password successfully',
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+};
+
 const updateStaffById = async (req, res) => {
   // Check if user can access this route
-  // const confirm = await confirmAccess({
-  //   staffType: req.body.staffType,
-  //   func: "getAllCustomers",
-  // });
-  // if (!confirm) return res.redirect("back");
+  const confirm = await confirmAccess({
+    staffType: req.body.staffType,
+    func: 'getAllCustomers',
+  });
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -354,11 +384,11 @@ const updateStaffById = async (req, res) => {
 
 const deleteStaffById = async (req, res) => {
   // Check if user can access this route
-  // const confirm = await confirmAccess({
-  //   staffType: req.body.staffType,
-  //   func: "getAllCustomers",
-  // });
-  // if (!confirm) return res.redirect("back");
+  const confirm = await confirmAccess({
+    staffType: req.body.staffType,
+    func: 'getAllCustomers',
+  });
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -410,7 +440,8 @@ module.exports = {
   getAllStaffs,
   getStaffById,
   loginStaff,
-  resetPasswordStaff,
+  sendChangePasswordTokenStaff,
+  changePasswordStaff,
   createStaff,
   updateStaffById,
   deleteStaffById,
