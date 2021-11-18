@@ -3,7 +3,7 @@ import axiosClient from './axiosClient';
 const userApi = {
   login(data) {
     const url = '/staff/login';
-    return axiosClient.post(url, data);
+    return axiosClient.put(url, data);
   },
   loadUser() {
     const url = '/staff/';
