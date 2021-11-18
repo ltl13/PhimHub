@@ -1,24 +1,28 @@
-import { CircularProgress, Divider, Grid, Typography } from '@mui/material';
-import Sidebar from 'components/Sidebar';
-import StorageKeys from 'constants/storage-keys';
-import DashboardLayout from 'layout/DashboardLayout';
+import { Typography } from '@mui/material';
+import Loading from 'components/Loading';
+import PrivateRoute from 'components/PrivateRoute';
+import Function from 'constants/function';
 import React from 'react';
-import { Navigate, Outlet, useRoutes } from 'react-router-dom';
+import { Navigate, useRoutes } from 'react-router-dom';
 
 const Login = React.lazy(() => import('features/Auth'));
-const TicketFeature = React.lazy(() => import('features/Ticket'));
+const DashboardLayout = React.lazy(() => import('features/Dashboard'));
 
 const Router = () => {
   return useRoutes([
     {
       path: '/dashboard',
-      element: <DashboardLayout />,
+      element: (
+        <PrivateRoute>
+          <DashboardLayout />
+        </PrivateRoute>
+      ),
       children: [
-        { path: '', element: <Navigate to="/dashboard/booking" replace /> },
+        // { path: '', element: <Navigate to="/dashboard/booking" replace /> },
         {
           path: 'booking',
           element: (
-            <PrivateRoute>
+            <PrivateRoute funcId={Function.TicketBooking.id}>
               <Typography variant="h3">Booking</Typography>
             </PrivateRoute>
           ),
@@ -26,7 +30,7 @@ const Router = () => {
         {
           path: 'waiting-ticket',
           element: (
-            <PrivateRoute>
+            <PrivateRoute funcId={Function.UnpaidTicket.id}>
               <Typography variant="h3">Waiting Ticket</Typography>
             </PrivateRoute>
           ),
@@ -34,7 +38,7 @@ const Router = () => {
         {
           path: 'statistic',
           element: (
-            <PrivateRoute>
+            <PrivateRoute funcId={Function.Statistic.id}>
               <Typography variant="h3">Statistic</Typography>
             </PrivateRoute>
           ),
@@ -49,7 +53,7 @@ const Router = () => {
             {
               path: 'movie',
               element: (
-                <PrivateRoute>
+                <PrivateRoute funcId={Function.MovieManagement.id}>
                   <Typography variant="h3">Movie</Typography>
                 </PrivateRoute>
               ),
@@ -57,7 +61,7 @@ const Router = () => {
             {
               path: 'staff',
               element: (
-                <PrivateRoute>
+                <PrivateRoute funcId={Function.StaffManagement.id}>
                   <Typography variant="h3">Staff</Typography>
                 </PrivateRoute>
               ),
@@ -65,7 +69,7 @@ const Router = () => {
             {
               path: 'showtime',
               element: (
-                <PrivateRoute>
+                <PrivateRoute funcId={Function.ShowtimeManagement.id}>
                   <Typography variant="h3">Showtime</Typography>
                 </PrivateRoute>
               ),
@@ -73,7 +77,7 @@ const Router = () => {
             {
               path: 'cinema-room',
               element: (
-                <PrivateRoute>
+                <PrivateRoute funcId={Function.CinemaRoomManagement.id}>
                   <Typography variant="h3">Cinema room</Typography>
                 </PrivateRoute>
               ),
@@ -81,7 +85,7 @@ const Router = () => {
             {
               path: 'customer',
               element: (
-                <PrivateRoute>
+                <PrivateRoute funcId={Function.CustomerManagement.id}>
                   <Typography variant="h3">Customer</Typography>
                 </PrivateRoute>
               ),
@@ -100,23 +104,23 @@ const Router = () => {
             {
               path: 'authorization',
               element: (
-                <PrivateRoute>
+                <PrivateRoute funcId={Function.AuthorizationSetting.id}>
                   <Typography variant="h3">Authorization</Typography>
                 </PrivateRoute>
               ),
             },
             {
-              path: 'discount',
+              path: 'promotion',
               element: (
-                <PrivateRoute>
-                  <Typography variant="h3">Discount</Typography>
+                <PrivateRoute funcId={Function.PromotionSetting.id}>
+                  <Typography variant="h3">Promotion</Typography>
                 </PrivateRoute>
               ),
             },
             {
               path: 'type-of-seat',
               element: (
-                <PrivateRoute>
+                <PrivateRoute funcId={Function.TypeOfSeatSetting.id}>
                   <Typography variant="h3">Type of seat</Typography>
                 </PrivateRoute>
               ),
@@ -124,7 +128,7 @@ const Router = () => {
             {
               path: 'type-of-payment',
               element: (
-                <PrivateRoute>
+                <PrivateRoute funcId={Function.TypeOfPaymentSetting.id}>
                   <Typography variant="h3">Type of payment</Typography>
                 </PrivateRoute>
               ),
@@ -157,23 +161,33 @@ const Router = () => {
   ]);
 };
 
-function Loading() {
-  return (
-    <Grid
-      container
-      direction="row"
-      justifyContent="center"
-      alignItems="center"
-      height="100%"
-    >
-      <CircularProgress />
-    </Grid>
-  );
-}
+// function PrivateRoute({ children, funcId }) {
+//   const user = useSelector(state => state.user.current);
+//   const [token, setToken] = useState(localStorage[StorageKeys.access]);
+//   const dispatch = useDispatch();
 
-function PrivateRoute({ children }) {
-  const loginInUser = localStorage.getItem(StorageKeys.access);
-  return !!loginInUser ? children : <Navigate to="/login" />;
-}
+//   useEffect(() => {
+//     const load = async () => {
+//       const action = loadUser();
+//       await dispatch(action);
+//       setToken(localStorage[StorageKeys.access]);
+//     };
+
+//     if (token) load();
+
+//     window.addEventListener('storage', load);
+//     return () => {
+//       window.removeEventListener('storage', load);
+//     };
+//   }, [localStorage[StorageKeys.access]]);
+
+//   return !token ? (
+//     <Navigate to="/login" />
+//   ) : !!(user && funcId && user.staffType.funcs.indexOf(funcId) === -1) ? (
+//     <Navigate to="/" />
+//   ) : (
+//     <React.Suspense fallback={<Loading />}>{children}</React.Suspense>
+//   );
+// }
 
 export default Router;

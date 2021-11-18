@@ -9,7 +9,12 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { styled } from '@mui/system';
+import { logout } from 'app/userSlice';
+import AccountInfo from 'features/Dashboard/pages/AccountInfo';
+import PasswordChange from 'features/Dashboard/pages/PasswordChange';
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const AccountStyle = styled(props => <Button {...props} />)(({ theme }) => ({
   display: 'flex',
@@ -21,13 +26,46 @@ const AccountStyle = styled(props => <Button {...props} />)(({ theme }) => ({
 }));
 
 export default function AccountMenuButton() {
+  const user = useSelector(state => state.user.current);
+  let navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [openAccountInfo, setOpenAccountInfo] = useState(false);
+
+  const handleOpenAccountInfo = () => {
+    setOpenAccountInfo(true);
+  };
+
+  const handleCloseAccountInfo = () => {
+    setOpenAccountInfo(false);
+  };
+
+  const [openPasswordChange, setOpenPasswordChange] = useState(false);
+
+  const handleOpenPasswordChange = () => {
+    setOpenPasswordChange(true);
+  };
+
+  const handleClosePasswordChange = () => {
+    setOpenPasswordChange(false);
+  };
+
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+
   const handleClick = event => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLogOut = async () => {
+    const action = logout();
+    await dispatch(action);
+
+    navigate('/login', { replace: true });
   };
   return (
     <>
@@ -39,10 +77,10 @@ export default function AccountMenuButton() {
           />
           <Box sx={{ ml: 2 }}>
             <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-              Le Trung Hieu
+              {!!user && user.name}
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              Role
+              {!!user && user.staffType.typeName}
             </Typography>
           </Box>
         </AccountStyle>
@@ -81,27 +119,34 @@ export default function AccountMenuButton() {
         transformOrigin={{ horizontal: 'left', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
       >
-        <MenuItem>
+        <MenuItem onClick={handleOpenAccountInfo}>
           <ListItemIcon>
             <PersonRoundedIcon fontSize="small" />
           </ListItemIcon>
           Thông tin
         </MenuItem>
 
-        <MenuItem>
+        <MenuItem onClick={handleOpenPasswordChange}>
           <ListItemIcon>
             <VpnKeyRoundedIcon fontSize="small" />
           </ListItemIcon>
           Đổi mật khẩu
         </MenuItem>
+
         <Divider />
-        <MenuItem>
+
+        <MenuItem onClick={handleLogOut}>
           <ListItemIcon>
             <LogoutRoundedIcon fontSize="small" />
           </ListItemIcon>
           Logout
         </MenuItem>
       </Menu>
+      <AccountInfo open={openAccountInfo} onClose={handleCloseAccountInfo} />
+      <PasswordChange
+        open={openPasswordChange}
+        onClose={handleClosePasswordChange}
+      />
     </>
   );
 }

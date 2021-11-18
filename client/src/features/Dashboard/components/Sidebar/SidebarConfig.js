@@ -59,7 +59,7 @@ const sidebarConfig = [
       },
       {
         title: 'Khuyến mãi',
-        path: '/dashboard/setting/discount',
+        path: '/dashboard/setting/promotion',
       },
       {
         title: 'Loại ghế',

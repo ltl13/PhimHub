@@ -1,13 +1,6 @@
 import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
-import {
-  Stack,
-  Avatar,
-  Menu,
-  Divider,
-  MenuItem,
-  ListItemIcon,
-} from '@mui/material';
+import { Stack } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -16,39 +9,14 @@ import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import AccountMenuButton from 'components/AccountMenuButton';
-import Sidebar from 'components/Sidebar';
+import AccountMenuButton from 'features/Dashboard/components/AccountMenuButton';
+import Sidebar from 'features/Dashboard/components/Sidebar';
 import * as React from 'react';
 import { Outlet } from 'react-router-dom';
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
-import { AccountCircleRoundedIcon } from '@mui/icons-material/AccountCircleRounded';
-import PersonAdd from '@mui/icons-material/PersonAdd';
-import Settings from '@mui/icons-material/Settings';
-import Logout from '@mui/icons-material/Logout';
 
 const drawerWidth = 260;
-
-// const sidebarWidth = 260;
-
-// function DashboardLayout(props) {
-//   return (
-//     // <Box sx={{ display: 'flex', width: '100%' }}>
-//     //   <Sidebar />
-//     //   <Outlet />
-//     // </Box>
-//     <>
-//       <Box container sx={{ height: '100%', display: 'flex' }}>
-//         <SimpleBar style={{ height: '100%', width: '260px' }}>
-//           <Sidebar />
-//         </SimpleBar>
-//         <Outlet />
-//       </Box>
-//     </>
-//   );
-// }
-
-// export default DashboardLayout;
 
 const Main = styled('main', { shouldForwardProp: prop => prop !== 'open' })(
   ({ theme, open }) => ({
@@ -120,14 +88,6 @@ export default function DashboardLayout() {
           >
             <MenuRoundedIcon />
           </IconButton>
-          {/* <Typography
-            variant="h5"
-            color="text.secondary"
-            noWrap
-            component="div"
-          >
-            Persistent drawer
-          </Typography> */}
         </Toolbar>
       </AppBar>
 

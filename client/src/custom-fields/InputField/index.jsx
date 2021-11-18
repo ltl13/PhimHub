@@ -35,7 +35,7 @@ function InputField(props) {
             margin="normal"
             label={label}
             fullWidth
-            disable={disable}
+            disabled={disable}
             error={!!hasError}
             helperText={errors[name]?.message}
           ></TextField>

@@ -1,20 +1,33 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import userApi from 'api/userApi';
-import StorageKeys from 'constants/storage-keys';
+import StorageKeys from 'constants/storageKeys';
 
-export const login = createAsyncThunk('users/login', async payload => {
+export const login = createAsyncThunk(
+  'users/login',
+  async (payload, { dispatch }) => {
+    try {
+      const response = await userApi.login(payload);
+      if (response.data.success)
+        localStorage.setItem(StorageKeys.access, response.data.token);
+
+      await dispatch(loadUser());
+
+      return response;
+    } catch (error) {
+      if (error.response) return error.response;
+      else return { success: false, message: error.message };
+    }
+  },
+);
+
+export const loadUser = createAsyncThunk('user/loadUser', async () => {
   try {
-    const response = await userApi.login(payload);
-    localStorage.setItem(StorageKeys.access, response.data.token);
-
+    const response = await userApi.loadUser();
     return response;
   } catch (error) {
-    if (error.response) return error.response;
-    else return { success: false, message: error.message };
+    localStorage.removeItem(StorageKeys.access);
   }
 });
-
-export const getAuth = createAsyncThunk('user/getAuth', async () => {});
 
 const userSlice = createSlice({
   name: 'user',
@@ -24,18 +37,19 @@ const userSlice = createSlice({
   },
   reducers: {
     logout(state) {
-      state.current = {};
+      state.current = null;
+      state.isLoggedIn = false;
       localStorage.removeItem(StorageKeys.access);
-      localStorage.removeItem(StorageKeys.user);
     },
   },
   extraReducers: {
-    [login.fulfilled]: (state, action) => {
-      state.current = action.payload;
-      console.log(action.payload.data);
-      state.isLoggedIn = true;
+    [loadUser.fulfilled]: (state, action) => {
+      if (action.payload) {
+        state.current = action.payload.data.staff;
+        state.isLoggedIn = true;
+      }
     },
-    [login.rejected]: (state, action) => {
+    [loadUser.rejected]: (state, action) => {
       state.current = null;
       state.isLoggedIn = false;
     },
@@ -43,4 +57,5 @@ const userSlice = createSlice({
 });
 
 const { actions, reducer } = userSlice;
+export const { logout } = actions;
 export default reducer;

@@ -1,7 +1,7 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
 
-const verifyToken = require("../middlewares/auth.middleware");
+const verifyToken = require('../middlewares/auth.middleware');
 const {
   loginStaff,
   resetPasswordStaff,
@@ -10,14 +10,16 @@ const {
   createStaff,
   updateStaffById,
   deleteStaffById,
-} = require("../controllers/staff.controller");
+  getLoggedInStaff,
+} = require('../controllers/staff.controller');
 
-router.put("/login", loginStaff);
-router.put("/reset-password", resetPasswordStaff);
-router.get("/get-all", verifyToken, getAllStaffs);
-router.get("/get/:id", verifyToken, getStaffById);
-router.post("/create", createStaff);
-router.put("/update/:id", verifyToken, updateStaffById);
-router.delete("/delete/:id", verifyToken, deleteStaffById);
+router.post('/login', loginStaff);
+router.put('/reset-password', resetPasswordStaff);
+router.get('/get-all', verifyToken, getAllStaffs);
+router.get('/get/:id', verifyToken, getStaffById);
+router.post('/create', createStaff);
+router.put('/update/:id', verifyToken, updateStaffById);
+router.delete('/delete/:id', verifyToken, deleteStaffById);
+router.get('/', verifyToken, getLoggedInStaff);
 
 module.exports = router;

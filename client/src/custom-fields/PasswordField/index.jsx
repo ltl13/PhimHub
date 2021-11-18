@@ -38,7 +38,7 @@ function PasswordField(props) {
             error={!!hasError}
             type={showPassword ? 'text' : 'password'}
             label={label}
-            disable={disable}
+            disabled={disable}
             fullWidth
             InputProps={{
               endAdornment: (

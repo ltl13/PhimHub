@@ -39,6 +39,8 @@ function LoginForm(props) {
     formState: { errors },
   } = form;
 
+  const { isSubmitting } = form.formState;
+
   const handleSubmit = async data => {
     const actions = login(data);
     const response = await dispatch(actions);
@@ -53,8 +55,6 @@ function LoginForm(props) {
       navigate('/500', { replace: true });
     }
   };
-
-  const { isSubmitting } = form.formState;
 
   return (
     <div>
@@ -80,11 +80,19 @@ function LoginForm(props) {
             fullWidth
             size="large"
             type="submit"
-            disable={isSubmitting}
+            disabled={isSubmitting}
             sx={{ height: '56px' }}
           >
             Đăng nhập
           </Button>
+          {/* <LoadingButton
+            loading
+            loadingPosition="start"
+            // startIcon={<SaveIcon />}
+            variant="outlined"
+          >
+            Save
+          </LoadingButton> */}
         </Stack>
       </form>
     </div>

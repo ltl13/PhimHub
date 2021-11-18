@@ -1,8 +1,8 @@
-const argon2 = require("argon2");
-const jsonwebtoken = require("jsonwebtoken");
+const argon2 = require('argon2');
+const jsonwebtoken = require('jsonwebtoken');
 
-const Staff = require("../models/Staff");
-const { confirmAccess } = require("../shared/functions");
+const Staff = require('../models/Staff');
+const { confirmAccess } = require('../shared/functions');
 
 const getAllStaffs = async (req, res) => {
   // Check if user can access this route
@@ -16,10 +16,10 @@ const getAllStaffs = async (req, res) => {
   try {
     const allStaffs = await Staff.find({ status: true })
       .populate({
-        path: "staffType",
-        select: "typeName",
+        path: 'staffType',
+        select: 'typeName',
       })
-      .select("-password");
+      .select('-password');
     return res.status(200).json({
       success: true,
       allStaffs,
@@ -28,7 +28,7 @@ const getAllStaffs = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -45,14 +45,14 @@ const getStaffById = async (req, res) => {
   try {
     const staff = await Staff.findById(req.params.id)
       .populate({
-        path: "staffType",
-        select: "typeName",
+        path: 'staffType',
+        select: 'typeName',
       })
-      .select("-password");
+      .select('-password');
     if (!staff)
       return res.status(406).json({
         success: false,
-        message: "Staff not found",
+        message: 'Staff not found',
       });
     return res.status(200).json({
       success: true,
@@ -62,7 +62,7 @@ const getStaffById = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -95,8 +95,8 @@ const createStaff = async (req, res) => {
     if (checker) {
       return res.status(409).json({
         success: false,
-        invalid: "phoneNumber",
-        message: "This phone number has been used by another staff",
+        invalid: 'phoneNumber',
+        message: 'This phone number has been used by another staff',
       });
     }
 
@@ -104,8 +104,8 @@ const createStaff = async (req, res) => {
     if (checker) {
       return res.status(409).json({
         success: false,
-        invalid: "identityNumber",
-        message: "This identity number has been used by another staff",
+        invalid: 'identityNumber',
+        message: 'This identity number has been used by another staff',
       });
     }
 
@@ -113,8 +113,8 @@ const createStaff = async (req, res) => {
     if (checker) {
       return res.status(409).json({
         success: false,
-        invalid: "email",
-        message: "This email has been used by another staff",
+        invalid: 'email',
+        message: 'This email has been used by another staff',
       });
     }
 
@@ -128,7 +128,7 @@ const createStaff = async (req, res) => {
       email,
       name,
       sex,
-      dateOfBirth: new Date(dateOfBirth.concat("T00:00:20Z")),
+      dateOfBirth: new Date(dateOfBirth.concat('T00:00:20Z')),
       identityNumber,
       salary,
     });
@@ -136,14 +136,14 @@ const createStaff = async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      message: "New staff was created successfully",
+      message: 'New staff was created successfully',
       newStaff,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -155,20 +155,20 @@ const loginStaff = async (req, res) => {
     // Check for existing account
     const staff = await Staff.findOne({ username, status: true });
     if (!staff) {
-      return res.status(406).json({
+      return res.status(401).json({
         success: false,
-        invalid: "phoneNumber",
-        message: "Incorrect phone number",
+        invalid: 'phoneNumber',
+        message: 'Incorrect phone number',
       });
     }
 
     // Check for correct password
     const correctPassword = await argon2.verify(staff.password, password);
     if (!correctPassword) {
-      return res.status(400).json({
+      return res.status(401).json({
         success: false,
-        invalid: "password",
-        message: "Incorrect password",
+        invalid: 'password',
+        message: 'Incorrect password',
       });
     }
 
@@ -183,16 +183,16 @@ const loginStaff = async (req, res) => {
       { new: true }
     ).then(async (result) => await result.save());
 
-    res.status(201).json({
+    res.status(200).json({
       success: true,
-      message: "User logged in",
+      message: 'User logged in',
       token: accessToken,
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -206,24 +206,24 @@ const resetPasswordStaff = async (req, res) => {
     if (!user) {
       return res.status(406).json({
         success: false,
-        message: "Email does not exist",
+        message: 'Email does not exist',
       });
     }
 
     // Send new password to user's email
     const transporter = nodemailer.createTransport({
-      service: "Gmail",
+      service: 'Gmail',
       auth: {
-        user: "thanhluan130201@gmail.com",
-        pass: "Luan130201",
+        user: 'thanhluan130201@gmail.com',
+        pass: 'Luan130201',
       },
     });
     const newPassword = Math.random().toString(36).slice(-8);
     const content = {
       from: '"PhimHub" <phimhub@cinema.com>',
       to: email,
-      subject: "Hello",
-      text: "Reset your password",
+      subject: 'Hello',
+      text: 'Reset your password',
       html: `<b>Hello, this is your new password: </b>${newPassword}`,
     };
     transporter.sendMail(content, async function (err, info) {
@@ -231,7 +231,7 @@ const resetPasswordStaff = async (req, res) => {
         console.log(err);
         return res.status(422).json({
           success: false,
-          message: "There is an error occurred when sending email",
+          message: 'There is an error occurred when sending email',
         });
       } else {
         // Change user's password in database
@@ -245,14 +245,14 @@ const resetPasswordStaff = async (req, res) => {
         if (!updatePassword) {
           return res.status(400).json({
             success: false,
-            message: "Update password failed due to no authorization",
+            message: 'Update password failed due to no authorization',
           });
         }
 
         // Return status code
         return res.status(200).json({
           success: true,
-          message: "Password reset email sent",
+          message: 'Password reset email sent',
         });
       }
     });
@@ -260,7 +260,7 @@ const resetPasswordStaff = async (req, res) => {
     console.log(error);
     res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -294,7 +294,7 @@ const updateStaffById = async (req, res) => {
     if (!staff)
       return res.status(406).json({
         status: false,
-        message: "Staff not found",
+        message: 'Staff not found',
       });
 
     // Check if email or phone number doesn't change
@@ -303,24 +303,24 @@ const updateStaffById = async (req, res) => {
     if (checker && phoneNumber !== staff.phoneNumber) {
       return res.status(400).json({
         success: false,
-        invalid: "phoneNumber",
-        message: "This phone number has been used by another staff",
+        invalid: 'phoneNumber',
+        message: 'This phone number has been used by another staff',
       });
     }
     checker = await Staff.findOne({ email, status: true });
     if (checker && email !== staff.email) {
       return res.status(400).json({
         success: false,
-        invalid: "email",
-        message: "This email has been used by another staff",
+        invalid: 'email',
+        message: 'This email has been used by another staff',
       });
     }
     checker = await Staff.findOne({ identityNumber, status: true });
     if (checker && identityNumber !== staff.identityNumber) {
       return res.status(400).json({
         success: false,
-        invalid: "identityNumber",
-        message: "This identity number has been used by another staff",
+        invalid: 'identityNumber',
+        message: 'This identity number has been used by another staff',
       });
     }
 
@@ -335,7 +335,7 @@ const updateStaffById = async (req, res) => {
         sex,
         identityNumber,
         salary,
-        dateOfBirth: new Date(dateOfBirth.concat("T00:00:10Z")),
+        dateOfBirth: new Date(dateOfBirth.concat('T00:00:10Z')),
       },
       { new: true }
     ).then((result) => result.save());
@@ -347,7 +347,7 @@ const updateStaffById = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -371,21 +371,38 @@ const deleteStaffById = async (req, res) => {
     if (!deleteStaff) {
       return res.status(406).json({
         success: false,
-        message: "Staff not found",
+        message: 'Staff not found',
       });
     }
     deleteStaff.save();
 
     return res.status(200).json({
       success: true,
-      message: "Delete staff successfully",
+      message: 'Delete staff successfully',
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
+  }
+};
+
+const getLoggedInStaff = async (req, res) => {
+  try {
+    const staff = await Staff.findById(req.body.id)
+      .populate('staffType')
+      .select('-password');
+    if (!staff) {
+      return res
+        .status(400)
+        .json({ success: false, message: 'Staff not found' });
+    }
+    return res.status(200).json({ success: true, staff });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
@@ -397,4 +414,5 @@ module.exports = {
   createStaff,
   updateStaffById,
   deleteStaffById,
+  getLoggedInStaff,
 };

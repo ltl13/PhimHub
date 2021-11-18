@@ -1,7 +1,7 @@
-const { confirmAccess } = require("../shared/functions");
-const StaffType = require("../models/StaffType");
-const Staff = require("../models/Staff");
-const Func = require("../models/Func");
+const { confirmAccess } = require('../shared/functions');
+const StaffType = require('../models/StaffType');
+const Staff = require('../models/Staff');
+const Func = require('../models/Func');
 
 const getAllStaffTypes = async (req, res) => {
   // Check if user can access this route
@@ -14,8 +14,8 @@ const getAllStaffTypes = async (req, res) => {
   // Passed
   try {
     const allStaffTypes = await StaffType.find().populate({
-      path: "funcs",
-      select: "funcName",
+      path: 'funcs',
+      select: 'funcName',
     });
     return res.status(200).json({
       success: true,
@@ -25,7 +25,7 @@ const getAllStaffTypes = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -41,13 +41,13 @@ const getStaffTypeById = async (req, res) => {
   // Passed
   try {
     const staffType = await StaffType.findById(req.params.id).populate({
-      path: "funcs",
-      select: "funcName",
+      path: 'funcs',
+      select: 'funcName',
     });
     if (!staffType)
       return res.status(406).json({
         success: false,
-        message: "Staff type not found",
+        message: 'Staff type not found',
       });
     return res.status(200).json({
       success: true,
@@ -57,7 +57,7 @@ const getStaffTypeById = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -72,31 +72,31 @@ const createStaffType = async (req, res) => {
 
   // Passed
   try {
-    const { typeName } = req.body;
+    const { typeName, funcs } = req.body;
 
     // Check if this position has existed
     const checker = await StaffType.findOne({ typeName });
     if (checker)
       return res.status(409).json({
         success: false,
-        message: "This type name has existed",
+        message: 'This type name has existed',
       });
 
     // Add new position
     const newStaffType = new StaffType({
       typeName,
-      funcs: [],
+      funcs,
     });
     await newStaffType.save();
     return res.status(201).json({
       success: true,
-      message: "New staff type has just been added",
+      message: 'New staff type has just been added',
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -118,7 +118,7 @@ const updateStaffTypeById = async (req, res) => {
     if (!checkStaffType)
       return res.status(406).json({
         success: false,
-        message: "Staff type not found",
+        message: 'Staff type not found',
       });
 
     // Check if this type name has existed
@@ -129,7 +129,7 @@ const updateStaffTypeById = async (req, res) => {
     if (checkTypeName)
       return res.status(400).json({
         success: false,
-        message: "This type name has existed",
+        message: 'This type name has existed',
       });
 
     // Delete all connections of this staff type with funcs before updating
@@ -172,13 +172,13 @@ const updateStaffTypeById = async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      message: "Staff type has been updated successfully",
+      message: 'Staff type has been updated successfully',
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -197,7 +197,7 @@ const deleteStaffTypeById = async (req, res) => {
     if (!checkeStaffType)
       return res.status(406).json({
         success: false,
-        message: "Staff type not found",
+        message: 'Staff type not found',
       });
 
     // Check if this staff type is in connection with staffs
@@ -208,7 +208,7 @@ const deleteStaffTypeById = async (req, res) => {
     if (checkStaff)
       return res.status(409).json({
         success: false,
-        message: "There is still staffs of this type so it can not be deleted",
+        message: 'There is still staffs of this type so it can not be deleted',
       });
 
     // All good, delete staff type
@@ -234,13 +234,13 @@ const deleteStaffTypeById = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Staff type was deleted successfully",
+      message: 'Staff type was deleted successfully',
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
