@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const FuncSchema = new Schema({
@@ -8,18 +8,12 @@ const FuncSchema = new Schema({
     unique: true,
   },
 
-  displayName: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-
   staffTypes: [
     {
       type: Schema.Types.ObjectId,
-      ref: "staff_types",
+      ref: 'staff_types',
     },
   ],
 });
 
-module.exports = mongoose.model("funcs", FuncSchema);
+module.exports = mongoose.model('funcs', FuncSchema);
