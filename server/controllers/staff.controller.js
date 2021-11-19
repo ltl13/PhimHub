@@ -257,7 +257,7 @@ const sendChangePasswordTokenStaff = async (req, res) => {
   }
 };
 
-const changePasswordStaff = async (req, res) => {
+const resetPasswordStaff = async (req, res) => {
   try {
     const { token, id, inputToken, newPassword } = req.body;
     if (token != inputToken)
@@ -436,14 +436,51 @@ const getLoggedInStaff = async (req, res) => {
   }
 };
 
+const changePasswordStaff = async (req, res) => {
+  try {
+    const { id, oldPassword, newPassword } = req.body;
+
+    let staff = await Staff.findOne({
+      _id: id,
+      status: true,
+    });
+
+    const correctPassword = await argon2.verify(staff.password, oldPassword);
+
+    if (!correctPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Old password is not correct',
+      });
+    }
+
+    // Change user's password in database
+    const hashedPassword = await argon2.hash(newPassword);
+    staff.password = hashedPassword;
+    await staff.save();
+
+    return res.status(201).json({
+      success: true,
+      message: 'Change password successfully',
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+};
+
 module.exports = {
   getAllStaffs,
   getStaffById,
   loginStaff,
   sendChangePasswordTokenStaff,
-  changePasswordStaff,
+  resetPasswordStaff,
   createStaff,
   updateStaffById,
   deleteStaffById,
   getLoggedInStaff,
+  changePasswordStaff,
 };

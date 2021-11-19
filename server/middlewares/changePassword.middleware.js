@@ -1,13 +1,13 @@
-const jsonwebtoken = require("jsonwebtoken");
+const jsonwebtoken = require('jsonwebtoken');
 
-const verifyChangePasswordToken = (req, res, next) => {
+const verifyResetPasswordToken = (req, res, next) => {
   try {
-    const authHeader = req.header("Authorization");
-    const headerToken = authHeader && authHeader.split(" ")[1];
+    const authHeader = req.header('Authorization');
+    const headerToken = authHeader && authHeader.split(' ')[1];
     if (!headerToken)
       return res.status(406).json({
         success: false,
-        message: "Token not found",
+        message: 'Token not found',
       });
     const verify = jsonwebtoken.verify(
       headerToken,
@@ -16,7 +16,7 @@ const verifyChangePasswordToken = (req, res, next) => {
     if (!verify)
       return res.status(401).json({
         success: false,
-        message: "Invalid token",
+        message: 'Invalid token',
       });
     req.body.id = verify.id;
     req.body.token = verify.token;
@@ -25,9 +25,9 @@ const verifyChangePasswordToken = (req, res, next) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
 
-module.exports = verifyChangePasswordToken;
+module.exports = verifyResetPasswordToken;

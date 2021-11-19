@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { alpha, styled, useTheme } from '@mui/system';
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { matchPath, NavLink, useLocation } from 'react-router-dom';
 
 const ListItemStyle = styled(props => (
@@ -44,9 +45,10 @@ const ListItemIconStyle = styled(ListItemIcon)({
 });
 
 function NavItem({ item, active }) {
+  const user = useSelector(state => state.user.current);
   const theme = useTheme();
   const isActiveRoot = active(item.path);
-  const { title, path, icon, children } = item;
+  const { title, path, icon, func, children } = item;
   const [open, setOpen] = useState(isActiveRoot);
 
   const activeRootStyle = {
@@ -68,7 +70,21 @@ function NavItem({ item, active }) {
     setOpen(prev => !prev);
   };
 
+  const checkAccessFunc = (type, func = null) => {
+    if (type === 1) {
+      //Has children
+      return (
+        user &&
+        children.some(item => user.staffType.funcs.indexOf(item.func.id) !== -1)
+      );
+    } else {
+      //Hasn't children
+      return user && func && user.staffType.funcs.indexOf(func.id) !== -1;
+    }
+  };
+
   if (children) {
+    if (!checkAccessFunc(1)) return <></>;
     return (
       <>
         <ListItemStyle
@@ -105,34 +121,36 @@ function NavItem({ item, active }) {
               const isActiveSub = active(path);
 
               return (
-                <ListItemStyle
-                  key={title}
-                  component={NavLink}
-                  to={path}
-                  sx={{ ...(isActiveSub && activeSubStyle) }}
-                >
-                  <ListItemIconStyle>
-                    <Box
-                      component="span"
-                      sx={{
-                        width: 4,
-                        height: 4,
-                        display: 'flex',
-                        borderRadius: '50%',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        bgcolor: 'text.disabled',
-                        transition: theme =>
-                          theme.transitions.create('transform'),
-                        ...(isActiveSub && {
-                          transform: 'scale(2)',
-                          bgcolor: 'primary.main',
-                        }),
-                      }}
-                    />
-                  </ListItemIconStyle>
-                  <ListItemText disableTypography primary={title} />
-                </ListItemStyle>
+                checkAccessFunc(0, item.func) && (
+                  <ListItemStyle
+                    key={title}
+                    component={NavLink}
+                    to={path}
+                    sx={{ ...(isActiveSub && activeSubStyle) }}
+                  >
+                    <ListItemIconStyle>
+                      <Box
+                        component="span"
+                        sx={{
+                          width: 4,
+                          height: 4,
+                          display: 'flex',
+                          borderRadius: '50%',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          bgcolor: 'text.disabled',
+                          transition: theme =>
+                            theme.transitions.create('transform'),
+                          ...(isActiveSub && {
+                            transform: 'scale(2)',
+                            bgcolor: 'primary.main',
+                          }),
+                        }}
+                      />
+                    </ListItemIconStyle>
+                    <ListItemText disableTypography primary={title} />
+                  </ListItemStyle>
+                )
               );
             })}
           </List>
@@ -142,18 +160,20 @@ function NavItem({ item, active }) {
   }
 
   return (
-    <ListItemStyle
-      component={NavLink}
-      to={path}
-      sx={{ ...(isActiveRoot && activeRootStyle) }}
-    >
-      <ListItemIconStyle
-        sx={{ ...(isActiveRoot && { color: 'primary.main' }) }}
+    checkAccessFunc(0, item.func) && (
+      <ListItemStyle
+        component={NavLink}
+        to={path}
+        sx={{ ...(isActiveRoot && activeRootStyle) }}
       >
-        {icon && icon}
-      </ListItemIconStyle>
-      <ListItemText disableTypography primary={title} />
-    </ListItemStyle>
+        <ListItemIconStyle
+          sx={{ ...(isActiveRoot && { color: 'primary.main' }) }}
+        >
+          {icon && icon}
+        </ListItemIconStyle>
+        <ListItemText disableTypography primary={title} />
+      </ListItemStyle>
+    )
   );
 }
 

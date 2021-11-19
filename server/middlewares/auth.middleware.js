@@ -12,17 +12,16 @@ const verifyToken = (req, res, next) => {
     }
     const verify = jsonwebtoken.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
-    if (!verify) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid token',
-      });
-    }
     req.body.id = verify.id;
     req.body.staffType = verify.staffType;
     next();
   } catch (error) {
-    console.log(error);
+    if (error.name === 'JsonWebTokenError') {
+      return res.status(403).json({
+        success: false,
+        message: error.message,
+      });
+    }
     return res.status(500).json({
       success: false,
       message: 'Internal server error',

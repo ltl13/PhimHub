@@ -26,8 +26,25 @@ export const loadUser = createAsyncThunk('user/loadUser', async () => {
     return response;
   } catch (error) {
     localStorage.removeItem(StorageKeys.access);
+
+    if (error.response) return error.response;
+    else return { success: false, message: error.message };
   }
 });
+
+export const changePassword = createAsyncThunk(
+  'user/changePassword',
+  async payload => {
+    console.log(1);
+    try {
+      const response = await userApi.changePassword(payload);
+      return response;
+    } catch (error) {
+      if (error.response) return error.response;
+      else return { success: false, message: error.message };
+    }
+  },
+);
 
 const userSlice = createSlice({
   name: 'user',

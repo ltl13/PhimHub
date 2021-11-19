@@ -9,6 +9,10 @@ const userApi = {
     const url = '/staff/';
     return axiosClient.get(url);
   },
+  changePassword(data) {
+    const url = '/staff/change-password';
+    return axiosClient.put(url, data);
+  },
 };
 
 export default userApi;
