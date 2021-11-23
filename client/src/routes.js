@@ -7,6 +7,9 @@ import { Navigate, useRoutes } from 'react-router-dom';
 
 const Login = React.lazy(() => import('features/Auth'));
 const DashboardLayout = React.lazy(() => import('features/Dashboard'));
+const Authorization = React.lazy(() =>
+  import('./features/Authorization/index'),
+);
 
 const Router = () => {
   return useRoutes([
@@ -19,6 +22,10 @@ const Router = () => {
       ),
       children: [
         // { path: '', element: <Navigate to="/dashboard/booking" replace /> },
+        // {
+        //   path: '',
+        //   element: <Navigate to="/dashboard/setting/authorization" replace />,
+        // },
         {
           path: 'booking',
           element: (
@@ -105,7 +112,7 @@ const Router = () => {
               path: 'authorization',
               element: (
                 <PrivateRoute funcId={Function.AuthorizationSetting.id}>
-                  <Typography variant="h3">Authorization</Typography>
+                  <Authorization />
                 </PrivateRoute>
               ),
             },

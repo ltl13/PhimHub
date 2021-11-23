@@ -76,7 +76,7 @@ export default function DashboardLayout() {
   };
 
   return (
-    <Box sx={{ display: 'flex', overflow: 'hidden' }}>
+    <Box sx={{ display: 'flex', height: '100%' }}>
       <CssBaseline />
       <AppBar position="absolute" open={open} elevation={0}>
         <Toolbar>
@@ -122,6 +122,7 @@ export default function DashboardLayout() {
       <Main open={open}>
         <DrawerHeader />
         <Outlet />
+        <DrawerHeader />
       </Main>
     </Box>
   );

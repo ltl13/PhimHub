@@ -44,15 +44,16 @@ function LoginForm(props) {
   const handleSubmit = async data => {
     const actions = login(data);
     const response = await dispatch(actions);
-    if (response.payload.status === 200) {
+    if (response.payload.success) {
       navigate('/', { replace: true });
-    } else if (response.payload.status === 401) {
+    } else {
       setError('login', {
         type: 'manual',
-        message: 'Tên đăng nhập hoặc mật khẩu không đúng',
+        message:
+          response.payload.message === 'Incorrect username or password'
+            ? 'Tên đăng nhập hoặc mật khẩu không đúng'
+            : 'Lỗi server',
       });
-    } else {
-      navigate('/500', { replace: true });
     }
   };
 
@@ -72,6 +73,11 @@ function LoginForm(props) {
           {!!errors.login && (
             <FormHelperText error={errors.login}>
               {errors.login.message}
+            </FormHelperText>
+          )}
+          {!!errors.serverError && (
+            <FormHelperText error={errors.serverError}>
+              {errors.serverError.message}
             </FormHelperText>
           )}
           <Button

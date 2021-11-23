@@ -1,4 +1,4 @@
-const { confirmAccess } = require('../shared/functions');
+const { confirmAccess, removeAccents } = require('../shared/functions');
 const StaffType = require('../models/StaffType');
 const Staff = require('../models/Staff');
 const Func = require('../models/Func');
@@ -64,19 +64,26 @@ const getStaffTypeById = async (req, res) => {
 
 const createStaffType = async (req, res) => {
   // Check if user can access this route
-  // const confirm = await confirmAccess({
-  //   staffType: req.body.staffType,
-  //   func: "createStaffType",
-  // });
-  // if (!confirm) return res.redirect("back");
+  const confirm = await confirmAccess({
+    staffType: req.body.staffType,
+    func: 'AuthorizationSetting',
+  });
+  if (!confirm)
+    return res.status(400).json({
+      success: false,
+      message: 'Not has access',
+    });
 
   // Passed
   try {
     const { typeName, funcs } = req.body;
 
     // Check if this position has existed
-    const checker = await StaffType.findOne({ typeName });
-    if (checker)
+    const checker = (await StaffType.find({}).select('typeName -_id')).map(
+      (item) => item.typeName.toLowerCase()
+    );
+
+    if (checker.indexOf(typeName.toLowerCase()) !== -1)
       return res.status(409).json({
         success: false,
         message: 'This type name has existed',
@@ -103,11 +110,15 @@ const createStaffType = async (req, res) => {
 
 const updateStaffTypeById = async (req, res) => {
   // Check if user can access this route
-  // const confirm = await confirmAccess({
-  //   typeName: req.body.staffType,
-  //   func: "updateStaffTypeById",
-  // });
-  // if (!confirm) return res.redirect("back");
+  const confirm = await confirmAccess({
+    staffType: req.body.staffType,
+    func: 'AuthorizationSetting',
+  });
+  if (!confirm)
+    return res.status(400).json({
+      success: false,
+      message: 'Not has access',
+    });
 
   // Passed
   try {
@@ -134,20 +145,19 @@ const updateStaffTypeById = async (req, res) => {
 
     // Delete all connections of this staff type with funcs before updating
     if (checkStaffType.funcs.length > 0) {
-      checkStaffType.funcs.forEach(async (func) => {
-        const findFunc = await Func.findById(func);
+      for (let i = 0; i < checkStaffType.funcs.length; i++) {
+        const findFunc = await Func.findById(checkStaffType.funcs[i]);
         if (findFunc) {
           const listStaffTypeUpdate = findFunc.staffTypes;
-          listStaffTypeUpdate.splice(
-            listStaffTypeUpdate.indexOf(checkStaffType._id)
-          );
+          const index = listStaffTypeUpdate.indexOf(checkStaffType._id);
+          if (index !== -1) listStaffTypeUpdate.splice(index);
           await Func.findByIdAndUpdate(
-            func,
+            checkStaffType.funcs[i],
             { staffTypes: listStaffTypeUpdate },
             { new: true }
           ).then(async (result) => await result.save());
         }
-      });
+      }
     }
 
     // All good, update staff type's info
@@ -160,14 +170,14 @@ const updateStaffTypeById = async (req, res) => {
 
     // Add connection of this staff type with func
     if (funcs.length > 0) {
-      funcs.forEach(async (func) => {
-        const updateFunc = await Func.findById(func);
+      for (let i = 0; i < funcs.length; i++) {
+        const updateFunc = await Func.findById(funcs[i]);
         if (updateFunc) {
-          await Func.findByIdAndUpdate(func, {
+          await Func.findByIdAndUpdate(funcs[i], {
             staffTypes: [...updateFunc.staffTypes, updateStaffType._id],
           }).then(async (result) => await result.save());
         }
-      });
+      }
     }
 
     return res.status(201).json({
