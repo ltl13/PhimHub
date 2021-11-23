@@ -157,8 +157,7 @@ const loginStaff = async (req, res) => {
     if (!staff) {
       return res.status(401).json({
         success: false,
-        invalid: 'phoneNumber',
-        message: 'Incorrect phone number',
+        message: 'Incorrect username or password',
       });
     }
 
@@ -167,8 +166,7 @@ const loginStaff = async (req, res) => {
     if (!correctPassword) {
       return res.status(401).json({
         success: false,
-        invalid: 'password',
-        message: 'Incorrect password',
+        message: 'Incorrect username or password',
       });
     }
 

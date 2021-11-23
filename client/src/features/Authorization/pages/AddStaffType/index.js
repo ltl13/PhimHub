@@ -10,15 +10,15 @@ import {
   LinearProgress,
   Typography,
 } from '@mui/material';
-import { changePassword } from 'app/userSlice';
-import PasswordField from 'custom-fields/PasswordField';
+import InputField from 'custom-fields/InputField';
+import { createStaffType } from 'features/Authorization/slice';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
-import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
+import * as yup from 'yup';
 
-function PasswordChange(props) {
+function AddtypeName(props) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState('');
@@ -26,11 +26,10 @@ function PasswordChange(props) {
   const { onClose, open } = props;
 
   const schema = yup.object().shape({
-    oldPassword: yup.string().required('Mật khẩu cũ không được để trống'),
-    newPassword: yup.string().required('Mật khẩu mới không được để trống'),
+    typeName: yup.string().required('Loại nhân viên không được để trống'),
   });
   const form = useForm({
-    defaultValues: { oldPassword: '', newPassword: '' },
+    defaultValues: { typeName: '' },
     resolver: yupResolver(schema),
   });
 
@@ -46,27 +45,23 @@ function PasswordChange(props) {
   const onDialogClose = () => {
     setInputValue('');
     setIsSubmittingSuccess(false);
-    setValue('oldPassword', '');
-    setValue('newPassword', '');
+    setValue('typeName', '');
     clearErrors();
     onClose();
   };
 
   const handleSubmit = async data => {
     setIsSubmittingSuccess(false);
-
-    const actions = changePassword(data);
+    const actions = createStaffType(data);
     const response = await dispatch(actions);
-
     if (response.payload.success) {
       setIsSubmittingSuccess(true);
     } else {
       setError('changePass', {
         type: 'manual',
-        message:
-          response.payload.message === 'Old password is not correct'
-            ? 'Mật khẩu cũ không đúng'
-            : 'Lối server',
+        message: 'This type name has existed'
+          ? 'Loại nhân viên đã tồn tại'
+          : 'Lối server',
       });
     }
   };
@@ -84,34 +79,25 @@ function PasswordChange(props) {
                 alignItem: 'center',
               }}
             >
-              <Typography variant="h3">Đổi mật khẩu</Typography>
+              <Typography variant="h3">Thêm loại nhân viên</Typography>
               <IconButton onClick={onDialogClose} sx={{ height: '40px' }}>
                 <CloseRoundedIcon />
               </IconButton>
             </Box>
           </Grid>
           <Grid item xs={12}>
-            <PasswordField name="oldPassword" label="Mật khẩu cũ" form={form} />
+            <InputField name="typeName" label="Loại nhân viên" form={form} />
           </Grid>
-          <Grid item xs={12}>
-            <PasswordField
-              name="newPassword"
-              label="Mật khẩu mới"
-              form={form}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            {!!errors.changePass && (
-              <FormHelperText error={errors.changePass}>
-                {errors.changePass.message}
-              </FormHelperText>
-            )}
-            {!!isSubmittingSuccess && (
-              <FormHelperText sx={{ color: 'text.success' }}>
-                Đổi mật khẩu thành công
-              </FormHelperText>
-            )}
-          </Grid>
+          {!!errors.changePass && (
+            <FormHelperText error={errors.changePass}>
+              {errors.changePass.message}
+            </FormHelperText>
+          )}
+          {!!isSubmittingSuccess && (
+            <FormHelperText sx={{ color: 'text.success' }}>
+              Thêm thành công
+            </FormHelperText>
+          )}
           <Grid item xs={12}>
             <Button
               variant="contained"
@@ -122,7 +108,7 @@ function PasswordChange(props) {
               disabled={isSubmitting}
               sx={{ height: '56px' }}
             >
-              Đổi mật khẩu
+              Thêm Loại Nhân Viên
             </Button>
           </Grid>
         </Grid>
@@ -131,4 +117,4 @@ function PasswordChange(props) {
   );
 }
 
-export default PasswordChange;
+export default AddtypeName;
