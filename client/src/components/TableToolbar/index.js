@@ -25,13 +25,17 @@ const SearchStyle = styled(OutlinedInput)(({ theme }) => ({
   },
 }));
 
-export default function AuthorizationListToolbar({ filterName, onFilterName }) {
+export default function TableToolbar({
+  filterName,
+  onFilterName,
+  placeholder,
+}) {
   return (
     <RootStyle>
       <SearchStyle
         value={filterName}
         onChange={onFilterName}
-        placeholder="Tìm chức năng..."
+        placeholder={placeholder}
         startAdornment={
           <InputAdornment position="start">
             <SearchRoundedIcon />

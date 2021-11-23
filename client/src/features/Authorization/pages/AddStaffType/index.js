@@ -15,15 +15,12 @@ import { createStaffType } from 'features/Authorization/slice';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 
-function AddtypeName(props) {
+function AddStaffType(props) {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [inputValue, setInputValue] = useState('');
   const [isSubmittingSuccess, setIsSubmittingSuccess] = useState(false);
-  const { onClose, open } = props;
+  const { onClose, open, setIsSubmitSuccess } = props;
 
   const schema = yup.object().shape({
     typeName: yup.string().required('Loại nhân viên không được để trống'),
@@ -43,7 +40,6 @@ function AddtypeName(props) {
   const { isSubmitting } = form.formState;
 
   const onDialogClose = () => {
-    setInputValue('');
     setIsSubmittingSuccess(false);
     setValue('typeName', '');
     clearErrors();
@@ -52,10 +48,12 @@ function AddtypeName(props) {
 
   const handleSubmit = async data => {
     setIsSubmittingSuccess(false);
+    setIsSubmitSuccess(false);
     const actions = createStaffType(data);
     const response = await dispatch(actions);
     if (response.payload.success) {
       setIsSubmittingSuccess(true);
+      setIsSubmitSuccess(true);
     } else {
       setError('changePass', {
         type: 'manual',
@@ -117,4 +115,4 @@ function AddtypeName(props) {
   );
 }
 
-export default AddtypeName;
+export default AddStaffType;

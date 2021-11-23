@@ -7,9 +7,8 @@ import { Navigate, useRoutes } from 'react-router-dom';
 
 const Login = React.lazy(() => import('features/Auth'));
 const DashboardLayout = React.lazy(() => import('features/Dashboard'));
-const Authorization = React.lazy(() =>
-  import('./features/Authorization/index'),
-);
+const Authorization = React.lazy(() => import('features/Authorization'));
+const Staff = React.lazy(() => import('features/Staff'));
 
 const Router = () => {
   return useRoutes([
@@ -69,7 +68,7 @@ const Router = () => {
               path: 'staff',
               element: (
                 <PrivateRoute funcId={Function.StaffManagement.id}>
-                  <Typography variant="h3">Staff</Typography>
+                  <Staff />
                 </PrivateRoute>
               ),
             },

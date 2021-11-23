@@ -68,85 +68,84 @@ export default function AccountMenuButton() {
     navigate('/login', { replace: true });
   };
   return (
-    <>
-      <Box>
-        <AccountStyle onClick={handleClick}>
-          <Avatar
-            src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
-            alt="photoURL"
-          />
-          <Box sx={{ ml: 2 }}>
-            <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-              {!!user && user.name}
-            </Typography>
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              {!!user && user.staffType.typeName}
-            </Typography>
-          </Box>
-        </AccountStyle>
-      </Box>
-      <Menu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        onClick={handleClose}
-        PaperProps={{
-          elevation: 0,
-          sx: {
-            overflow: 'visible',
-            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-            // mt: 1.5,
-            '& .MuiAvatar-root': {
-              width: 32,
-              height: 32,
-              ml: -0.5,
-              mr: 1,
+    !!user && (
+      <>
+        <Box>
+          <AccountStyle onClick={handleClick}>
+            <Avatar src={user.avatar} alt="photoURL" />
+            <Box sx={{ ml: 2 }}>
+              <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
+                {user.name}
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                {user.staffType.typeName}
+              </Typography>
+            </Box>
+          </AccountStyle>
+        </Box>
+        <Menu
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          onClick={handleClose}
+          PaperProps={{
+            elevation: 0,
+            sx: {
+              overflow: 'visible',
+              filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+              // mt: 1.5,
+              '& .MuiAvatar-root': {
+                width: 32,
+                height: 32,
+                ml: -0.5,
+                mr: 1,
+              },
+              '&:before': {
+                content: '""',
+                display: 'block',
+                position: 'absolute',
+                top: 0,
+                left: 22,
+                width: 10,
+                height: 10,
+                bgcolor: 'background.paper',
+                transform: 'translateY(-50%) rotate(45deg)',
+                zIndex: 0,
+              },
             },
-            '&:before': {
-              content: '""',
-              display: 'block',
-              position: 'absolute',
-              top: 0,
-              left: 22,
-              width: 10,
-              height: 10,
-              bgcolor: 'background.paper',
-              transform: 'translateY(-50%) rotate(45deg)',
-              zIndex: 0,
-            },
-          },
-        }}
-        transformOrigin={{ horizontal: 'left', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
-      >
-        <MenuItem onClick={handleOpenAccountInfo}>
-          <ListItemIcon>
-            <PersonRoundedIcon fontSize="small" />
-          </ListItemIcon>
-          Thông tin
-        </MenuItem>
+          }}
+          transformOrigin={{ horizontal: 'left', vertical: 'top' }}
+          anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+        >
+          <MenuItem onClick={handleOpenAccountInfo}>
+            <ListItemIcon>
+              <PersonRoundedIcon fontSize="small" />
+            </ListItemIcon>
+            Thông tin
+          </MenuItem>
 
-        <MenuItem onClick={handleOpenPasswordChange}>
-          <ListItemIcon>
-            <VpnKeyRoundedIcon fontSize="small" />
-          </ListItemIcon>
-          Đổi mật khẩu
-        </MenuItem>
+          <MenuItem onClick={handleOpenPasswordChange}>
+            <ListItemIcon>
+              <VpnKeyRoundedIcon fontSize="small" />
+            </ListItemIcon>
+            Đổi mật khẩu
+          </MenuItem>
 
-        <Divider />
+          <Divider />
 
-        <MenuItem onClick={handleLogOut}>
-          <ListItemIcon>
-            <LogoutRoundedIcon fontSize="small" />
-          </ListItemIcon>
-          Logout
-        </MenuItem>
-      </Menu>
-      <AccountInfo open={openAccountInfo} onClose={handleCloseAccountInfo} />
-      <PasswordChange
-        open={openPasswordChange}
-        onClose={handleClosePasswordChange}
-      />
-    </>
+          <MenuItem onClick={handleLogOut}>
+            <ListItemIcon>
+              <LogoutRoundedIcon fontSize="small" />
+            </ListItemIcon>
+            Logout
+          </MenuItem>
+        </Menu>
+        <AccountInfo open={openAccountInfo} onClose={handleCloseAccountInfo} />
+        <PasswordChange
+          open={openPasswordChange}
+          onClose={handleClosePasswordChange}
+        />
+      </>
+    )
   );
 }
