@@ -1,10 +1,10 @@
-const SpecialOffer = require("../models/SpecialOffer");
-const { confirmAccess } = require("../shared/functions");
+const SpecialOffer = require('../models/SpecialOffer');
+const { confirmAccess } = require('../shared/functions');
 
 const getAllSpecialOffers = async (req, res) => {
   // Check if user can access this route
   // const confirm = await confirmAccess({
-  //   staffType: req.body.staffType,
+  //   staffType: req.body.staffTypeJwt,
   //   func: "getAllSpecialOffers",
   // });
   // if (!confirm) return res.redirect("back");
@@ -20,7 +20,7 @@ const getAllSpecialOffers = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -28,7 +28,7 @@ const getAllSpecialOffers = async (req, res) => {
 const getSpecialOfferById = async (req, res) => {
   // Check if user can access this route
   // const confirm = await confirmAccess({
-  //   staffType: req.body.staffType,
+  //   staffType: req.body.staffTypeJwt,
   //   func: "getSpecialOfferById",
   // });
   // if (!confirm) return res.redirect("back");
@@ -39,7 +39,7 @@ const getSpecialOfferById = async (req, res) => {
     if (!specialOffer)
       return res.status(404).json({
         success: false,
-        message: "Special offer not found",
+        message: 'Special offer not found',
       });
     return res.status(200).json({
       success: true,
@@ -49,7 +49,7 @@ const getSpecialOfferById = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -57,7 +57,7 @@ const getSpecialOfferById = async (req, res) => {
 const createSpecialOffer = async (req, res) => {
   // Check if user can access this route
   // const confirm = await confirmAccess({
-  //   staffType: req.body.staffType,
+  //   staffType: req.body.staffTypeJwt,
   //   func: "createSpecialOffer",
   // });
   // if (!confirm) return res.redirect("back");
@@ -71,7 +71,7 @@ const createSpecialOffer = async (req, res) => {
     if (checker) {
       return res.status(409).json({
         success: false,
-        message: "This code has already existed",
+        message: 'This code has already existed',
       });
     }
 
@@ -86,14 +86,14 @@ const createSpecialOffer = async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      message: "New special offer was created successfully",
+      message: 'New special offer was created successfully',
       newSpecialOffer,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -101,7 +101,7 @@ const createSpecialOffer = async (req, res) => {
 const updateSpecialOfferById = async (req, res) => {
   // Check if user can access this route
   // const confirm = await confirmAccess({
-  //   staffType: req.body.staffType,
+  //   staffType: req.body.staffTypeJwt,
   //   func: "updateSpecialOfferById",
   // });
   // if (!confirm) return res.redirect("back");
@@ -115,7 +115,7 @@ const updateSpecialOfferById = async (req, res) => {
     if (!oldSpecialOffer)
       return res.status(404).json({
         success: false,
-        message: "Special offer not found",
+        message: 'Special offer not found',
       });
 
     // Check if code has already existed
@@ -123,7 +123,7 @@ const updateSpecialOfferById = async (req, res) => {
     if (checker && code != oldSpecialOffer.code) {
       return res.status(409).json({
         success: false,
-        message: "This code has already existed",
+        message: 'This code has already existed',
       });
     }
 
@@ -142,14 +142,14 @@ const updateSpecialOfferById = async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      message: "Special offer was updated successfully",
+      message: 'Special offer was updated successfully',
       updateSpecialOffer,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -157,7 +157,7 @@ const updateSpecialOfferById = async (req, res) => {
 const deleteSpecialOfferById = async (req, res) => {
   // Check if user can access this route
   // const confirm = await confirmAccess({
-  //   staffType: req.body.staffType,
+  //   staffType: req.body.staffTypeJwt,
   //   func: "deleteSpecialOfferById",
   // });
   // if (!confirm) return res.redirect("back");
@@ -169,7 +169,7 @@ const deleteSpecialOfferById = async (req, res) => {
     if (!checker)
       return res.status(404).json({
         success: false,
-        message: "Special offer not found",
+        message: 'Special offer not found',
       });
 
     // Delete special offer
@@ -181,13 +181,13 @@ const deleteSpecialOfferById = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Special offer was deleted successfully",
+      message: 'Special offer was deleted successfully',
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };

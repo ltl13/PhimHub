@@ -6,7 +6,7 @@ const Func = require('../models/Func');
 const getAllStaffTypes = async (req, res) => {
   // Check if user can access this route
   // const confirm = await confirmAccess({
-  //   staffType: req.body.staffType,
+  //   staffType: req.body.staffTypeJwt,
   //   func: "getAllStaffTypes",
   // });
   // if (!confirm) return res.redirect("back");
@@ -33,7 +33,7 @@ const getAllStaffTypes = async (req, res) => {
 const getStaffTypeById = async (req, res) => {
   // Check if user can access this route
   // const confirm = await confirmAccess({
-  //   staffType: req.body.staffType,
+  //   staffType: req.body.staffTypeJwt,
   //   func: "getStaffTypeById",
   // });
   // if (!confirm) return res.redirect("back");
@@ -65,7 +65,7 @@ const getStaffTypeById = async (req, res) => {
 const createStaffType = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
+    staffType: req.body.staffTypeJwt,
     func: 'AuthorizationSetting',
   });
   if (!confirm)
@@ -111,7 +111,7 @@ const createStaffType = async (req, res) => {
 const updateStaffTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
+    staffType: req.body.staffTypeJwt,
     func: 'AuthorizationSetting',
   });
   if (!confirm)
@@ -196,7 +196,7 @@ const updateStaffTypeById = async (req, res) => {
 const deleteStaffTypeById = async (req, res) => {
   // Check if user can access this route
   // const confirm = await confirmAccess({
-  //   staffType: req.body.staffType,
+  //   staffType: req.body.staffTypeJwt,
   //   func: "deleteStaffTypeById",
   // });
   // if (!confirm) return res.redirect("back");

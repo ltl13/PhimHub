@@ -25,15 +25,11 @@ const SearchStyle = styled(OutlinedInput)(({ theme }) => ({
   },
 }));
 
-export default function TableToolbar({
-  filterName,
-  onFilterName,
-  placeholder,
-}) {
+export default function TableToolbar({ filter, onFilterName, placeholder }) {
   return (
     <RootStyle>
       <SearchStyle
-        value={filterName}
+        value={filter}
         onChange={onFilterName}
         placeholder={placeholder}
         startAdornment={

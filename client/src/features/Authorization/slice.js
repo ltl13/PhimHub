@@ -6,7 +6,7 @@ export const loadStaffType = createAsyncThunk('staffType/load', async () => {
     const response = await staffTypeApi.getAllStaffType();
     return response;
   } catch (error) {
-    if (error.response) return error.response;
+    if (error.response) return error.response.data;
     else return { success: false, message: error.message };
   }
 });
@@ -21,7 +21,7 @@ export const updateStaffType = createAsyncThunk(
       );
       return response;
     } catch (error) {
-      if (error.response) return error.response;
+      if (error.response) return error.response.data;
       else return { success: false, message: error.message };
     }
   },
@@ -52,7 +52,7 @@ export const updateAllStaffType = createAsyncThunk(
         return { success: true, message: 'Cập nhật thành công' };
       }
     } catch (error) {
-      if (error.response) return error.response;
+      if (error.response) return error.response.data;
       else return { success: false, message: error.message };
     }
   },
@@ -66,7 +66,7 @@ export const createStaffType = createAsyncThunk(
       await dispatch(loadStaffType());
       return response;
     } catch (error) {
-      if (error.response) return error.response;
+      if (error.response) return error.response.data;
       else return { success: false, message: error.message };
     }
   },

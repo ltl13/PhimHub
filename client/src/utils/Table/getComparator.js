@@ -1,4 +1,4 @@
-import descendingComparator from 'utils/descendingComparator';
+import descendingComparator from 'utils/Table/descendingComparator';
 
 export default function getComparator(order, orderBy) {
   return order === 'desc'

@@ -36,7 +36,6 @@ export default function Authorization() {
       {
         id: 'funcName',
         align: 'left',
-        disablePadding: false,
         label: 'Chức năng',
       },
     ];
@@ -44,7 +43,6 @@ export default function Authorization() {
       id: _id,
       label: typeName,
       align: 'center',
-      disablePadding: false,
     }));
     setHeadCells(newHeadCells.concat(tempHeadCells));
   };
@@ -165,7 +163,12 @@ export default function Authorization() {
             justifyContent="space-between"
             spacing={1}
           >
-            <Button variant="contained" mr={1} onClick={handleOpenAddStaffType}>
+            <Button
+              variant="contained"
+              mr={1}
+              onClick={handleOpenAddStaffType}
+              sx={{ backgroundColor: 'secondary.main' }}
+            >
               Thêm loại nhân viên
             </Button>
             <Button
@@ -188,6 +191,7 @@ export default function Authorization() {
       <AddStaffType
         onClose={handleCloseAddStaffType}
         open={openAddStaffType}
+        isSubmitSuccess={isAddStaffTypeSuccess}
         setIsSubmitSuccess={setIsAddStaffTypeSuccess}
       />
     </>

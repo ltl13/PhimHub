@@ -1,29 +1,29 @@
-const argon2 = require("argon2");
-const jsonwebtoken = require("jsonwebtoken");
+const argon2 = require('argon2');
+const jsonwebtoken = require('jsonwebtoken');
 
-const Customer = require("../models/Customer");
-const { confirmAccess } = require("../shared/functions");
+const Customer = require('../models/Customer');
+const { confirmAccess } = require('../shared/functions');
 
 const getAllCustomers = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: "getAllCustomers",
+    staffType: req.body.staffTypeJwt,
+    func: 'getAllCustomers',
   });
-  if (!confirm) return res.redirect("back");
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
     const allCustomers = await Customer.find({ status: true })
       .populate({
-        path: "customerType",
-        select: "typeName",
+        path: 'customerType',
+        select: 'typeName',
       })
-      .select("-password");
+      .select('-password');
     if (allCustomers) {
       return res.status(200).json({
         success: true,
-        message: "Get all customers successfully",
+        message: 'Get all customers successfully',
         allCustomers,
       });
     }
@@ -31,7 +31,7 @@ const getAllCustomers = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -39,10 +39,10 @@ const getAllCustomers = async (req, res) => {
 const getCustomerById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: "getCustomerById",
+    staffType: req.body.staffTypeJwt,
+    func: 'getCustomerById',
   });
-  if (!confirm) return res.redirect("back");
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -51,14 +51,14 @@ const getCustomerById = async (req, res) => {
       status: true,
     })
       .populate({
-        path: "customerType",
-        select: "typeName",
+        path: 'customerType',
+        select: 'typeName',
       })
-      .select("-password");
+      .select('-password');
     if (!customer) {
       return res.status(406).json({
         success: false,
-        message: "Customer not found",
+        message: 'Customer not found',
       });
     }
     return res.status(200).json({
@@ -69,7 +69,7 @@ const getCustomerById = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -77,10 +77,10 @@ const getCustomerById = async (req, res) => {
 const createCustomer = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: "createCustomer",
+    staffType: req.body.staffTypeJwt,
+    func: 'createCustomer',
   });
-  if (!confirm) return res.redirect("back");
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -99,8 +99,8 @@ const createCustomer = async (req, res) => {
     if (checker) {
       return res.status(409).json({
         success: false,
-        invalid: "phoneNumber",
-        message: "This phone number has been used for register before",
+        invalid: 'phoneNumber',
+        message: 'This phone number has been used for register before',
       });
     }
 
@@ -108,8 +108,8 @@ const createCustomer = async (req, res) => {
     if (checker) {
       return res.status(409).json({
         success: false,
-        invalid: "email",
-        message: "This email has been used for register before",
+        invalid: 'email',
+        message: 'This email has been used for register before',
       });
     }
 
@@ -122,20 +122,20 @@ const createCustomer = async (req, res) => {
       email,
       name,
       sex,
-      dateOfBirth: new Date(dateOfBirth.concat("T00:00:20Z")),
+      dateOfBirth: new Date(dateOfBirth.concat('T00:00:20Z')),
     });
     await newCustomer.save();
 
     res.status(201).json({
       success: true,
-      message: "New customer created successfully",
+      message: 'New customer created successfully',
       newCustomer,
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -157,16 +157,16 @@ const registerCustomer = async (req, res) => {
     if (checker) {
       return res.status(400).json({
         success: false,
-        invalid: "phoneNumber",
-        message: "This phone number has been used for register before",
+        invalid: 'phoneNumber',
+        message: 'This phone number has been used for register before',
       });
     }
     checker = await Customer.findOne({ email, status: true });
     if (checker) {
       return res.status(400).json({
         success: false,
-        invalid: "email",
-        message: "This email has been used for register before",
+        invalid: 'email',
+        message: 'This email has been used for register before',
       });
     }
 
@@ -179,7 +179,7 @@ const registerCustomer = async (req, res) => {
       email,
       name,
       sex,
-      dateOfBirth: new Date(dateOfBirth.concat("T00:00:20Z")),
+      dateOfBirth: new Date(dateOfBirth.concat('T00:00:20Z')),
     });
 
     // Return access token
@@ -192,14 +192,14 @@ const registerCustomer = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "New account created successfully",
+      message: 'New account created successfully',
       token: accessToken,
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -213,8 +213,8 @@ const loginCustomer = async (req, res) => {
     if (!customer) {
       return res.status(406).json({
         success: false,
-        invalid: "phoneNumber",
-        message: "Incorrect phone number",
+        invalid: 'phoneNumber',
+        message: 'Incorrect phone number',
       });
     }
 
@@ -223,8 +223,8 @@ const loginCustomer = async (req, res) => {
     if (!correctPassword) {
       return res.status(400).json({
         success: false,
-        invalid: "password",
-        message: "Incorrect password",
+        invalid: 'password',
+        message: 'Incorrect password',
       });
     }
 
@@ -241,14 +241,14 @@ const loginCustomer = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "User logged in",
+      message: 'User logged in',
       token: accessToken,
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -256,10 +256,10 @@ const loginCustomer = async (req, res) => {
 const updateCustomerById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: "updateCustomerById",
+    staffType: req.body.staffTypeJwt,
+    func: 'updateCustomerById',
   });
-  if (!confirm) return res.redirect("back");
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -274,7 +274,7 @@ const updateCustomerById = async (req, res) => {
     if (!customer)
       return res.status(406).json({
         status: false,
-        message: "Customer not found",
+        message: 'Customer not found',
       });
 
     // Check if email or phone number doesn't change
@@ -283,16 +283,16 @@ const updateCustomerById = async (req, res) => {
     if (checker && phoneNumber !== customer.phoneNumber) {
       return res.status(400).json({
         success: false,
-        invalid: "phoneNumber",
-        message: "This phone number has been used for register before",
+        invalid: 'phoneNumber',
+        message: 'This phone number has been used for register before',
       });
     }
     checker = await Customer.findOne({ email, status: true });
     if (checker && email !== customer.email) {
       return res.status(400).json({
         success: false,
-        invalid: "email",
-        message: "This email has been used for register before",
+        invalid: 'email',
+        message: 'This email has been used for register before',
       });
     }
 
@@ -305,7 +305,7 @@ const updateCustomerById = async (req, res) => {
         email,
         name,
         sex,
-        dateOfBirth: new Date(dateOfBirth.concat("T00:00:10Z")),
+        dateOfBirth: new Date(dateOfBirth.concat('T00:00:10Z')),
       },
       { new: true }
     ).then(async (result) => await result.save());
@@ -317,7 +317,7 @@ const updateCustomerById = async (req, res) => {
     console.log(error);
     res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -331,44 +331,44 @@ const sendChangePasswordTokenCustomer = async (req, res) => {
     if (!customer) {
       return res.status(406).json({
         success: false,
-        invalid: "email",
-        message: "Email has not been registered yet",
+        invalid: 'email',
+        message: 'Email has not been registered yet',
       });
     }
 
     // Send new password to user's email
     const transporter = nodemailer.createTransport({
-      service: "Gmail",
+      service: 'Gmail',
       auth: {
-        user: "thanhluan130201@gmail.com",
-        pass: "Luan130201",
+        user: 'thanhluan130201@gmail.com',
+        pass: 'Luan130201',
       },
     });
     const changePasswordToken = Math.random().toString().slice(-6);
     const content = {
       from: '"PhimHub" <phimhub@cinema.com>',
       to: email,
-      subject: "Hello",
-      text: "Reset your password",
+      subject: 'Hello',
+      text: 'Reset your password',
       html: `<b>Hello, this is your change password token, please do not share it to anyone. Please note that this token will expire after 15 minutes: </b>${changePasswordToken}`,
     };
     const respondToken = jsonwebtoken.sign(
       { id: customer._id, token: changePasswordToken },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "900s" }
+      { expiresIn: '900s' }
     );
     transporter.sendMail(content, async function (err, info) {
       if (err) {
         console.log(err);
         return res.status(422).json({
           success: false,
-          message: "There is an error occurred when sending email",
+          message: 'There is an error occurred when sending email',
         });
       } else {
         // Return status code
         return res.status(200).json({
           success: true,
-          message: "Change password token was sent to user",
+          message: 'Change password token was sent to user',
           token: respondToken,
         });
       }
@@ -377,7 +377,7 @@ const sendChangePasswordTokenCustomer = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -388,8 +388,8 @@ const changePasswordCustomer = async (req, res) => {
     if (token != inputToken)
       return res.status(400).json({
         success: false,
-        invalid: "inputToken",
-        message: "Wrong token!!!",
+        invalid: 'inputToken',
+        message: 'Wrong token!!!',
       });
 
     // Change user's password in database
@@ -403,19 +403,19 @@ const changePasswordCustomer = async (req, res) => {
     if (!updatePassword) {
       return res.status(400).json({
         success: false,
-        message: "Update password failed due to no authorization",
+        message: 'Update password failed due to no authorization',
       });
     }
 
     return res.status(201).json({
       success: true,
-      message: "Change password successfully",
+      message: 'Change password successfully',
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -423,10 +423,10 @@ const changePasswordCustomer = async (req, res) => {
 const deleteCustomerById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: "deleteCustomerById",
+    staffType: req.body.staffTypeJwt,
+    func: 'deleteCustomerById',
   });
-  if (!confirm) return res.redirect("back");
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -439,19 +439,19 @@ const deleteCustomerById = async (req, res) => {
     if (!deleteCustomer) {
       return res.status(406).json({
         success: false,
-        message: "Customer not found",
+        message: 'Customer not found',
       });
     }
 
     return res.status(200).json({
       success: true,
-      message: "Delete customer successfully",
+      message: 'Delete customer successfully',
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };

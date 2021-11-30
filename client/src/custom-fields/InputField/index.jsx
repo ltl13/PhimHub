@@ -32,7 +32,6 @@ function InputField(props) {
             {...field}
             {...other}
             variant="outlined"
-            margin="normal"
             label={label}
             fullWidth
             disabled={disable}

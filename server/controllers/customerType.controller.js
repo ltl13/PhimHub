@@ -1,14 +1,14 @@
-const CustomerType = require("../models/CustomerType");
-const Customer = require("../models/Customer");
-const { confirmAccess } = require("../shared/functions");
+const CustomerType = require('../models/CustomerType');
+const Customer = require('../models/Customer');
+const { confirmAccess } = require('../shared/functions');
 
 const getAllCustomerTypes = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: "getAllCustomerTypes",
+    staffType: req.body.staffTypeJwt,
+    func: 'getAllCustomerTypes',
   });
-  if (!confirm) return res.redirect("back");
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -21,7 +21,7 @@ const getAllCustomerTypes = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -29,10 +29,10 @@ const getAllCustomerTypes = async (req, res) => {
 const getCustomerTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: "getCustomerTypeById",
+    staffType: req.body.staffTypeJwt,
+    func: 'getCustomerTypeById',
   });
-  if (!confirm) return res.redirect("back");
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -40,7 +40,7 @@ const getCustomerTypeById = async (req, res) => {
     if (!customerType) {
       return res.status(406).json({
         success: false,
-        message: "Customer type not found",
+        message: 'Customer type not found',
       });
     }
     return res.status(200).json({
@@ -51,7 +51,7 @@ const getCustomerTypeById = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -59,10 +59,10 @@ const getCustomerTypeById = async (req, res) => {
 const createCustomerType = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: "createCustomerType",
+    staffType: req.body.staffTypeJwt,
+    func: 'createCustomerType',
   });
-  if (!confirm) return res.redirect("back");
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -73,7 +73,7 @@ const createCustomerType = async (req, res) => {
     if (customerType) {
       return res.status(400).json({
         success: false,
-        message: "This customer type has existed",
+        message: 'This customer type has existed',
       });
     }
 
@@ -84,13 +84,13 @@ const createCustomerType = async (req, res) => {
     await newCustomerType.save();
     return res.status(201).json({
       success: true,
-      message: "New customer type has just been added",
+      message: 'New customer type has just been added',
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -98,10 +98,10 @@ const createCustomerType = async (req, res) => {
 const updateCustomerTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: "updateCustomerTypeById",
+    staffType: req.body.staffTypeJwt,
+    func: 'updateCustomerTypeById',
   });
-  if (!confirm) return res.redirect("back");
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -112,7 +112,7 @@ const updateCustomerTypeById = async (req, res) => {
     if (!customerType) {
       return res.status(406).json({
         success: false,
-        message: "Customer type not found",
+        message: 'Customer type not found',
       });
     }
 
@@ -123,7 +123,7 @@ const updateCustomerTypeById = async (req, res) => {
     if (checker && customerType.typeName != typeName) {
       return res.status(400).json({
         success: false,
-        message: "This customer type has existed",
+        message: 'This customer type has existed',
       });
     }
 
@@ -139,13 +139,13 @@ const updateCustomerTypeById = async (req, res) => {
     // Updated successfully
     return res.status(200).json({
       success: true,
-      message: "Customer type has been updated",
+      message: 'Customer type has been updated',
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -153,10 +153,10 @@ const updateCustomerTypeById = async (req, res) => {
 const deleteCustomerTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: "deleteCustomerTypeById",
+    staffType: req.body.staffTypeJwt,
+    func: 'deleteCustomerTypeById',
   });
-  if (!confirm) return res.redirect("back");
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -169,7 +169,7 @@ const deleteCustomerTypeById = async (req, res) => {
       return res.status(406).json({
         success: false,
         message:
-          "Can not delete because there are still customers of this type",
+          'Can not delete because there are still customers of this type',
       });
     }
 
@@ -180,18 +180,18 @@ const deleteCustomerTypeById = async (req, res) => {
     if (!deleteCustomerType) {
       return res.status(406).json({
         success: false,
-        message: "Customer type not found",
+        message: 'Customer type not found',
       });
     }
     return res.status(200).json({
       success: true,
-      message: "Delete customer type successfully",
+      message: 'Delete customer type successfully',
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };

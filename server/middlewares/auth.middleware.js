@@ -13,7 +13,7 @@ const verifyToken = (req, res, next) => {
     const verify = jsonwebtoken.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
     req.body.id = verify.id;
-    req.body.staffType = verify.staffType;
+    req.body.staffTypeJwt = verify.staffType;
     next();
   } catch (error) {
     if (error.name === 'JsonWebTokenError') {

@@ -19,8 +19,7 @@ import * as yup from 'yup';
 
 function AddStaffType(props) {
   const dispatch = useDispatch();
-  const [isSubmittingSuccess, setIsSubmittingSuccess] = useState(false);
-  const { onClose, open, setIsSubmitSuccess } = props;
+  const { onClose, open, isSubmitSuccess, setIsSubmitSuccess } = props;
 
   const schema = yup.object().shape({
     typeName: yup.string().required('Loại nhân viên không được để trống'),
@@ -40,19 +39,16 @@ function AddStaffType(props) {
   const { isSubmitting } = form.formState;
 
   const onDialogClose = () => {
-    setIsSubmittingSuccess(false);
     setValue('typeName', '');
     clearErrors();
     onClose();
   };
 
   const handleSubmit = async data => {
-    setIsSubmittingSuccess(false);
     setIsSubmitSuccess(false);
     const actions = createStaffType(data);
     const response = await dispatch(actions);
     if (response.payload.success) {
-      setIsSubmittingSuccess(true);
       setIsSubmitSuccess(true);
     } else {
       setError('changePass', {
@@ -91,7 +87,7 @@ function AddStaffType(props) {
               {errors.changePass.message}
             </FormHelperText>
           )}
-          {!!isSubmittingSuccess && (
+          {!!isSubmitSuccess && (
             <FormHelperText sx={{ color: 'text.success' }}>
               Thêm thành công
             </FormHelperText>
