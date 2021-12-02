@@ -1,10 +1,10 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const StaffSchema = new Schema({
   staffType: {
     type: Schema.Types.ObjectId,
-    ref: "staff_types",
+    ref: 'staff_types',
   },
 
   username: {
@@ -56,6 +56,10 @@ const StaffSchema = new Schema({
     required: true,
   },
 
+  avatar: {
+    type: String,
+  },
+
   status: {
     type: Boolean,
     required: true,
@@ -69,4 +73,4 @@ const StaffSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model("staffs", StaffSchema);
+module.exports = mongoose.model('staffs', StaffSchema);

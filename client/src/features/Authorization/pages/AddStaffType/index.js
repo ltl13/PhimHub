@@ -12,18 +12,14 @@ import {
 } from '@mui/material';
 import InputField from 'custom-fields/InputField';
 import { createStaffType } from 'features/Authorization/slice';
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 
-function AddtypeName(props) {
+function AddStaffType(props) {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [inputValue, setInputValue] = useState('');
-  const [isSubmittingSuccess, setIsSubmittingSuccess] = useState(false);
-  const { onClose, open } = props;
+  const { onClose, open, isSubmitSuccess, setIsSubmitSuccess } = props;
 
   const schema = yup.object().shape({
     typeName: yup.string().required('Loại nhân viên không được để trống'),
@@ -43,19 +39,17 @@ function AddtypeName(props) {
   const { isSubmitting } = form.formState;
 
   const onDialogClose = () => {
-    setInputValue('');
-    setIsSubmittingSuccess(false);
     setValue('typeName', '');
     clearErrors();
     onClose();
   };
 
   const handleSubmit = async data => {
-    setIsSubmittingSuccess(false);
+    setIsSubmitSuccess(false);
     const actions = createStaffType(data);
     const response = await dispatch(actions);
     if (response.payload.success) {
-      setIsSubmittingSuccess(true);
+      setIsSubmitSuccess(true);
     } else {
       setError('changePass', {
         type: 'manual',
@@ -93,7 +87,7 @@ function AddtypeName(props) {
               {errors.changePass.message}
             </FormHelperText>
           )}
-          {!!isSubmittingSuccess && (
+          {!!isSubmitSuccess && (
             <FormHelperText sx={{ color: 'text.success' }}>
               Thêm thành công
             </FormHelperText>
@@ -117,4 +111,4 @@ function AddtypeName(props) {
   );
 }
 
-export default AddtypeName;
+export default AddStaffType;

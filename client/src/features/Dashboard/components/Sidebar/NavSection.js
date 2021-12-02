@@ -48,7 +48,7 @@ function NavItem({ item, active }) {
   const user = useSelector(state => state.user.current);
   const theme = useTheme();
   const isActiveRoot = active(item.path);
-  const { title, path, icon, func, children } = item;
+  const { title, path, icon, children } = item;
   const [open, setOpen] = useState(isActiveRoot);
 
   const activeRootStyle = {

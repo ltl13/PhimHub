@@ -1,14 +1,14 @@
-const SeatType = require("../models/SeatType");
-const Seat = require("../models/Seat");
-const { confirmAccess } = require("../shared/functions");
+const SeatType = require('../models/SeatType');
+const Seat = require('../models/Seat');
+const { confirmAccess } = require('../shared/functions');
 
 const getAllSeatTypes = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: "getAllSeatTypes",
+    staffType: req.body.staffTypeJwt,
+    func: 'getAllSeatTypes',
   });
-  if (!confirm) return res.redirect("back");
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -21,7 +21,7 @@ const getAllSeatTypes = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -29,10 +29,10 @@ const getAllSeatTypes = async (req, res) => {
 const getSeatTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: "getSeatTypeById",
+    staffType: req.body.staffTypeJwt,
+    func: 'getSeatTypeById',
   });
-  if (!confirm) return res.redirect("back");
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -40,7 +40,7 @@ const getSeatTypeById = async (req, res) => {
     if (!seatType)
       return res.status(406).json({
         success: false,
-        message: "Seat type not found",
+        message: 'Seat type not found',
       });
     return res.status(200).json({
       success: true,
@@ -50,7 +50,7 @@ const getSeatTypeById = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -58,10 +58,10 @@ const getSeatTypeById = async (req, res) => {
 const createSeatType = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: "createSeatType",
+    staffType: req.body.staffTypeJwt,
+    func: 'createSeatType',
   });
-  if (!confirm) return res.redirect("back");
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -72,7 +72,7 @@ const createSeatType = async (req, res) => {
     if (checker)
       return res.status(409).json({
         success: false,
-        message: "This type has existed",
+        message: 'This type has existed',
       });
 
     // Add new type
@@ -82,13 +82,13 @@ const createSeatType = async (req, res) => {
     await newSeatType.save();
     return res.status(201).json({
       success: true,
-      message: "New seat type has just been added",
+      message: 'New seat type has just been added',
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -102,7 +102,7 @@ const updateSeatTypeById = async (req, res) => {
     if (!seatType) {
       return res.status(406).json({
         success: false,
-        message: "Seat type not found",
+        message: 'Seat type not found',
       });
     }
 
@@ -113,7 +113,7 @@ const updateSeatTypeById = async (req, res) => {
     if (checker && seatType.typeName != typeName) {
       return res.status(400).json({
         success: false,
-        message: "This seat type has existed",
+        message: 'This seat type has existed',
       });
     }
 
@@ -129,13 +129,13 @@ const updateSeatTypeById = async (req, res) => {
     // Updated successfully
     return res.status(200).json({
       success: true,
-      message: "Seat type has been updated",
+      message: 'Seat type has been updated',
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -143,10 +143,10 @@ const updateSeatTypeById = async (req, res) => {
 const deleteSeatTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: "deleteSeatTypeById",
+    staffType: req.body.staffTypeJwt,
+    func: 'deleteSeatTypeById',
   });
-  if (!confirm) return res.redirect("back");
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -158,7 +158,7 @@ const deleteSeatTypeById = async (req, res) => {
     if (seatChecker) {
       return res.status(406).json({
         success: false,
-        message: "Can not delete because there are still seats of this type",
+        message: 'Can not delete because there are still seats of this type',
       });
     }
 
@@ -167,18 +167,18 @@ const deleteSeatTypeById = async (req, res) => {
     if (!deleteSeatType) {
       return res.status(406).json({
         success: false,
-        message: "Seat type not found",
+        message: 'Seat type not found',
       });
     }
     return res.status(200).json({
       success: true,
-      message: "Delete seat type successfully",
+      message: 'Delete seat type successfully',
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };

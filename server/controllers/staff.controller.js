@@ -7,10 +7,14 @@ const { confirmAccess } = require('../shared/functions');
 const getAllStaffs = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: 'getAllStaffs',
+    staffType: req.body.staffTypeJwt,
+    func: 'StaffManagement',
   });
-  if (!confirm) return res.redirect('back');
+  if (!confirm)
+    return res.status(400).json({
+      success: false,
+      message: 'Not has access',
+    });
 
   // Passed
   try {
@@ -36,10 +40,14 @@ const getAllStaffs = async (req, res) => {
 const getStaffById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: 'getStaffById',
+    staffType: req.body.staffTypeJwt,
+    func: 'StaffManagement',
   });
-  if (!confirm) return res.redirect('back');
+  if (!confirm)
+    return res.status(400).json({
+      success: false,
+      message: 'Not has access',
+    });
 
   // Passed
   try {
@@ -70,10 +78,14 @@ const getStaffById = async (req, res) => {
 const createStaff = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: 'createStaff',
+    staffType: req.body.staffTypeJwt,
+    func: 'StaffManagement',
   });
-  if (!confirm) return res.redirect('back');
+  if (!confirm)
+    return res.status(400).json({
+      success: false,
+      message: 'Not has access',
+    });
 
   // Passed
   try {
@@ -88,6 +100,7 @@ const createStaff = async (req, res) => {
       dateOfBirth,
       identityNumber,
       salary,
+      avatar,
     } = req.body;
 
     // Check if email/phone number/identity number has been used by another staff before
@@ -118,6 +131,15 @@ const createStaff = async (req, res) => {
       });
     }
 
+    checker = await Staff.findOne({ username, status: true });
+    if (checker) {
+      return res.status(409).json({
+        success: false,
+        invalid: 'username',
+        message: 'This username has been used by another staff',
+      });
+    }
+
     // Create new staff
     const hashedPassword = await argon2.hash(password);
     const newStaff = new Staff({
@@ -128,9 +150,10 @@ const createStaff = async (req, res) => {
       email,
       name,
       sex,
-      dateOfBirth: new Date(dateOfBirth.concat('T00:00:20Z')),
+      dateOfBirth: new Date(dateOfBirth),
       identityNumber,
       salary,
+      avatar,
     });
     await newStaff.save();
 
@@ -296,10 +319,14 @@ const resetPasswordStaff = async (req, res) => {
 const updateStaffById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: 'getAllCustomers',
+    staffType: req.body.staffTypeJwt,
+    func: 'StaffManagement',
   });
-  if (!confirm) return res.redirect('back');
+  if (!confirm)
+    return res.status(400).json({
+      success: false,
+      message: 'Not has access',
+    });
 
   // Passed
   try {
@@ -312,6 +339,9 @@ const updateStaffById = async (req, res) => {
       dateOfBirth,
       identityNumber,
       salary,
+      avatar,
+      username,
+      password,
     } = req.body;
 
     // Check if this staff exists
@@ -352,7 +382,17 @@ const updateStaffById = async (req, res) => {
       });
     }
 
+    checker = await Staff.findOne({ username, status: true });
+    if (checker && username !== staff.username) {
+      return res.status(409).json({
+        success: false,
+        invalid: 'username',
+        message: 'This username has been used by another staff',
+      });
+    }
+
     // Update staff's information
+    const hashedPassword = await argon2.hash(password);
     await Staff.findOneAndUpdate(
       { _id: req.params.id, status: true },
       {
@@ -363,7 +403,10 @@ const updateStaffById = async (req, res) => {
         sex,
         identityNumber,
         salary,
-        dateOfBirth: new Date(dateOfBirth.concat('T00:00:10Z')),
+        username,
+        dateOfBirth: new Date(dateOfBirth),
+        avatar: !!avatar ? avatar : staff.avatar,
+        password: !!password ? hashedPassword : staff.password,
       },
       { new: true }
     ).then((result) => result.save());
@@ -383,10 +426,14 @@ const updateStaffById = async (req, res) => {
 const deleteStaffById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: 'getAllCustomers',
+    staffType: req.body.staffTypeJwt,
+    func: 'StaffManagement',
   });
-  if (!confirm) return res.redirect('back');
+  if (!confirm)
+    return res.status(400).json({
+      success: false,
+      message: 'Not has access',
+    });
 
   // Passed
   try {

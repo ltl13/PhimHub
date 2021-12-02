@@ -1,30 +1,32 @@
 import { Alert, Snackbar } from '@mui/material';
+import { closeSnackBar } from 'app/snackBarSlice';
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-export function SuccessSnackBar({ open, handleClose, message }) {
+export function SnackBar() {
+  const snackBar = useSelector(state => state.snackBar);
+  const dispatch = useDispatch();
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    dispatch(closeSnackBar());
+  };
   return (
-    <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+    <Snackbar
+      open={snackBar.open}
+      autoHideDuration={6000}
+      onClose={handleClose}
+    >
       <Alert
         onClose={handleClose}
         variant="filled"
-        severity="success"
+        severity={snackBar.type}
         sx={{ width: '100%' }}
       >
-        {message}
-      </Alert>
-    </Snackbar>
-  );
-}
-export function ErrorSnackBar({ open, handleClose, message }) {
-  return (
-    <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-      <Alert
-        onClose={handleClose}
-        variant="filled"
-        severity="error"
-        sx={{ width: '100%' }}
-      >
-        {message}
+        {snackBar.message}
       </Alert>
     </Snackbar>
   );

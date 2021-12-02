@@ -1,14 +1,14 @@
-const RoomType = require("../models/RoomType");
-const Room = require("../models/Room");
-const { confirmAccess } = require("../shared/functions");
+const RoomType = require('../models/RoomType');
+const Room = require('../models/Room');
+const { confirmAccess } = require('../shared/functions');
 
 const getAllRoomTypes = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: "getAllRoomTypes",
+    staffType: req.body.staffTypeJwt,
+    func: 'getAllRoomTypes',
   });
-  if (!confirm) return res.redirect("back");
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -21,7 +21,7 @@ const getAllRoomTypes = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -29,10 +29,10 @@ const getAllRoomTypes = async (req, res) => {
 const getRoomTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: "getRoomTypeById",
+    staffType: req.body.staffTypeJwt,
+    func: 'getRoomTypeById',
   });
-  if (!confirm) return res.redirect("back");
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -40,7 +40,7 @@ const getRoomTypeById = async (req, res) => {
     if (!roomType)
       return res.status(406).json({
         success: false,
-        message: "Room type not found",
+        message: 'Room type not found',
       });
     return res.status(200).json({
       success: true,
@@ -50,7 +50,7 @@ const getRoomTypeById = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -58,10 +58,10 @@ const getRoomTypeById = async (req, res) => {
 const createRoomType = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: "createRoomType",
+    staffType: req.body.staffTypeJwt,
+    func: 'createRoomType',
   });
-  if (!confirm) return res.redirect("back");
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -72,7 +72,7 @@ const createRoomType = async (req, res) => {
     if (checker)
       return res.status(409).json({
         success: false,
-        message: "This type has existed",
+        message: 'This type has existed',
       });
 
     // Add new type
@@ -82,13 +82,13 @@ const createRoomType = async (req, res) => {
     await newRoomType.save();
     return res.status(201).json({
       success: true,
-      message: "New room type was added successfully",
+      message: 'New room type was added successfully',
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -102,7 +102,7 @@ const updateRoomTypeById = async (req, res) => {
     if (!roomType) {
       return res.status(406).json({
         success: false,
-        message: "Room type not found",
+        message: 'Room type not found',
       });
     }
 
@@ -113,7 +113,7 @@ const updateRoomTypeById = async (req, res) => {
     if (checker && roomType.typeName != typeName) {
       return res.status(400).json({
         success: false,
-        message: "This room type has existed",
+        message: 'This room type has existed',
       });
     }
 
@@ -129,13 +129,13 @@ const updateRoomTypeById = async (req, res) => {
     // Updated successfully
     return res.status(200).json({
       success: true,
-      message: "Room type has been updated",
+      message: 'Room type has been updated',
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -143,10 +143,10 @@ const updateRoomTypeById = async (req, res) => {
 const deleteRoomTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: "deleteRoomTypeById",
+    staffType: req.body.staffTypeJwt,
+    func: 'deleteRoomTypeById',
   });
-  if (!confirm) return res.redirect("back");
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -158,7 +158,7 @@ const deleteRoomTypeById = async (req, res) => {
     if (roomChecker) {
       return res.status(406).json({
         success: false,
-        message: "Can not delete because there are still rooms of this type",
+        message: 'Can not delete because there are still rooms of this type',
       });
     }
 
@@ -167,18 +167,18 @@ const deleteRoomTypeById = async (req, res) => {
     if (!deleteRoomType) {
       return res.status(406).json({
         success: false,
-        message: "Room type not found",
+        message: 'Room type not found',
       });
     }
     return res.status(200).json({
       success: true,
-      message: "Delete room type successfully",
+      message: 'Delete room type successfully',
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };

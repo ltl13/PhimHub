@@ -16,12 +16,9 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
-import { useNavigate } from 'react-router-dom';
 
 function PasswordChange(props) {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [inputValue, setInputValue] = useState('');
   const [isSubmittingSuccess, setIsSubmittingSuccess] = useState(false);
   const { onClose, open } = props;
 
@@ -44,7 +41,6 @@ function PasswordChange(props) {
   const { isSubmitting } = form.formState;
 
   const onDialogClose = () => {
-    setInputValue('');
     setIsSubmittingSuccess(false);
     setValue('oldPassword', '');
     setValue('newPassword', '');

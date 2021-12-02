@@ -1,11 +1,4 @@
-import {
-  TableHead,
-  TableRow,
-  TableCell,
-  TableSortLabel,
-  Box,
-} from '@mui/material';
-import { visuallyHidden } from '@mui/utils';
+import { TableCell, TableHead, TableRow, TableSortLabel } from '@mui/material';
 
 export default function TableHeader(props) {
   const { order, orderBy, onRequestSort, headCells } = props;

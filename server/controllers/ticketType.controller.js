@@ -1,14 +1,14 @@
-const TicketType = require("../models/TicketType");
-const Ticket = require("../models/Ticket");
-const { confirmAccess } = require("../shared/functions");
+const TicketType = require('../models/TicketType');
+const Ticket = require('../models/Ticket');
+const { confirmAccess } = require('../shared/functions');
 
 const getAllTicketTypes = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: "getAllTicketTypes",
+    staffType: req.body.staffTypeJwt,
+    func: 'getAllTicketTypes',
   });
-  if (!confirm) return res.redirect("back");
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -21,7 +21,7 @@ const getAllTicketTypes = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -29,10 +29,10 @@ const getAllTicketTypes = async (req, res) => {
 const getTicketTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: "getTicketTypeById",
+    staffType: req.body.staffTypeJwt,
+    func: 'getTicketTypeById',
   });
-  if (!confirm) return res.redirect("back");
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -40,7 +40,7 @@ const getTicketTypeById = async (req, res) => {
     if (!ticketType)
       return res.status(406).json({
         success: false,
-        message: "Ticket type not found",
+        message: 'Ticket type not found',
       });
     return res.status(200).json({
       success: true,
@@ -50,7 +50,7 @@ const getTicketTypeById = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -58,10 +58,10 @@ const getTicketTypeById = async (req, res) => {
 const createTicketType = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: "createTicketType",
+    staffType: req.body.staffTypeJwt,
+    func: 'createTicketType',
   });
-  if (!confirm) return res.redirect("back");
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -72,7 +72,7 @@ const createTicketType = async (req, res) => {
     if (checker)
       return res.status(409).json({
         success: false,
-        message: "This type has existed",
+        message: 'This type has existed',
       });
 
     // Add new type
@@ -82,13 +82,13 @@ const createTicketType = async (req, res) => {
     await newTicketType.save();
     return res.status(201).json({
       success: true,
-      message: "New ticket type was added successfully",
+      message: 'New ticket type was added successfully',
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -102,7 +102,7 @@ const updateTicketTypeById = async (req, res) => {
     if (!ticketType) {
       return res.status(406).json({
         success: false,
-        message: "Ticket type not found",
+        message: 'Ticket type not found',
       });
     }
 
@@ -113,7 +113,7 @@ const updateTicketTypeById = async (req, res) => {
     if (checker && ticketType.typeName != typeName) {
       return res.status(400).json({
         success: false,
-        message: "This ticket type has existed",
+        message: 'This ticket type has existed',
       });
     }
 
@@ -129,13 +129,13 @@ const updateTicketTypeById = async (req, res) => {
     // Updated successfully
     return res.status(200).json({
       success: true,
-      message: "Ticket type has been updated",
+      message: 'Ticket type has been updated',
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -143,10 +143,10 @@ const updateTicketTypeById = async (req, res) => {
 const deleteTicketTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
-    staffType: req.body.staffType,
-    func: "deleteTicketTypeById",
+    staffType: req.body.staffTypeJwt,
+    func: 'deleteTicketTypeById',
   });
-  if (!confirm) return res.redirect("back");
+  if (!confirm) return res.redirect('back');
 
   // Passed
   try {
@@ -158,7 +158,7 @@ const deleteTicketTypeById = async (req, res) => {
     if (ticketChecker) {
       return res.status(406).json({
         success: false,
-        message: "Can not delete because there are still tickets of this type",
+        message: 'Can not delete because there are still tickets of this type',
       });
     }
 
@@ -167,18 +167,18 @@ const deleteTicketTypeById = async (req, res) => {
     if (!deleteTicketType) {
       return res.status(406).json({
         success: false,
-        message: "Ticket type not found",
+        message: 'Ticket type not found',
       });
     }
     return res.status(200).json({
       success: true,
-      message: "Delete ticket type successfully",
+      message: 'Delete ticket type successfully',
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
