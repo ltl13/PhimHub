@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import InputField from 'custom-fields/InputField';
 import { createStaffType } from 'features/Authorization/slice';
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import * as yup from 'yup';

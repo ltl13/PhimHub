@@ -1,6 +1,5 @@
 import {
   Avatar,
-  Checkbox,
   Paper,
   Stack,
   Table,
@@ -14,16 +13,13 @@ import SearchNotFound from 'components/SearchNotFound';
 import TableHeader from 'components/TableHeader';
 import TableToolbar from 'components/TableToolbar';
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import getComparator from 'utils/Table/getComparator';
 import getFilter from 'utils/Table/getFilter';
 import stableSortFilter from 'utils/Table/stableSortFilter';
 import UserMoreMenu from '../UserMoreMenu';
 
 function StaffList(props) {
-  const { rows, setRows, headCells, listEdited, setListEdited } = props;
-  const staffType = useSelector(state => state.staffType.current);
-  const dispatch = useDispatch();
+  const { rows, setRows, headCells } = props;
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('funcName');
   const [filterString, setFilterString] = useState('');
@@ -64,7 +60,6 @@ function StaffList(props) {
             />
             <TableBody>
               {filteredFunc.map((row, index) => {
-                const labelId = `enhanced-table-checkbox-${index}`;
                 const { staffName, avatarUrl, role, identityNumber, phoneNum } =
                   row;
                 return (
@@ -86,7 +81,7 @@ function StaffList(props) {
                         justifyContent="space-between"
                       >
                         {phoneNum}
-                        <UserMoreMenu />
+                        <UserMoreMenu setRows={setRows} staff={row} />
                       </Stack>
                     </TableCell>
                   </TableRow>

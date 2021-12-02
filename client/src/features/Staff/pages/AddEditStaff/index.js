@@ -1,10 +1,8 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import {
-  Backdrop,
   Box,
   Button,
-  CircularProgress,
   Dialog,
   FormHelperText,
   Grid,
@@ -14,20 +12,24 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
+import { closeBackdrop, openBackdrop } from 'app/backdropSlice';
 import AutocompleteField from 'custom-fields/AutocompleteField';
 import AvatarField from 'custom-fields/AvatarField';
 import DateField from 'custom-fields/DateField';
 import InputField from 'custom-fields/InputField';
 import PasswordField from 'custom-fields/PasswordField';
-import { createStaff } from 'features/Staff/slice';
-import React, { useState } from 'react';
+import {
+  createStaff,
+  getStaffById,
+  updateStaffById,
+} from 'features/Staff/slice';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import upload from 'utils/Firebase/upload';
 import * as yup from 'yup';
 
 const getErrorMessage = type => {
-  console.log(type);
   switch (type) {
     case 'phoneNumber':
       return 'Số điện thoại đã được sử dụng';
@@ -42,12 +44,31 @@ const getErrorMessage = type => {
   }
 };
 
+const emptyInitialValue = {
+  name: '',
+  identityNumber: '',
+  sex: null,
+  dateOfBirth: new Date(),
+  phoneNumber: '',
+  email: '',
+  staffType: null,
+  salary: 0,
+  username: '',
+  password: '',
+  avatar: null,
+};
+
 function AddEditStaff(props) {
   const { onClose, open, setRows, staffId } = props;
   const dispatch = useDispatch();
   const [isSubmitSuccess, setIsSubmitSuccess] = useState(false);
-  const [openBackdrop, setOpenBackdrop] = useState(false);
   const staffTypes = useSelector(state => state.staffType.current);
+  const [avatarUrl, setAvatarUrl] = useState('');
+
+  const listStaffType = staffTypes?.map(item => ({
+    id: item._id,
+    label: item.typeName,
+  }));
 
   const schema = yup.object().shape({
     name: yup
@@ -87,41 +108,64 @@ function AddEditStaff(props) {
       .typeError('Lương phải là số nguyên')
       .required('Lương không được để trống'),
     username: yup.string().required('Tên đăng nhập không được để trống'),
-    password: yup.string().required('Mật khẩu không được để trống'),
+    // password: yup.string().required('Mật khẩu không được để trống'),
   });
 
-  const initialValue = {
-    name: '',
-    identityNumber: '',
-    sex: null,
-    dateOfBirth: new Date(),
-    phoneNumber: '',
-    email: '',
-    staffType: null,
-    salary: 0,
-    username: '',
-    password: '',
-    avatar: null,
-  };
-
   const form = useForm({
-    defaultValues: initialValue,
+    defaultValues: emptyInitialValue,
     resolver: yupResolver(schema),
   });
 
   const {
     setError,
-    formState: { errors },
+    formState: { errors, isDirty },
     clearErrors,
-    setValue,
     reset,
   } = form;
 
   const { isSubmitting } = form.formState;
 
+  useEffect(() => {
+    async function load() {
+      if (!!staffId) {
+        const response = await dispatch(getStaffById({ id: staffId }));
+        reset({
+          name: response.payload.staff.name,
+          identityNumber: response.payload.staff.identityNumber,
+          sex: response.payload.staff.sex
+            ? { id: 1, label: 'Nam' }
+            : { id: 0, label: 'Nữ' },
+          dateOfBirth: response.payload.staff.dateOfBirth,
+          phoneNumber: response.payload.staff.phoneNumber,
+          email: response.payload.staff.email,
+          staffType: {
+            id: response.payload.staff.staffType._id,
+            label: response.payload.staff.staffType.typeName,
+          },
+          salary: response.payload.staff.salary,
+          username: response.payload.staff.username,
+          password: '',
+          avatar: null,
+        });
+        setAvatarUrl(response.payload.staff.avatar);
+      }
+    }
+
+    load();
+  }, [open]);
+
   const handleSubmit = async data => {
+    if (!data.password && !staffId) {
+      setError('password', {
+        type: 'manual',
+        message: 'Mật khẩu không được để trống',
+      });
+
+      return;
+    }
+
     setIsSubmitSuccess(false);
-    setOpenBackdrop(true);
+    dispatch(openBackdrop());
     clearErrors();
 
     let url;
@@ -129,7 +173,7 @@ function AddEditStaff(props) {
       url = await upload([data.avatar]);
     }
 
-    const bodyReq = {
+    const reqBody = {
       ...data,
       sex: data.sex.id,
       staffType: data.staffType.id,
@@ -137,58 +181,89 @@ function AddEditStaff(props) {
       avatar: !!data.avatar ? url[data.avatar.name] : '',
     };
 
-    const actions = createStaff(bodyReq);
-    const response = await dispatch(actions);
+    if (!staffId) {
+      const actions = createStaff(reqBody);
+      const response = await dispatch(actions);
 
-    if (response.payload.success) {
-      setIsSubmitSuccess(true);
-      setRows(prev => {
-        const tempRow = {};
-        tempRow.id = response.payload.newStaff._id;
-        tempRow.staffName = response.payload.newStaff.name;
-        tempRow.avatarUrl = response.payload.newStaff.avatar;
-        tempRow.role = staffTypes.find(
-          item => item._id === response.payload.newStaff.staffType,
-        ).typeName;
-        tempRow.identityNumber = response.payload.newStaff.identityNumber;
-        tempRow.phoneNum = response.payload.newStaff.phoneNumber;
+      if (response.payload.success) {
+        setIsSubmitSuccess(true);
 
-        return [...prev, tempRow];
-      });
+        setRows(prev => {
+          const tempRow = {};
+          tempRow.id = response.payload.newStaff._id;
+          tempRow.staffName = response.payload.newStaff.name;
+          tempRow.avatarUrl = response.payload.newStaff.avatar;
+          tempRow.role = staffTypes.find(
+            item => item._id === response.payload.newStaff.staffType,
+          ).typeName;
+          tempRow.identityNumber = response.payload.newStaff.identityNumber;
+          tempRow.phoneNum = response.payload.newStaff.phoneNumber;
+
+          return [...prev, tempRow];
+        });
+      } else {
+        setError('createStaff', {
+          type: 'manual',
+          message:
+            !!response.payload.invalid &&
+            getErrorMessage(response.payload.invalid),
+        });
+      }
     } else {
-      setError('createStaff', {
-        type: 'manual',
-        message:
-          !!response.payload.invalid &&
-          getErrorMessage(response.payload.invalid),
-      });
+      const response = await dispatch(
+        updateStaffById({ id: staffId, data: reqBody }),
+      );
+      if (response.payload.success) {
+        setIsSubmitSuccess(true);
+
+        setRows(prev => {
+          const newRows = prev.filter(item => item.id !== staffId);
+
+          const tempRow = {};
+          tempRow.id = staffId;
+          tempRow.staffName = reqBody.name;
+          tempRow.avatarUrl = !!reqBody.avatar ? reqBody.avatar : avatarUrl;
+          tempRow.role = staffTypes.find(
+            item => item._id === reqBody.staffType,
+          ).typeName;
+          tempRow.identityNumber = reqBody.identityNumber;
+          tempRow.phoneNum = reqBody.phoneNumber;
+
+          return [...newRows, tempRow];
+        });
+      } else {
+        setError('createStaff', {
+          type: 'manual',
+          message:
+            !!response.payload.invalid &&
+            getErrorMessage(response.payload.invalid),
+        });
+      }
     }
 
-    setOpenBackdrop(false);
+    dispatch(closeBackdrop());
   };
 
   const handleClose = () => {
     onClose();
-    reset(initialValue);
+    reset(emptyInitialValue);
     clearErrors();
     setIsSubmitSuccess(false);
   };
 
   return (
     <Dialog onClose={handleClose} open={open} maxWidth="md">
-      <Backdrop
-        sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 1 }}
-        open={openBackdrop}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
       {isSubmitting && <LinearProgress color="primary" />}
       <form onSubmit={form.handleSubmit(handleSubmit)}>
         <Stack direction="row" alignItems="center" m={2} spacing={2}>
           <Paper sx={{ flexGrow: 2 }}>
             <Grid container spacing={2} p={3.5}>
               <Grid item xs={12} mb={3} align="center">
-                <AvatarField name="avatar" form={form} />
+                <AvatarField
+                  name="avatar"
+                  form={form}
+                  defaultValue={avatarUrl}
+                />
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="h6">Tài khoản</Typography>
@@ -264,10 +339,7 @@ function AddEditStaff(props) {
                   name="staffType"
                   label="Chức vụ"
                   form={form}
-                  options={staffTypes?.map(item => ({
-                    id: item._id,
-                    label: item.typeName,
-                  }))}
+                  options={listStaffType}
                 />
               </Grid>
 
@@ -297,7 +369,12 @@ function AddEditStaff(props) {
                     </FormHelperText>
                   )}
                   {!!staffId ? (
-                    <Button variant="contained" color="primary" type="submit">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      type="submit"
+                      disabled={!isDirty}
+                    >
                       Lưu chỉnh sửa
                     </Button>
                   ) : (

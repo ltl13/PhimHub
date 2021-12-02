@@ -11,7 +11,7 @@ import SearchNotFound from 'components/SearchNotFound';
 import TableHeader from 'components/TableHeader';
 import TableToolbar from 'components/TableToolbar';
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import getComparator from 'utils/Table/getComparator';
 import getFilter from 'utils/Table/getFilter';
 import stableSortFilter from 'utils/Table/stableSortFilter';
@@ -19,7 +19,6 @@ import stableSortFilter from 'utils/Table/stableSortFilter';
 function AuthorizationList(props) {
   const { rows, setRows, headCells, listEdited, setListEdited } = props;
   const staffType = useSelector(state => state.staffType.current);
-  const dispatch = useDispatch();
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('funcName');
   const [filterString, setFilterString] = useState('');

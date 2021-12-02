@@ -1,29 +1,17 @@
-import {
-  Backdrop,
-  Box,
-  Button,
-  CircularProgress,
-  Stack,
-  Typography,
-} from '@mui/material';
-import { ErrorSnackBar, SuccessSnackBar } from 'components/SnackBar';
+import { Box, Button, Stack, Typography } from '@mui/material';
+import { closeBackdrop, openBackdrop } from 'app/backdropSlice';
+import { openSnackBar } from 'app/snackBarSlice';
 import Function from 'constants/function';
 import AddStaffType from 'features/Authorization/pages/AddStaffType';
 import { updateAllStaffType } from 'features/Authorization/slice';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import AuthorizationList from './components/AuthorizationList/index';
 import { loadStaffType } from './slice';
 
 export default function Authorization() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const staffType = useSelector(state => state.staffType.current);
-  const [openSnackBarSuccess, setOpenSnackBarSuccess] = React.useState(false);
-  const [openSnackBarError, setOpenSnackBarError] = React.useState(false);
-  const [messageSnackBar, setMessageSnackBar] = React.useState('');
-  const [openBackdrop, setOpenBackdrop] = React.useState(false);
   const [openAddStaffType, setOpenAddStaffType] = React.useState(false);
   const [isAddStaffTypeSuccess, setIsAddStaffTypeSuccess] =
     React.useState(false);
@@ -92,33 +80,21 @@ export default function Authorization() {
   };
 
   const handleUpdate = async () => {
-    setOpenBackdrop(true);
+    dispatch(openBackdrop());
+
     const response = await dispatch(updateAllStaffType({ data: exportData() }));
+
     if (response.payload.success) {
       setListEdited([]);
-      setMessageSnackBar(response.payload.message);
-      setOpenSnackBarSuccess(true);
+      dispatch(
+        openSnackBar({ type: 'success', message: response.payload.message }),
+      );
     } else {
-      setMessageSnackBar(response.payload.message);
-      setOpenSnackBarError(true);
+      dispatch(
+        openSnackBar({ type: 'error', message: response.payload.message }),
+      );
     }
-    setOpenBackdrop(false);
-  };
-
-  const handleCloseSuccess = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setOpenSnackBarSuccess(false);
-  };
-
-  const handleCloseError = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setOpenSnackBarError(false);
+    dispatch(closeBackdrop());
   };
 
   const handleOpenAddStaffType = () => {
@@ -132,22 +108,6 @@ export default function Authorization() {
   return (
     <>
       <Box sx={{ width: '100%' }}>
-        <Backdrop
-          sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 1 }}
-          open={openBackdrop}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
-        <SuccessSnackBar
-          open={openSnackBarSuccess}
-          handleClose={handleCloseSuccess}
-          message={messageSnackBar}
-        />
-        <ErrorSnackBar
-          open={openSnackBarError}
-          handleClose={handleCloseError}
-          message={messageSnackBar}
-        />
         <Stack
           direction="row"
           alignItems="center"

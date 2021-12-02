@@ -90,5 +90,5 @@ const authorizationSlice = createSlice({
   },
 });
 
-const { actions, reducer } = authorizationSlice;
+const { reducer } = authorizationSlice;
 export default reducer;

@@ -1,9 +1,9 @@
-import { Avatar, Button, Box, Typography } from '@mui/material';
-import React, { useState } from 'react';
+import { Avatar, Box, Button, Typography } from '@mui/material';
+import React from 'react';
 import { Controller } from 'react-hook-form';
 
 function AvatarField(props) {
-  const { form, name, label, disable, ...other } = props;
+  const { form, name, defaultValue } = props;
 
   return (
     <Controller
@@ -13,7 +13,9 @@ function AvatarField(props) {
         <label htmlFor="avatar-upload">
           <Button component="span" sx={{ padding: 0, borderRadius: '50%' }}>
             <Avatar
-              src={field.value && URL.createObjectURL(field.value)}
+              src={
+                !!field.value ? URL.createObjectURL(field.value) : defaultValue
+              }
               alt=""
               sx={{ width: 130, height: 130 }}
             />

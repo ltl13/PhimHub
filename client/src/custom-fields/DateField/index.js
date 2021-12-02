@@ -6,7 +6,7 @@ import { Controller } from 'react-hook-form';
 import { TextField } from '@mui/material';
 
 function DateField(props) {
-  const { form, name, label, disable, ...other } = props;
+  const { form, name, label, disable } = props;
 
   const {
     formState: { errors },
@@ -30,6 +30,7 @@ function DateField(props) {
                 fullWidth
                 error={!!hasError}
                 helperText={errors[name]?.message}
+                disabled={disable}
               />
             )}
           />

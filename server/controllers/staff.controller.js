@@ -340,6 +340,8 @@ const updateStaffById = async (req, res) => {
       identityNumber,
       salary,
       avatar,
+      username,
+      password,
     } = req.body;
 
     // Check if this staff exists
@@ -380,7 +382,17 @@ const updateStaffById = async (req, res) => {
       });
     }
 
+    checker = await Staff.findOne({ username, status: true });
+    if (checker && username !== staff.username) {
+      return res.status(409).json({
+        success: false,
+        invalid: 'username',
+        message: 'This username has been used by another staff',
+      });
+    }
+
     // Update staff's information
+    const hashedPassword = await argon2.hash(password);
     await Staff.findOneAndUpdate(
       { _id: req.params.id, status: true },
       {
@@ -391,8 +403,10 @@ const updateStaffById = async (req, res) => {
         sex,
         identityNumber,
         salary,
+        username,
         dateOfBirth: new Date(dateOfBirth),
-        avatar,
+        avatar: !!avatar ? avatar : staff.avatar,
+        password: !!password ? hashedPassword : staff.password,
       },
       { new: true }
     ).then((result) => result.save());

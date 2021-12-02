@@ -1,16 +1,7 @@
-import {
-  Backdrop,
-  Box,
-  Button,
-  CircularProgress,
-  Stack,
-  Typography,
-} from '@mui/material';
-import { ErrorSnackBar, SuccessSnackBar } from 'components/SnackBar';
+import { Box, Button, Stack, Typography } from '@mui/material';
 import { loadStaffType } from 'features/Authorization/slice';
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import StaffList from './components/StaffList';
 import AddEditStaff from './pages/AddEditStaff';
 import { loadStaffs } from './slice';
@@ -40,15 +31,7 @@ const headCells = [
 
 export default function Staff() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const staffs = useSelector(state => state.staffs.current);
-  const [openSnackBarSuccess, setOpenSnackBarSuccess] = React.useState(false);
-  const [openSnackBarError, setOpenSnackBarError] = React.useState(false);
-  const [messageSnackBar, setMessageSnackBar] = React.useState('');
-  const [openAddEditStaff, setOpenAddEditStaff] = React.useState(false);
-  const [isAddEditStaffSuccess, setIsAddEditStaffSuccess] =
-    React.useState(false);
-  const [listEdited, setListEdited] = useState([]);
+  const [openAddEditStaff, setOpenAddEditStaff] = useState(false);
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
@@ -76,36 +59,6 @@ export default function Staff() {
     load();
   }, []);
 
-  const handleUpdate = async () => {
-    // setOpenBackdrop(true);
-    // const response = await dispatch(updateAllStaffType({ data: exportData() }));
-    // if (response.payload.success) {
-    //   setListEdited([]);
-    //   setMessageSnackBar(response.payload.message);
-    //   setOpenSnackBarSuccess(true);
-    // } else {
-    //   setMessageSnackBar(response.payload.message);
-    //   setOpenSnackBarError(true);
-    // }
-    // setOpenBackdrop(false);
-  };
-
-  const handleCloseSuccess = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setOpenSnackBarSuccess(false);
-  };
-
-  const handleCloseError = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setOpenSnackBarError(false);
-  };
-
   const handleOpenAddEditStaff = () => {
     setOpenAddEditStaff(true);
   };
@@ -117,16 +70,6 @@ export default function Staff() {
   return (
     <>
       <Box sx={{ width: '100%' }}>
-        <SuccessSnackBar
-          open={openSnackBarSuccess}
-          handleClose={handleCloseSuccess}
-          message={messageSnackBar}
-        />
-        <ErrorSnackBar
-          open={openSnackBarError}
-          handleClose={handleCloseError}
-          message={messageSnackBar}
-        />
         <Stack
           direction="row"
           alignItems="center"
@@ -152,13 +95,7 @@ export default function Staff() {
             </Button>
           </Stack>
         </Stack>
-        <StaffList
-          rows={rows}
-          setRows={setRows}
-          headCells={headCells}
-          listEdited={listEdited}
-          setListEdited={setListEdited}
-        />
+        <StaffList rows={rows} setRows={setRows} headCells={headCells} />
       </Box>
       <AddEditStaff
         onClose={handleCloseAddEditStaff}
