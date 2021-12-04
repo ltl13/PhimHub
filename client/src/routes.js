@@ -9,6 +9,7 @@ const Login = React.lazy(() => import('features/Auth'));
 const DashboardLayout = React.lazy(() => import('features/Dashboard'));
 const Authorization = React.lazy(() => import('features/Authorization'));
 const Staff = React.lazy(() => import('features/Staff'));
+const Customer = React.lazy(() => import('features/Customer'));
 
 const Router = () => {
   return useRoutes([
@@ -92,7 +93,7 @@ const Router = () => {
               path: 'customer',
               element: (
                 <PrivateRoute funcId={Function.CustomerManagement.id}>
-                  <Typography variant="h3">Customer</Typography>
+                  <Customer />
                 </PrivateRoute>
               ),
             },

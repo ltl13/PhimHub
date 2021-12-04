@@ -3,25 +3,20 @@ import { closeBackdrop, openBackdrop } from 'app/backdropSlice';
 import { loadStaffType } from 'features/Authorization/slice';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import StaffList from './components/StaffList';
-import AddEditStaff from './pages/AddEditStaff';
-import { loadStaffs } from './slice';
+import CustomerList from './components/CustomerList';
+import AddEditCustomer from './pages/AddEditCustomer';
+import { loadCustomers } from './slice';
 
 const headCells = [
   {
-    id: 'staffName',
+    id: 'name',
     align: 'left',
     label: 'Tên',
   },
   {
-    id: 'role',
+    id: 'email',
     align: 'left',
-    label: 'Chức vụ',
-  },
-  {
-    id: 'identityNumber',
-    align: 'left',
-    label: 'CMND/CCCD',
+    label: 'Email',
   },
   {
     id: 'phoneNum',
@@ -30,28 +25,27 @@ const headCells = [
   },
 ];
 
-export default function Staff() {
+export default function Customer() {
   const dispatch = useDispatch();
-  const [openAddEditStaff, setOpenAddEditStaff] = useState(false);
+  const [openAddEditCustomer, setOpenAddEditCustomer] = useState(false);
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
     const load = async () => {
       dispatch(openBackdrop());
 
-      const action = loadStaffs();
+      const action = loadCustomers();
       const response = await dispatch(action);
 
       if (response.payload.success) {
         // Create row table
         const tempRows = [];
-        response.payload.allStaffs.forEach(item => {
+        response.payload.allCustomers.forEach(item => {
           const tempRow = {};
           tempRow.id = item._id;
-          tempRow.staffName = item.name;
+          tempRow.name = item.name;
           tempRow.avatarUrl = item.avatar;
-          tempRow.role = item.staffType.typeName;
-          tempRow.identityNumber = item.identityNumber;
+          tempRow.email = item.email;
           tempRow.phoneNum = item.phoneNumber;
           tempRows.push(tempRow);
         });
@@ -64,12 +58,12 @@ export default function Staff() {
     load();
   }, []);
 
-  const handleOpenAddEditStaff = () => {
-    setOpenAddEditStaff(true);
+  const handleOpenAddEditCustomer = () => {
+    setOpenAddEditCustomer(true);
   };
 
-  const handleCloseAddEditStaff = () => {
-    setOpenAddEditStaff(false);
+  const handleCloseAddEditCustomer = () => {
+    setOpenAddEditCustomer(false);
   };
 
   return (
@@ -82,7 +76,7 @@ export default function Staff() {
           mb={5}
         >
           <Typography variant="h4" gutterBottom>
-            Nhân viên
+            Khách hàng
           </Typography>
           <Stack
             direction="row"
@@ -93,18 +87,18 @@ export default function Staff() {
             <Button
               variant="contained"
               mr={1}
-              onClick={handleOpenAddEditStaff}
+              onClick={handleOpenAddEditCustomer}
               color="secondary"
             >
-              Thêm nhân viên
+              Thêm khách hàng
             </Button>
           </Stack>
         </Stack>
-        <StaffList rows={rows} setRows={setRows} headCells={headCells} />
+        <CustomerList rows={rows} setRows={setRows} headCells={headCells} />
       </Box>
-      <AddEditStaff
-        onClose={handleCloseAddEditStaff}
-        open={openAddEditStaff}
+      <AddEditCustomer
+        onClose={handleCloseAddEditCustomer}
+        open={openAddEditCustomer}
         setRows={setRows}
         staffId={null}
       />

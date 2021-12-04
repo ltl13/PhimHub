@@ -35,11 +35,6 @@ const sidebarConfig = [
         func: Function.MovieManagement,
       },
       {
-        title: 'Nhân viên',
-        path: '/dashboard/management/staff',
-        func: Function.StaffManagement,
-      },
-      {
         title: 'Lịch chiếu',
         path: '/dashboard/management/showtime',
         func: Function.ShowtimeManagement,
@@ -48,6 +43,11 @@ const sidebarConfig = [
         title: 'Phòng chiếu',
         path: '/dashboard/management/cinema-room',
         func: Function.CinemaRoomManagement,
+      },
+      {
+        title: 'Nhân viên',
+        path: '/dashboard/management/staff',
+        func: Function.StaffManagement,
       },
       {
         title: 'Khách hàng',

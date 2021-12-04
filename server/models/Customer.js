@@ -1,12 +1,7 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const CustomerSchema = new Schema({
-  customerType: {
-    type: Schema.Types.ObjectId,
-    ref: "customer_types",
-  },
-
   phoneNumber: {
     type: String,
     required: true,
@@ -47,6 +42,11 @@ const CustomerSchema = new Schema({
     default: true,
   },
 
+  avatar: {
+    type: String,
+    default: '',
+  },
+
   createAt: {
     type: Date,
     required: true,
@@ -54,4 +54,4 @@ const CustomerSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model("customers", CustomerSchema);
+module.exports = mongoose.model('customers', CustomerSchema);
