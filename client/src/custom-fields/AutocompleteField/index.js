@@ -17,7 +17,7 @@ AutocompleteField.defaultProps = {
 };
 
 function AutocompleteField(props) {
-  const { form, name, label, disable, options } = props;
+  const { form, name, label, disable, options, type } = props;
   const {
     formState: { errors },
   } = form;
@@ -33,9 +33,11 @@ function AutocompleteField(props) {
             onChange={(event, item) => {
               onChange(item);
             }}
+            multiple={type === 'multiple'}
+            filterSelectedOptions
             value={value}
             options={options}
-            getOptionLabel={item => (item.label ? item.label : '')}
+            getOptionLabel={item => (!!item.label ? item.label : '')}
             isOptionEqualToValue={(option, value) =>
               value === undefined || value === '' || option.id === value.id
             }

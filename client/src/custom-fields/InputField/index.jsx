@@ -16,7 +16,7 @@ InputField.defaultProps = {
 };
 
 function InputField(props) {
-  const { form, name, label, disable, ...other } = props;
+  const { form, name, label, disable, multiline } = props;
   const {
     formState: { errors },
   } = form;
@@ -30,7 +30,8 @@ function InputField(props) {
         render={({ field }) => (
           <TextField
             {...field}
-            {...other}
+            multiline={!!multiline}
+            rows={!!multiline && 3}
             variant="outlined"
             label={label}
             fullWidth
