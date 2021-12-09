@@ -1,4 +1,4 @@
-import { TextField } from '@mui/material';
+import { InputAdornment, TextField } from '@mui/material';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Controller } from 'react-hook-form';
@@ -16,7 +16,7 @@ InputField.defaultProps = {
 };
 
 function InputField(props) {
-  const { form, name, label, disable, multiline } = props;
+  const { form, name, label, disable, multiline, unit } = props;
   const {
     formState: { errors },
   } = form;
@@ -31,13 +31,22 @@ function InputField(props) {
           <TextField
             {...field}
             multiline={!!multiline}
-            rows={!!multiline && 3}
+            rows={!!multiline ? 2 : undefined}
             variant="outlined"
             label={label}
             fullWidth
             disabled={disable}
             error={!!hasError}
             helperText={errors[name]?.message}
+            InputProps={
+              !!unit
+                ? {
+                    endAdornment: (
+                      <InputAdornment position="end">{unit}</InputAdornment>
+                    ),
+                  }
+                : undefined
+            }
           ></TextField>
         )}
       />

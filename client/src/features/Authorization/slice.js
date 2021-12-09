@@ -73,7 +73,7 @@ export const createStaffType = createAsyncThunk(
 );
 
 const authorizationSlice = createSlice({
-  name: 'staffType',
+  name: 'staffTypes',
   initialState: {
     current: null,
   },

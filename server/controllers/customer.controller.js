@@ -239,7 +239,8 @@ const updateCustomerById = async (req, res) => {
 
   // Passed
   try {
-    const { phoneNumber, email, name, sex, dateOfBirth } = req.body;
+    const { phoneNumber, email, name, sex, dateOfBirth, avatar, password } =
+      req.body;
 
     // Check if this customer exists
     const customer = await Customer.findOne({
@@ -272,6 +273,7 @@ const updateCustomerById = async (req, res) => {
     }
 
     // Update customer
+    const hashedPassword = await argon2.hash(password);
     await Customer.findOneAndUpdate(
       { _id: req.params.id, status: true },
       {
@@ -280,6 +282,8 @@ const updateCustomerById = async (req, res) => {
         name,
         sex,
         dateOfBirth: new Date(dateOfBirth),
+        avatar: !!avatar ? avatar : customer.avatar,
+        password: !!password ? hashedPassword : customer.password,
       },
       { new: true }
     ).then(async (result) => await result.save());

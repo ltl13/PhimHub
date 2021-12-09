@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { closeBackdrop, openBackdrop } from 'app/backdropSlice';
 import AutocompleteField from 'custom-fields/AutocompleteField';
-import AvatarField from 'custom-fields/AvatarField';
+import AvatarField from 'custom-fields/ImageField';
 import DateField from 'custom-fields/DateField';
 import InputField from 'custom-fields/InputField';
 import PasswordField from 'custom-fields/PasswordField';
@@ -221,6 +221,9 @@ function AddEditCustomer(props) {
                   name="avatar"
                   form={form}
                   defaultValue={avatarUrl}
+                  type="avatar"
+                  height={130}
+                  width={130}
                 />
               </Grid>
             </Grid>

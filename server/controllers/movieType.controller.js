@@ -132,7 +132,7 @@ const deleteMovieTypeById = async (req, res) => {
         message: 'Movie type not found',
       });
     }
-    return res.stautus(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Delete movie type successfully',
     });

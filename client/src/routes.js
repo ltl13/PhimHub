@@ -10,6 +10,7 @@ const DashboardLayout = React.lazy(() => import('features/Dashboard'));
 const Authorization = React.lazy(() => import('features/Authorization'));
 const Staff = React.lazy(() => import('features/Staff'));
 const Customer = React.lazy(() => import('features/Customer'));
+const Movie = React.lazy(() => import('features/Movie'));
 
 const Router = () => {
   return useRoutes([
@@ -61,7 +62,7 @@ const Router = () => {
               path: 'movie',
               element: (
                 <PrivateRoute funcId={Function.MovieManagement.id}>
-                  <Typography variant="h3">Movie</Typography>
+                  <Movie />
                 </PrivateRoute>
               ),
             },

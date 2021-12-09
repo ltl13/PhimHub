@@ -19,17 +19,14 @@ const MovieSchema = new Schema({
 
   verticalPoster: {
     type: String,
-    required: true,
   },
 
   horizontalPoster: {
     type: String,
-    required: true,
   },
 
   trailer: {
     type: String,
-    required: true,
   },
 
   description: {
@@ -67,6 +64,17 @@ const MovieSchema = new Schema({
       ref: 'movie_types',
     },
   ],
+
+  status: {
+    type: Boolean,
+    required: true,
+    default: true,
+  },
+
+  deletedAt: {
+    type: Date,
+    default: null,
+  },
 });
 
 module.exports = mongoose.model('movies', MovieSchema);
