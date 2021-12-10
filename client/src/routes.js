@@ -11,6 +11,7 @@ const Authorization = React.lazy(() => import('features/Authorization'));
 const Staff = React.lazy(() => import('features/Staff'));
 const Customer = React.lazy(() => import('features/Customer'));
 const Movie = React.lazy(() => import('features/Movie'));
+const Room = React.lazy(() => import('features/Room'));
 
 const Router = () => {
   return useRoutes([
@@ -86,7 +87,7 @@ const Router = () => {
               path: 'cinema-room',
               element: (
                 <PrivateRoute funcId={Function.CinemaRoomManagement.id}>
-                  <Typography variant="h3">Cinema room</Typography>
+                  <Room />
                 </PrivateRoute>
               ),
             },

@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const RoomTypeSchema = new Schema({
@@ -6,6 +6,8 @@ const RoomTypeSchema = new Schema({
     type: String,
     required: true,
   },
+
+  seats: [[{ type: Schema.Types.ObjectId, ref: 'seat_types', default: null }]],
 });
 
-module.exports = mongoose.model("room_types", RoomTypeSchema);
+module.exports = mongoose.model('room_types', RoomTypeSchema);

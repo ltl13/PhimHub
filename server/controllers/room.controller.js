@@ -55,7 +55,7 @@ const getRoomById = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: 'Intenal server error',
+      message: 'Internal server error',
     });
   }
 };
@@ -69,20 +69,19 @@ const createRoom = async (req, res) => {
   // if (!confirm) return res.redirect("back");
 
   try {
-    const { name, status, numberSeat, capacity, roomType } = req.body;
+    const { name, status, roomType } = req.body;
 
     const newRoom = new Room({
       name,
       status,
-      numberSeat,
-      capacity,
+
       roomType,
     });
     await newRoom.save();
 
     return res.status(200).json({
       success: true,
-      message: 'New room was creatd successfully',
+      message: 'New room was created successfully',
     });
   } catch (error) {
     console.log(error);
@@ -102,7 +101,7 @@ const updateRoomById = async (req, res) => {
   // if (!confirm) return res.redirect("back");
 
   try {
-    const { name, status, numberSeat, capacity, roomType } = req.body;
+    const { name, status, roomType } = req.body;
 
     const room = await Room.findOne({
       _id: req.params.id,
@@ -120,8 +119,7 @@ const updateRoomById = async (req, res) => {
       {
         name,
         status,
-        numberSeat,
-        capacity,
+
         roomType,
       },
       { new: true }
@@ -129,7 +127,7 @@ const updateRoomById = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Room's infomation has been updated successfully",
+      message: "Room's information has been updated successfully",
     });
   } catch (error) {
     console.log(error);

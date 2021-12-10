@@ -1,18 +1,28 @@
 const RoomType = require('../models/RoomType');
 const Room = require('../models/Room');
 const { confirmAccess } = require('../shared/functions');
+const SeatType = require('../models/SeatType');
+const { getInfoSeatType } = require('./seatType.controller');
 
 const getAllRoomTypes = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'getAllRoomTypes',
+    func: 'CinemaRoomManagement',
   });
-  if (!confirm) return res.redirect('back');
+
+  if (!confirm)
+    return res.status(400).json({
+      success: false,
+      message: 'Not has access',
+    });
 
   // Passed
   try {
-    const allRoomTypes = await RoomType.find();
+    const allRoomTypes = await RoomType.find().populate({
+      path: 'seats',
+      select: 'typeName',
+    });
     return res.status(200).json({
       success: true,
       allRoomTypes,
@@ -30,9 +40,14 @@ const getRoomTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'getRoomTypeById',
+    func: 'CinemaRoomManagement',
   });
-  if (!confirm) return res.redirect('back');
+
+  if (!confirm)
+    return res.status(400).json({
+      success: false,
+      message: 'Not has access',
+    });
 
   // Passed
   try {
@@ -42,6 +57,8 @@ const getRoomTypeById = async (req, res) => {
         success: false,
         message: 'Room type not found',
       });
+
+    // const newSeats = await getInfoSeatType(roomType.seats);
     return res.status(200).json({
       success: true,
       roomType,
@@ -59,13 +76,18 @@ const createRoomType = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'createRoomType',
+    func: 'CinemaRoomManagement',
   });
-  if (!confirm) return res.redirect('back');
+
+  if (!confirm)
+    return res.status(400).json({
+      success: false,
+      message: 'Not has access',
+    });
 
   // Passed
   try {
-    const { typeName } = req.body;
+    const { typeName, seats } = req.body;
 
     // Check if this type has existed
     let checker = await RoomType.findOne({ typeName });
@@ -78,6 +100,7 @@ const createRoomType = async (req, res) => {
     // Add new type
     const newRoomType = new RoomType({
       typeName,
+      seats,
     });
     await newRoomType.save();
     return res.status(201).json({
@@ -94,6 +117,17 @@ const createRoomType = async (req, res) => {
 };
 
 const updateRoomTypeById = async (req, res) => {
+  const confirm = await confirmAccess({
+    staffType: req.body.staffTypeJwt,
+    func: 'CinemaRoomManagement',
+  });
+
+  if (!confirm)
+    return res.status(400).json({
+      success: false,
+      message: 'Not has access',
+    });
+
   try {
     const { typeName } = req.body;
 
@@ -144,9 +178,14 @@ const deleteRoomTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'deleteRoomTypeById',
+    func: 'CinemaRoomManagement',
   });
-  if (!confirm) return res.redirect('back');
+
+  if (!confirm)
+    return res.status(400).json({
+      success: false,
+      message: 'Not has access',
+    });
 
   // Passed
   try {

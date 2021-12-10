@@ -18,7 +18,7 @@ import stableSortFilter from 'utils/Table/stableSortFilter';
 
 function AuthorizationList(props) {
   const { rows, setRows, headCells, listEdited, setListEdited } = props;
-  const staffType = useSelector(state => state.staffType.current);
+  const staffType = useSelector(state => state.staffTypes.current);
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('funcName');
   const [filterString, setFilterString] = useState('');
@@ -67,7 +67,7 @@ function AuthorizationList(props) {
   const isFuncNotFound = filteredFunc.length === 0;
   return (
     <>
-      <Paper sx={{ width: '100%', mb: 2 }}>
+      <Paper sx={{ width: '100%', mb: 2 }} elevation={3}>
         <TableToolbar
           filter={filterString}
           onFilterName={handleFilterByFuncName}

@@ -6,9 +6,14 @@ const getAllSeatTypes = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'getAllSeatTypes',
+    func: 'CinemaRoomManagement',
   });
-  if (!confirm) return res.redirect('back');
+
+  if (!confirm)
+    return res.status(400).json({
+      success: false,
+      message: 'Not has access',
+    });
 
   // Passed
   try {
@@ -30,9 +35,14 @@ const getSeatTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'getSeatTypeById',
+    func: 'CinemaRoomManagement',
   });
-  if (!confirm) return res.redirect('back');
+
+  if (!confirm)
+    return res.status(400).json({
+      success: false,
+      message: 'Not has access',
+    });
 
   // Passed
   try {
@@ -59,13 +69,18 @@ const createSeatType = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'createSeatType',
+    func: 'CinemaRoomManagement',
   });
-  if (!confirm) return res.redirect('back');
+
+  if (!confirm)
+    return res.status(400).json({
+      success: false,
+      message: 'Not has access',
+    });
 
   // Passed
   try {
-    const { typeName } = req.body;
+    const { typeName, size } = req.body;
 
     // Check if this type has existed
     let checker = await SeatType.findOne({ typeName });
@@ -78,6 +93,7 @@ const createSeatType = async (req, res) => {
     // Add new type
     const newSeatType = new SeatType({
       typeName,
+      size,
     });
     await newSeatType.save();
     return res.status(201).json({
@@ -94,8 +110,20 @@ const createSeatType = async (req, res) => {
 };
 
 const updateSeatTypeById = async (req, res) => {
+  // Check if user can access this route
+  const confirm = await confirmAccess({
+    staffType: req.body.staffTypeJwt,
+    func: 'CinemaRoomManagement',
+  });
+
+  if (!confirm)
+    return res.status(400).json({
+      success: false,
+      message: 'Not has access',
+    });
+
   try {
-    const { typeName } = req.body;
+    const { typeName, size } = req.body;
 
     // Check if Seat exists in database
     const seatType = await SeatType.findById(req.params.id);
@@ -122,6 +150,7 @@ const updateSeatTypeById = async (req, res) => {
       req.params.id,
       {
         typeName,
+        size,
       },
       { new: true }
     ).then(async (result) => await result.save());
@@ -144,9 +173,14 @@ const deleteSeatTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'deleteSeatTypeById',
+    func: 'CinemaRoomManagement',
   });
-  if (!confirm) return res.redirect('back');
+
+  if (!confirm)
+    return res.status(400).json({
+      success: false,
+      message: 'Not has access',
+    });
 
   // Passed
   try {
@@ -183,10 +217,31 @@ const deleteSeatTypeById = async (req, res) => {
   }
 };
 
+const getInfoSeatType = async (seats) => {
+  const newSeats = [];
+  if (seats.length > 0) {
+    for (let i = 0; i < seats.length; i++) {
+      const newRows = [];
+
+      if (seats[i].length > 0) {
+        for (let j = 0; j < seats[i].length; j++) {
+          const temp = await SeatType.findById(seats[i][j]);
+          newRows.push(temp);
+        }
+      }
+
+      newSeats.push(newRows);
+    }
+  }
+
+  return newSeats;
+};
+
 module.exports = {
   getAllSeatTypes,
   getSeatTypeById,
   createSeatType,
   updateSeatTypeById,
   deleteSeatTypeById,
+  getInfoSeatType,
 };

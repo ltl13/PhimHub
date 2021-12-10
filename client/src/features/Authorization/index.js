@@ -11,7 +11,7 @@ import { loadStaffType } from './slice';
 
 export default function Authorization() {
   const dispatch = useDispatch();
-  const staffType = useSelector(state => state.staffType.current);
+  const staffType = useSelector(state => state.staffTypes.current);
   const [openAddStaffType, setOpenAddStaffType] = React.useState(false);
   const [isAddStaffTypeSuccess, setIsAddStaffTypeSuccess] =
     React.useState(false);
