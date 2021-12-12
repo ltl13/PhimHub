@@ -221,7 +221,8 @@ const _calculateIncomeByMoviesInDate = async (payments, date, month, year) => {
       const _paytime = payment.paytime.toISOString();
       const _year = _paytime[0];
       const _month = _paytime[1];
-      if (_year == year && _month == month) {
+      const _date = _paytime[2].split("T")[0];
+      if (_year == year && _month == month && _date == date) {
         const _ticket = await Ticket.findById(payment.ticket);
         const _movie = await Movie.findById(_ticket.movie);
         result[_movie.name] += payment.value;
