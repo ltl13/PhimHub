@@ -95,7 +95,7 @@ const createPayment = async (req, res) => {
       code: specialOffer,
       status: true,
     });
-    if (!applySpecialOffer)
+    if (!applySpecialOffer && specialOffer != null)
       return res.status(406).json({
         success: false,
         invalid: 'specialOffer',
@@ -103,11 +103,17 @@ const createPayment = async (req, res) => {
       });
 
     // Create new payment
-    const newPayment = new Payment({
-      specialOffer: applySpecialOffer,
-      staff,
-      value,
-    });
+    const newPayment =
+      specialOffer != null
+        ? new Payment({
+            specialOffer: applySpecialOffer,
+            staff,
+            value,
+          })
+        : new Payment({
+            staff,
+            value,
+          });
 
     // Create new ticket
     const newTicket = await createTicket({
