@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const MovieSchema = new Schema({
@@ -17,9 +17,16 @@ const MovieSchema = new Schema({
     required: true,
   },
 
-  poster: {
+  verticalPoster: {
     type: String,
-    required: true,
+  },
+
+  horizontalPoster: {
+    type: String,
+  },
+
+  trailer: {
+    type: String,
   },
 
   description: {
@@ -54,9 +61,20 @@ const MovieSchema = new Schema({
   movieTypes: [
     {
       type: Schema.Types.ObjectId,
-      ref: "movie_types",
+      ref: 'movie_types',
     },
   ],
+
+  status: {
+    type: Boolean,
+    required: true,
+    default: true,
+  },
+
+  deletedAt: {
+    type: Date,
+    default: null,
+  },
 });
 
-module.exports = mongoose.model("movies", MovieSchema);
+module.exports = mongoose.model('movies', MovieSchema);

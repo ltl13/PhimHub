@@ -43,7 +43,7 @@ function StaffList(props) {
   const isStaffNotFound = filteredFunc.length === 0;
   return (
     <>
-      <Paper sx={{ width: '100%', mb: 2 }}>
+      <Paper sx={{ width: '100%', mb: 2 }} elevation={3}>
         <TableToolbar
           filter={filterString}
           onFilterName={handleFilter}

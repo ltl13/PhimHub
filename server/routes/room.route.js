@@ -1,19 +1,19 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
 
-//const verifyToken = require("../middlewares/auth.middleware");
+const verifyToken = require('../middlewares/auth.middleware');
 const {
   getAllRooms,
   getRoomById,
   createRoom,
   updateRoomById,
   deleteRoomById,
-} = require("../controllers/room.controller");
+} = require('../controllers/room.controller');
 
-router.get("/get-all", getAllRooms);
-router.get("/get/:id", getRoomById);
-router.post("/create", createRoom);
-router.put("/update/:id", updateRoomById);
-router.delete("/delete/:id", deleteRoomById);
+router.get('/get-all', verifyToken, getAllRooms);
+router.get('/get/:id', verifyToken, getRoomById);
+router.post('/create', verifyToken, createRoom);
+router.put('/update/:id', verifyToken, updateRoomById);
+router.delete('/delete/:id', verifyToken, deleteRoomById);
 
 module.exports = router;

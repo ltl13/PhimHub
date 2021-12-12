@@ -2,24 +2,14 @@ const argon2 = require('argon2');
 const jsonwebtoken = require('jsonwebtoken');
 
 const Customer = require('../models/Customer');
-const { confirmAccess } = require('../shared/functions');
+const { confirmAccess, standardName } = require('../shared/functions');
 
 const getAllCustomers = async (req, res) => {
-  // Check if user can access this route
-  const confirm = await confirmAccess({
-    staffType: req.body.staffTypeJwt,
-    func: 'getAllCustomers',
-  });
-  if (!confirm) return res.redirect('back');
-
   // Passed
   try {
-    const allCustomers = await Customer.find({ status: true })
-      .populate({
-        path: 'customerType',
-        select: 'typeName',
-      })
-      .select('-password');
+    const allCustomers = await Customer.find({ status: true }).select(
+      '-password'
+    );
     if (allCustomers) {
       return res.status(200).json({
         success: true,
@@ -40,7 +30,7 @@ const getCustomerById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'getCustomerById',
+    func: 'CustomerManagement',
   });
   if (!confirm) return res.redirect('back');
 
@@ -49,12 +39,7 @@ const getCustomerById = async (req, res) => {
     const customer = await Customer.findOne({
       _id: req.params.id,
       status: true,
-    })
-      .populate({
-        path: 'customerType',
-        select: 'typeName',
-      })
-      .select('-password');
+    }).select('-password');
     if (!customer) {
       return res.status(406).json({
         success: false,
@@ -78,21 +63,13 @@ const createCustomer = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'createCustomer',
+    func: 'CustomerManagement',
   });
   if (!confirm) return res.redirect('back');
-
   // Passed
   try {
-    const {
-      customerType,
-      password,
-      phoneNumber,
-      email,
-      name,
-      sex,
-      dateOfBirth,
-    } = req.body;
+    const { password, phoneNumber, email, name, sex, dateOfBirth, avatar } =
+      req.body;
 
     // Check if email or phone number has been used for register before
     let checker = await Customer.findOne({ phoneNumber, status: true });
@@ -114,15 +91,16 @@ const createCustomer = async (req, res) => {
     }
 
     // Create new customer
+
     const hashedPassword = await argon2.hash(password);
     const newCustomer = new Customer({
-      customerType,
       phoneNumber,
       password: hashedPassword,
       email,
-      name,
+      name: standardName(name),
       sex,
-      dateOfBirth: new Date(dateOfBirth.concat('T00:00:20Z')),
+      avatar,
+      dateOfBirth: new Date(dateOfBirth),
     });
     await newCustomer.save();
 
@@ -142,15 +120,7 @@ const createCustomer = async (req, res) => {
 
 const registerCustomer = async (req, res) => {
   try {
-    const {
-      customerType,
-      password,
-      phoneNumber,
-      email,
-      name,
-      sex,
-      dateOfBirth,
-    } = req.body;
+    const { password, phoneNumber, email, name, sex, dateOfBirth } = req.body;
 
     // Check if email or phone number has been used for register before
     let checker = await Customer.findOne({ phoneNumber, status: true });
@@ -173,13 +143,12 @@ const registerCustomer = async (req, res) => {
     // Create new customer
     const hashPassword = await argon2.hash(password);
     const newCustomer = new Customer({
-      customerType,
       phoneNumber,
       password: hashPassword,
       email,
-      name,
+      name: standardName(name),
       sex,
-      dateOfBirth: new Date(dateOfBirth.concat('T00:00:20Z')),
+      dateOfBirth: new Date(dateOfBirth),
     });
 
     // Return access token
@@ -257,13 +226,13 @@ const updateCustomerById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'updateCustomerById',
+    func: 'CustomerManagement',
   });
   if (!confirm) return res.redirect('back');
 
   // Passed
   try {
-    const { customerType, phoneNumber, email, name, sex, dateOfBirth } =
+    const { phoneNumber, email, name, sex, dateOfBirth, avatar, password } =
       req.body;
 
     // Check if this customer exists
@@ -297,15 +266,17 @@ const updateCustomerById = async (req, res) => {
     }
 
     // Update customer
+    const hashedPassword = await argon2.hash(password);
     await Customer.findOneAndUpdate(
       { _id: req.params.id, status: true },
       {
-        customerType,
         phoneNumber,
         email,
-        name,
+        name: standardName(name),
         sex,
-        dateOfBirth: new Date(dateOfBirth.concat('T00:00:10Z')),
+        dateOfBirth: new Date(dateOfBirth),
+        avatar: !!avatar ? avatar : customer.avatar,
+        password: !!password ? hashedPassword : customer.password,
       },
       { new: true }
     ).then(async (result) => await result.save());
@@ -424,7 +395,7 @@ const deleteCustomerById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'deleteCustomerById',
+    func: 'CustomerManagement',
   });
   if (!confirm) return res.redirect('back');
 

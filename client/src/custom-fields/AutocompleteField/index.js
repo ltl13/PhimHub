@@ -1,4 +1,4 @@
-import { TextField } from '@mui/material';
+import { TextField, Checkbox } from '@mui/material';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Controller } from 'react-hook-form';
@@ -17,7 +17,7 @@ AutocompleteField.defaultProps = {
 };
 
 function AutocompleteField(props) {
-  const { form, name, label, disable, options } = props;
+  const { form, name, label, disable, options, multiple } = props;
   const {
     formState: { errors },
   } = form;
@@ -33,12 +33,23 @@ function AutocompleteField(props) {
             onChange={(event, item) => {
               onChange(item);
             }}
+            multiple={multiple}
+            disableCloseOnSelect={multiple}
+            filterSelectedOptions={!multiple}
             value={value}
             options={options}
-            getOptionLabel={item => (item.label ? item.label : '')}
+            getOptionLabel={item => (!!item.label ? item.label : '')}
             isOptionEqualToValue={(option, value) =>
               value === undefined || value === '' || option.id === value.id
             }
+            renderOption={(props, option, { selected }) => (
+              <li {...props}>
+                {multiple && (
+                  <Checkbox style={{ marginRight: 8 }} checked={selected} />
+                )}
+                {option.label}
+              </li>
+            )}
             renderInput={params => (
               <TextField
                 {...params}

@@ -35,11 +35,6 @@ const sidebarConfig = [
         func: Function.MovieManagement,
       },
       {
-        title: 'Nhân viên',
-        path: '/dashboard/management/staff',
-        func: Function.StaffManagement,
-      },
-      {
         title: 'Lịch chiếu',
         path: '/dashboard/management/showtime',
         func: Function.ShowtimeManagement,
@@ -48,6 +43,11 @@ const sidebarConfig = [
         title: 'Phòng chiếu',
         path: '/dashboard/management/cinema-room',
         func: Function.CinemaRoomManagement,
+      },
+      {
+        title: 'Nhân viên',
+        path: '/dashboard/management/staff',
+        func: Function.StaffManagement,
       },
       {
         title: 'Khách hàng',
@@ -72,14 +72,19 @@ const sidebarConfig = [
         func: Function.PromotionSetting,
       },
       {
-        title: 'Loại ghế',
-        path: '/dashboard/setting/type-of-seat',
-        func: Function.TypeOfSeatSetting,
+        title: 'Giá vé',
+        path: '/dashboard/setting/type-of-price',
+        func: Function.TypeOfPriceSetting,
       },
       {
         title: 'Thanh toán',
         path: '/dashboard/setting/type-of-payment',
         func: Function.TypeOfPaymentSetting,
+      },
+      {
+        title: 'Loại phòng chiếu',
+        path: '/dashboard/setting/type-of-room',
+        func: Function.CinemaRoomManagement,
       },
     ],
   },

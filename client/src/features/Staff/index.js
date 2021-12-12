@@ -1,4 +1,5 @@
 import { Box, Button, Stack, Typography } from '@mui/material';
+import { closeBackdrop, openBackdrop } from 'app/backdropSlice';
 import { loadStaffType } from 'features/Authorization/slice';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -36,6 +37,8 @@ export default function Staff() {
 
   useEffect(() => {
     const load = async () => {
+      dispatch(openBackdrop());
+
       const action = loadStaffs();
       const response = await dispatch(action);
 
@@ -55,6 +58,8 @@ export default function Staff() {
         setRows(tempRows);
       }
       await dispatch(loadStaffType());
+
+      dispatch(closeBackdrop());
     };
     load();
   }, []);

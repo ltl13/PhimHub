@@ -1,5 +1,5 @@
-const { confirmAccess, removeAccents } = require('../shared/functions');
 const StaffType = require('../models/StaffType');
+const { confirmAccess, standardName } = require('../shared/functions');
 const Staff = require('../models/Staff');
 const Func = require('../models/Func');
 
@@ -77,21 +77,20 @@ const createStaffType = async (req, res) => {
   // Passed
   try {
     const { typeName, funcs } = req.body;
+    const standardizedName = standardName(typeName);
 
     // Check if this position has existed
-    const checker = (await StaffType.find({}).select('typeName -_id')).map(
-      (item) => item.typeName.toLowerCase()
-    );
-
-    if (checker.indexOf(typeName.toLowerCase()) !== -1)
+    let checker = await SeatType.findOne({ typeName: standardizedName });
+    if (checker)
       return res.status(409).json({
         success: false,
-        message: 'This type name has existed',
+        invalid: 'typeName',
+        message: 'This type has existed',
       });
 
     // Add new position
     const newStaffType = new StaffType({
-      typeName,
+      typeName: standardizedName,
       funcs,
     });
     await newStaffType.save();
@@ -123,6 +122,7 @@ const updateStaffTypeById = async (req, res) => {
   // Passed
   try {
     const { typeName, funcs } = req.body;
+    const standardizedName = standardName(typeName);
 
     // Check if this staff type exists
     const checkStaffType = await StaffType.findById(req.params.id);
@@ -133,15 +133,15 @@ const updateStaffTypeById = async (req, res) => {
       });
 
     // Check if this type name has existed
-    const checkTypeName = await StaffType.findOne({
-      _id: { $ne: req.params.id },
-      typeName,
+    const checker = await SeatType.findOne({
+      typeName: standardizedName,
     });
-    if (checkTypeName)
+    if (checker && seatType.typeName != standardizedName) {
       return res.status(400).json({
         success: false,
-        message: 'This type name has existed',
+        message: 'This seat type has existed',
       });
+    }
 
     // Delete all connections of this staff type with funcs before updating
     if (checkStaffType.funcs.length > 0) {
@@ -150,7 +150,8 @@ const updateStaffTypeById = async (req, res) => {
         if (findFunc) {
           const listStaffTypeUpdate = findFunc.staffTypes;
           const index = listStaffTypeUpdate.indexOf(checkStaffType._id);
-          if (index !== -1) listStaffTypeUpdate.splice(index);
+          if (index !== -1) listStaffTypeUpdate.splice(index, 1);
+          console.log(listStaffTypeUpdate);
           await Func.findByIdAndUpdate(
             checkStaffType.funcs[i],
             { staffTypes: listStaffTypeUpdate },
@@ -163,7 +164,7 @@ const updateStaffTypeById = async (req, res) => {
     // All good, update staff type's info
     const updateStaffType = await StaffType.findByIdAndUpdate(
       req.params.id,
-      { typeName, funcs },
+      { typeName: standardizedName, funcs },
       { new: true }
     );
     await updateStaffType.save();
@@ -231,7 +232,8 @@ const deleteStaffTypeById = async (req, res) => {
         if (findFunc) {
           const listStaffTypeUpdate = findFunc.staffTypes;
           listStaffTypeUpdate.splice(
-            listStaffTypeUpdate.indexOf(deleteStaffType._id)
+            listStaffTypeUpdate.indexOf(deleteStaffType._id),
+            1
           );
           await Func.findByIdAndUpdate(
             func,

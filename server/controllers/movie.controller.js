@@ -1,7 +1,8 @@
 const argon2 = require('argon2');
+const mongoose = require('mongoose');
 
 const Movie = require('../models/Movie');
-const { confirmAccess } = require('../shared/functions');
+const { confirmAccess, standardName } = require('../shared/functions');
 
 const getAllMovies = async (req, res) => {
   // const confirm = await confirmAccess({
@@ -11,7 +12,7 @@ const getAllMovies = async (req, res) => {
   //if (!confirm) return res.redirect("back");
 
   try {
-    const allMovies = await Movie.find().populate({
+    const allMovies = await Movie.find({ deletedAt: null }).populate({
       path: 'movieTypes',
       select: 'typeName',
     });
@@ -60,44 +61,69 @@ const getMovieById = async (req, res) => {
 };
 
 const createMovie = async (req, res) => {
-  // const confirm = await confirmAccess({
-  //     staffType: req.body.staffTypeJwt,
-  //     func: "createMovie"
-  // })
+  const confirm = await confirmAccess({
+    staffType: req.body.staffTypeJwt,
+    func: 'MovieManagement',
+  });
 
-  // if (!confirm) return res.redirect("back");
+  if (!confirm)
+    return res.status(400).json({
+      success: false,
+      message: 'Not has access',
+    });
 
   try {
     const {
       name,
       duration,
       premiereDate,
-      poster,
+      verticalPoster,
+      horizontalPoster,
+      trailer,
       description,
       directors,
       productionCompanies,
       writers,
       actors,
       movieTypes,
+      status,
     } = req.body;
 
+    const standardizedName = standardName(name);
+
+    let checker = await Movie.findOne({
+      name: standardizedName,
+      deletedAt: null,
+    });
+    if (checker) {
+      return res.status(400).json({
+        success: false,
+        invalid: 'name',
+        message: 'Name already exists',
+      });
+    }
+
     const newMovie = new Movie({
-      name,
+      name: standardizedName,
       duration,
       premiereDate,
-      poster,
+      verticalPoster,
+      horizontalPoster,
+      trailer,
       description,
       directors,
       productionCompanies,
       writers,
       actors,
       movieTypes,
+      status,
     });
     await newMovie.save();
 
     return res.status(201).json({
       success: true,
       message: 'New Movie was created successfully',
+      newMovie: newMovie,
     });
   } catch (error) {
     console.log(error);
@@ -109,26 +135,35 @@ const createMovie = async (req, res) => {
 };
 
 const updateMovieById = async (req, res) => {
-  // Check if user can access this route
-  // const confirm = await confirmAccess({
-  //     staffType: req.body.staffTypeJwt,
-  //     func: "updateMovieById",
-  // });
-  // if (!confirm) return res.redirect("back");
+  const confirm = await confirmAccess({
+    staffType: req.body.staffTypeJwt,
+    func: 'MovieManagement',
+  });
+
+  if (!confirm)
+    return res.status(400).json({
+      success: false,
+      message: 'Not has access',
+    });
 
   try {
     const {
       name,
       duration,
       premiereDate,
-      poster,
+      verticalPoster,
+      horizontalPoster,
+      trailer,
       description,
       directors,
       productionCompanies,
       writers,
       actors,
       movieTypes,
+      status,
     } = req.body;
+
+    const standardizedName = standardName(name);
 
     const movie = await Movie.findOne({ _id: req.params.id });
     if (!movie) {
@@ -138,19 +173,34 @@ const updateMovieById = async (req, res) => {
       });
     }
 
+    let checker = await Movie.findOne({
+      name: standardizedName,
+      deletedAt: null,
+    });
+    if (checker && standardizedName !== movie.name) {
+      return res.status(400).json({
+        success: false,
+        invalid: 'name',
+        message: 'Name already exists',
+      });
+    }
+
     await Movie.findOneAndUpdate(
       { _id: req.params.id },
       {
-        name,
+        name: standardizedName,
         duration,
-        premiereDate: new Date(premiereDate.concat('T00:00:10Z')),
-        poster,
+        premiereDate,
+        verticalPoster,
+        horizontalPoster,
+        trailer,
         description,
         directors,
         productionCompanies,
         writers,
         actors,
         movieTypes,
+        status,
       },
       { new: true }
     ).then((result) => result.save());
@@ -168,15 +218,35 @@ const updateMovieById = async (req, res) => {
 };
 
 const deleteMovieById = async (req, res) => {
-  // Check if user can access this route
-  // const confirm = await confirmAccess({
-  //     staffType: req.body.staffTypeJwt,
-  //     func: "deleteMovieById",
-  // });
-  // if (!confirm) return res.redirect("back");
+  const confirm = await confirmAccess({
+    staffType: req.body.staffTypeJwt,
+    func: 'MovieManagement',
+  });
+
+  if (!confirm)
+    return res.status(400).json({
+      success: false,
+      message: 'Not has access',
+    });
 
   try {
-    // Nghĩ lại thì chức năng này không nên có
+    const deleteMovie = await Movie.findOneAndUpdate(
+      { _id: req.params.id, status: true },
+      { deletedAt: new Date(Date.now()) },
+      { new: true }
+    );
+    if (!deleteMovie) {
+      return res.status(406).json({
+        success: false,
+        message: 'Movie not found',
+      });
+    }
+    deleteMovie.save();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Delete Movie successfully',
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({

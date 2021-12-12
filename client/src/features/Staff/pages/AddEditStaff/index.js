@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { closeBackdrop, openBackdrop } from 'app/backdropSlice';
 import AutocompleteField from 'custom-fields/AutocompleteField';
-import AvatarField from 'custom-fields/AvatarField';
+import AvatarField from 'custom-fields/ImageField';
 import DateField from 'custom-fields/DateField';
 import InputField from 'custom-fields/InputField';
 import PasswordField from 'custom-fields/PasswordField';
@@ -62,7 +62,7 @@ function AddEditStaff(props) {
   const { onClose, open, setRows, staffId } = props;
   const dispatch = useDispatch();
   const [isSubmitSuccess, setIsSubmitSuccess] = useState(false);
-  const staffTypes = useSelector(state => state.staffType.current);
+  const staffTypes = useSelector(state => state.staffTypes.current);
   const [avatarUrl, setAvatarUrl] = useState('');
 
   const listStaffType = staffTypes?.map(item => ({
@@ -263,6 +263,9 @@ function AddEditStaff(props) {
                   name="avatar"
                   form={form}
                   defaultValue={avatarUrl}
+                  type="avatar"
+                  height={130}
+                  width={130}
                 />
               </Grid>
               <Grid item xs={12}>

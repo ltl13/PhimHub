@@ -9,6 +9,10 @@ const Login = React.lazy(() => import('features/Auth'));
 const DashboardLayout = React.lazy(() => import('features/Dashboard'));
 const Authorization = React.lazy(() => import('features/Authorization'));
 const Staff = React.lazy(() => import('features/Staff'));
+const Customer = React.lazy(() => import('features/Customer'));
+const Movie = React.lazy(() => import('features/Movie'));
+const RoomType = React.lazy(() => import('features/RoomType'));
+const Room = React.lazy(() => import('features/Room'));
 
 const Router = () => {
   return useRoutes([
@@ -60,7 +64,7 @@ const Router = () => {
               path: 'movie',
               element: (
                 <PrivateRoute funcId={Function.MovieManagement.id}>
-                  <Typography variant="h3">Movie</Typography>
+                  <Movie />
                 </PrivateRoute>
               ),
             },
@@ -84,7 +88,7 @@ const Router = () => {
               path: 'cinema-room',
               element: (
                 <PrivateRoute funcId={Function.CinemaRoomManagement.id}>
-                  <Typography variant="h3">Cinema room</Typography>
+                  <Room />
                 </PrivateRoute>
               ),
             },
@@ -92,7 +96,7 @@ const Router = () => {
               path: 'customer',
               element: (
                 <PrivateRoute funcId={Function.CustomerManagement.id}>
-                  <Typography variant="h3">Customer</Typography>
+                  <Customer />
                 </PrivateRoute>
               ),
             },
@@ -124,10 +128,10 @@ const Router = () => {
               ),
             },
             {
-              path: 'type-of-seat',
+              path: 'type-of-price',
               element: (
-                <PrivateRoute funcId={Function.TypeOfSeatSetting.id}>
-                  <Typography variant="h3">Type of seat</Typography>
+                <PrivateRoute funcId={Function.TypeOfPriceSetting.id}>
+                  <Typography variant="h3">Type of price</Typography>
                 </PrivateRoute>
               ),
             },
@@ -136,6 +140,14 @@ const Router = () => {
               element: (
                 <PrivateRoute funcId={Function.TypeOfPaymentSetting.id}>
                   <Typography variant="h3">Type of payment</Typography>
+                </PrivateRoute>
+              ),
+            },
+            {
+              path: 'type-of-room',
+              element: (
+                <PrivateRoute funcId={Function.CinemaRoomManagement.id}>
+                  <RoomType />
                 </PrivateRoute>
               ),
             },

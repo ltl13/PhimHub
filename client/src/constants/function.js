@@ -39,9 +39,9 @@ const Function = {
     id: '61967768595b9c4fcb5e904c',
     displayName: 'Cài đặt khuyến mãi',
   },
-  TypeOfSeatSetting: {
+  TypeOfPriceSetting: {
     id: '61967777595b9c4fcb5e9051',
-    displayName: 'Cài đặt loại ghế',
+    displayName: 'Cài đặt giá vé',
   },
   TypeOfPaymentSetting: {
     id: '61967798595b9c4fcb5e9056',
