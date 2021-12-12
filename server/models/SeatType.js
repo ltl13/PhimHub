@@ -13,6 +13,11 @@ const SeatTypeSchema = new Schema({
     default: 1,
   },
 
+  color: {
+    type: String,
+    required: true,
+  },
+
   deletedAt: {
     type: Date,
     default: null,

@@ -7,6 +7,7 @@ import staffReducer from 'features/Staff/slice';
 import customerReducer from 'features/Customer/slice';
 import movieReducer from 'features/Movie/slice';
 import movieTypeReducer from 'features/Movie/movieTypeSlice';
+import roomTypeReducer from 'features/RoomType/slice';
 
 const rootReducer = {
   user: userReducer,
@@ -17,6 +18,7 @@ const rootReducer = {
   movies: movieReducer,
   movieTypes: movieTypeReducer,
   customers: customerReducer,
+  roomTypes: roomTypeReducer,
 };
 
 const store = configureStore({

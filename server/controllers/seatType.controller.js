@@ -1,6 +1,6 @@
 const SeatType = require('../models/SeatType');
 const Seat = require('../models/Seat');
-const { confirmAccess } = require('../shared/functions');
+const { confirmAccess, standardName } = require('../shared/functions');
 
 const getAllSeatTypes = async (req, res) => {
   // Check if user can access this route
@@ -80,25 +80,38 @@ const createSeatType = async (req, res) => {
 
   // Passed
   try {
-    const { typeName, size } = req.body;
+    const { typeName, size, color } = req.body;
+
+    const standardizedName = standardName(typeName);
 
     // Check if this type has existed
-    let checker = await SeatType.findOne({ typeName });
+    let checker = await SeatType.findOne({ typeName: standardizedName });
     if (checker)
       return res.status(409).json({
         success: false,
+        invalid: 'typeName',
         message: 'This type has existed',
+      });
+
+    checker = await SeatType.findOne({ color: color });
+    if (checker)
+      return res.status(409).json({
+        success: false,
+        invalid: 'color',
+        message: 'This type color has existed',
       });
 
     // Add new type
     const newSeatType = new SeatType({
-      typeName,
+      typeName: standardizedName,
       size,
+      color,
     });
     await newSeatType.save();
     return res.status(201).json({
       success: true,
       message: 'New seat type has just been added',
+      newSeatType,
     });
   } catch (error) {
     console.log(error);
@@ -123,7 +136,8 @@ const updateSeatTypeById = async (req, res) => {
     });
 
   try {
-    const { typeName, size } = req.body;
+    const { typeName, size, color } = req.body;
+    const standardizedName = standardName(typeName);
 
     // Check if Seat exists in database
     const seatType = await SeatType.findById(req.params.id);
@@ -136,21 +150,30 @@ const updateSeatTypeById = async (req, res) => {
 
     // Check if new type name has existed
     const checker = await SeatType.findOne({
-      typeName,
+      typeName: standardizedName,
     });
-    if (checker && seatType.typeName != typeName) {
+    if (checker && seatType.typeName != standardizedName) {
       return res.status(400).json({
         success: false,
         message: 'This seat type has existed',
       });
     }
 
+    checker = await SeatType.findOne({ color });
+    if (checker && seatType.color != color)
+      return res.status(409).json({
+        success: false,
+        invalid: 'color',
+        message: 'This type color has existed',
+      });
+
     // Update new type name
     await SeatType.findByIdAndUpdate(
       req.params.id,
       {
-        typeName,
+        typeName: standardizedName,
         size,
+        color,
       },
       { new: true }
     ).then(async (result) => await result.save());

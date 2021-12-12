@@ -1,6 +1,6 @@
 const CustomerType = require('../models/CustomerType');
 const Customer = require('../models/Customer');
-const { confirmAccess } = require('../shared/functions');
+const { confirmAccess, standardName } = require('../shared/functions');
 
 const getAllCustomerTypes = async (req, res) => {
   // Check if user can access this route
@@ -69,7 +69,9 @@ const createCustomerType = async (req, res) => {
     const { typeName } = req.body;
 
     // Check if this customer type has existed in the database
-    const customerType = await CustomerType.findOne({ typeName });
+    const customerType = await CustomerType.findOne({
+      typeName: standardName(typeName),
+    });
     if (customerType) {
       return res.status(400).json({
         success: false,
@@ -79,7 +81,7 @@ const createCustomerType = async (req, res) => {
 
     // Add new customer type
     const newCustomerType = new CustomerType({
-      typeName,
+      typeName: standardName(typeName),
     });
     await newCustomerType.save();
     return res.status(201).json({
@@ -106,7 +108,7 @@ const updateCustomerTypeById = async (req, res) => {
   // Passed
   try {
     const { typeName } = req.body;
-
+    const standardizedName = standardName(typeName);
     // Check if customer exists in database
     const customerType = await CustomerType.findById(req.params.id);
     if (!customerType) {
@@ -118,9 +120,9 @@ const updateCustomerTypeById = async (req, res) => {
 
     // Check if new type name has existed
     const checker = await CustomerType.findOne({
-      typeName,
+      typeName: standardizedName,
     });
-    if (checker && customerType.typeName != typeName) {
+    if (checker && customerType.typeName !== standardizedName) {
       return res.status(400).json({
         success: false,
         message: 'This customer type has existed',
@@ -131,7 +133,7 @@ const updateCustomerTypeById = async (req, res) => {
     await CustomerType.findByIdAndUpdate(
       req.params.id,
       {
-        typeName,
+        typeName: standardizedName,
       },
       { new: true }
     ).then(async (result) => await result.save());

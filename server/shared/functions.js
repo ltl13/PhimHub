@@ -23,4 +23,16 @@ function removeAccents(str) {
     .replace(/Đ/g, 'D');
 }
 
-module.exports = { confirmAccess, removeAccents };
+function standardName(str) {
+  const convertToArray = str
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase()
+    .split(' ');
+  const result = convertToArray.map(function (val) {
+    return val.replace(val.charAt(0), val.charAt(0).toUpperCase());
+  });
+  return result.join(' ');
+}
+
+module.exports = { confirmAccess, removeAccents, standardName };

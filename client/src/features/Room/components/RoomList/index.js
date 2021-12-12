@@ -16,9 +16,9 @@ import React, { useState } from 'react';
 import getComparator from 'utils/Table/getComparator';
 import getFilter from 'utils/Table/getFilter';
 import stableSortFilter from 'utils/Table/stableSortFilter';
-import MovieMoreMenu from '../MovieMoreMenu';
+import RoomMoreMenu from '../RoomMoreMenu';
 
-function MovieList(props) {
+function RoomList(props) {
   const { rows, setRows, headCells } = props;
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('funcName');
@@ -47,7 +47,7 @@ function MovieList(props) {
         <TableToolbar
           filter={filterString}
           onFilterName={handleFilter}
-          placeholder="Tìm phim..."
+          placeholder="Tìm phòng chiếu..."
         />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
@@ -60,7 +60,7 @@ function MovieList(props) {
             />
             <TableBody>
               {filteredFunc.map((row, index) => {
-                const { name, premiereDate, status } = row;
+                const { name, roomType } = row;
                 return (
                   <TableRow hover key={index}>
                     <TableCell component="th" scope="row">
@@ -70,17 +70,15 @@ function MovieList(props) {
                         </Typography>
                       </Stack>
                     </TableCell>
-                    <TableCell align="left">
-                      {new Date(premiereDate).toLocaleDateString()}
-                    </TableCell>
+
                     <TableCell align="left">
                       <Stack
                         direction="row"
                         alignItems="center"
                         justifyContent="space-between"
                       >
-                        {status ? 'Đang chiếu' : 'Sắp chiếu'}
-                        <MovieMoreMenu setRows={setRows} movie={row} />
+                        {roomType.typeName}
+                        <RoomMoreMenu setRows={setRows} room={row} />
                       </Stack>
                     </TableCell>
                   </TableRow>
@@ -88,7 +86,7 @@ function MovieList(props) {
               })}
             </TableBody>
             {isStaffNotFound && (
-              <SearchNotFound message="Không tìm thấy phim" />
+              <SearchNotFound message="Không tìm thấy phòng chiếu" />
             )}
           </Table>
         </TableContainer>
@@ -97,4 +95,4 @@ function MovieList(props) {
   );
 }
 
-export default MovieList;
+export default RoomList;

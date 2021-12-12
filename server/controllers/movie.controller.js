@@ -2,7 +2,7 @@ const argon2 = require('argon2');
 const mongoose = require('mongoose');
 
 const Movie = require('../models/Movie');
-const { confirmAccess } = require('../shared/functions');
+const { confirmAccess, standardName } = require('../shared/functions');
 
 const getAllMovies = async (req, res) => {
   // const confirm = await confirmAccess({
@@ -89,7 +89,12 @@ const createMovie = async (req, res) => {
       status,
     } = req.body;
 
-    let checker = await Movie.findOne({ name, deletedAt: null });
+    const standardizedName = standardName(name);
+
+    let checker = await Movie.findOne({
+      name: standardizedName,
+      deletedAt: null,
+    });
     if (checker) {
       return res.status(400).json({
         success: false,
@@ -99,7 +104,7 @@ const createMovie = async (req, res) => {
     }
 
     const newMovie = new Movie({
-      name,
+      name: standardizedName,
       duration,
       premiereDate,
       verticalPoster,
@@ -158,6 +163,8 @@ const updateMovieById = async (req, res) => {
       status,
     } = req.body;
 
+    const standardizedName = standardName(name);
+
     const movie = await Movie.findOne({ _id: req.params.id });
     if (!movie) {
       return res.status(406).json({
@@ -166,8 +173,11 @@ const updateMovieById = async (req, res) => {
       });
     }
 
-    let checker = await Movie.findOne({ name, deletedAt: null });
-    if (checker && name !== movie.name) {
+    let checker = await Movie.findOne({
+      name: standardizedName,
+      deletedAt: null,
+    });
+    if (checker && standardizedName !== movie.name) {
       return res.status(400).json({
         success: false,
         invalid: 'name',
@@ -178,7 +188,7 @@ const updateMovieById = async (req, res) => {
     await Movie.findOneAndUpdate(
       { _id: req.params.id },
       {
-        name,
+        name: standardizedName,
         duration,
         premiereDate,
         verticalPoster,

@@ -2,16 +2,9 @@ const argon2 = require('argon2');
 const jsonwebtoken = require('jsonwebtoken');
 
 const Customer = require('../models/Customer');
-const { confirmAccess } = require('../shared/functions');
+const { confirmAccess, standardName } = require('../shared/functions');
 
 const getAllCustomers = async (req, res) => {
-  // Check if user can access this route
-  const confirm = await confirmAccess({
-    staffType: req.body.staffTypeJwt,
-    func: 'CustomerManagement',
-  });
-  if (!confirm) return res.redirect('back');
-
   // Passed
   try {
     const allCustomers = await Customer.find({ status: true }).select(
@@ -73,7 +66,6 @@ const createCustomer = async (req, res) => {
     func: 'CustomerManagement',
   });
   if (!confirm) return res.redirect('back');
-
   // Passed
   try {
     const { password, phoneNumber, email, name, sex, dateOfBirth, avatar } =
@@ -99,12 +91,13 @@ const createCustomer = async (req, res) => {
     }
 
     // Create new customer
+
     const hashedPassword = await argon2.hash(password);
     const newCustomer = new Customer({
       phoneNumber,
       password: hashedPassword,
       email,
-      name,
+      name: standardName(name),
       sex,
       avatar,
       dateOfBirth: new Date(dateOfBirth),
@@ -153,7 +146,7 @@ const registerCustomer = async (req, res) => {
       phoneNumber,
       password: hashPassword,
       email,
-      name,
+      name: standardName(name),
       sex,
       dateOfBirth: new Date(dateOfBirth),
     });
@@ -279,7 +272,7 @@ const updateCustomerById = async (req, res) => {
       {
         phoneNumber,
         email,
-        name,
+        name: standardName(name),
         sex,
         dateOfBirth: new Date(dateOfBirth),
         avatar: !!avatar ? avatar : customer.avatar,

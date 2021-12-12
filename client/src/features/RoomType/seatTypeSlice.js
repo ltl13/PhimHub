@@ -32,7 +32,6 @@ export const createSeatType = createAsyncThunk(
   async (payload, { dispatch }) => {
     try {
       const response = await seatTypeApi.createSeatType(payload);
-      await dispatch(getAllSeatType());
       return response;
     } catch (error) {
       if (error.response) return error.response.data;

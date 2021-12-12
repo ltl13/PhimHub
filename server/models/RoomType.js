@@ -8,6 +8,11 @@ const RoomTypeSchema = new Schema({
   },
 
   seats: [[{ type: Schema.Types.ObjectId, ref: 'seat_types', default: null }]],
+
+  deletedAt: {
+    type: Date,
+    default: null,
+  },
 });
 
 module.exports = mongoose.model('room_types', RoomTypeSchema);

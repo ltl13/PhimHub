@@ -1,5 +1,6 @@
 const MovieType = require('../models/MovieType');
 const Movie = require('../models/Movie');
+const { confirmAccess, standardName } = require('../shared/functions');
 
 const getAllMovieTypes = async (req, res) => {
   try {
@@ -42,8 +43,9 @@ const getMovieTypeById = async (req, res) => {
 const createMovieType = async (req, res) => {
   try {
     const { typeName } = req.body;
+    const standardizedNam = standardName(typeName);
 
-    const movieType = await MovieType.findOne({ typeName });
+    const movieType = await MovieType.findOne({ typeName: standardizedNam });
     if (movieType) {
       return res.status(400).json({
         success: false,
@@ -51,7 +53,7 @@ const createMovieType = async (req, res) => {
       });
     }
 
-    const newMovieType = new MovieType({ typeName });
+    const newMovieType = new MovieType({ typeName: standardizedNam });
     await newMovieType.save();
     return res.status(201).json({
       success: true,
@@ -78,9 +80,13 @@ const updateMovieTypeById = async (req, res) => {
       });
     }
 
-    const movieChecker = await MovieType.findOne({ typeName });
-    console.log(movieType.typeName != typeName);
-    if (movieChecker && movieType.type != typeName) {
+    const standardizedName = standardName(typeName);
+
+    const movieChecker = await MovieType.findOne({
+      typeName: standardizedName,
+    });
+
+    if (movieChecker && movieType.typeName !== standardizedName) {
       return res.status(400).json({
         success: false,
         message: 'This movie type has existed',
@@ -89,7 +95,7 @@ const updateMovieTypeById = async (req, res) => {
 
     await MovieType.findByIdAndUpdate(
       req.params.id,
-      { typeName },
+      { typeName: standardizedName },
       { new: true }
     ).then(async (result) => await result.save());
 

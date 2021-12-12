@@ -72,14 +72,19 @@ const sidebarConfig = [
         func: Function.PromotionSetting,
       },
       {
-        title: 'Loại ghế',
-        path: '/dashboard/setting/type-of-seat',
-        func: Function.TypeOfSeatSetting,
+        title: 'Giá vé',
+        path: '/dashboard/setting/type-of-price',
+        func: Function.TypeOfPriceSetting,
       },
       {
         title: 'Thanh toán',
         path: '/dashboard/setting/type-of-payment',
         func: Function.TypeOfPaymentSetting,
+      },
+      {
+        title: 'Loại phòng chiếu',
+        path: '/dashboard/setting/type-of-room',
+        func: Function.CinemaRoomManagement,
       },
     ],
   },
