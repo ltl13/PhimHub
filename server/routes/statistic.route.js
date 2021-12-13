@@ -9,10 +9,10 @@ const {
   getStatisticByMoviesInDate,
 } = require("../controllers/statistic.controller");
 
-router.get("/by-months-in-year", getStatisticByMonthsInYear);
-router.get("/by-years", getStatisticByYears);
-router.get("/by-quarters-in-year", getStatisticByQuartersInYear);
-router.get("/by-movies-in-month", getStatisticByMoviesInMonth);
-router.get("/by-movies-in-date", getStatisticByMoviesInDate);
+router.post("/by-months-in-year", getStatisticByMonthsInYear);
+router.post("/by-years", getStatisticByYears);
+router.post("/by-quarters-in-year", getStatisticByQuartersInYear);
+router.post("/by-movies-in-month", getStatisticByMoviesInMonth);
+router.post("/by-movies-in-date", getStatisticByMoviesInDate);
 
 module.exports = router;

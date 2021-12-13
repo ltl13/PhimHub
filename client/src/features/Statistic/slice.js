@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { StatisticApi } from '../../api/statisticApi';
+import { statisticApi } from '../../api/statisticApi';
 
 export const getStatisticByMonthInYear = createAsyncThunk(
   'statistic/getStatisticByMonthInYear',
   async payload => {
     try {
-      const response = await StatisticApi.getStatisticByMonthsInYears(payload);
+      const response = await statisticApi.getStatisticByMonthsInYears(payload);
       return response;
     } catch (error) {
       if (error.response) return error.response.data;
@@ -18,7 +18,7 @@ export const getStatisticByMoviesInDate = createAsyncThunk(
   'statistic/getStatisticByMoviesInDate',
   async payload => {
     try {
-      const response = await StatisticApi.getStatisticByMoviesInDate(payload);
+      const response = await statisticApi.getStatisticByMoviesInDate(payload);
       return response;
     } catch (error) {
       if (error.response) return error.response.data;
@@ -31,7 +31,7 @@ export const getStatisticByMoviesInMonth = createAsyncThunk(
   'statistic/getStatisticByMoviesInMonth',
   async payload => {
     try {
-      const response = await StatisticApi.getStatisticByMoviesInMonth(payload);
+      const response = await statisticApi.getStatisticByMoviesInMonth(payload);
       return response;
     } catch (error) {
       if (error.response) return error.response.data;
@@ -44,7 +44,7 @@ export const getStatisticByYears = createAsyncThunk(
   'statistic/getStatisticByYears',
   async payload => {
     try {
-      const response = await StatisticApi.getStatisticByYears(payload);
+      const response = await statisticApi.getStatisticByYears(payload);
       return response;
     } catch (error) {
       if (error.response) return error.response.data;

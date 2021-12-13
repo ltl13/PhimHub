@@ -7,11 +7,13 @@ import {
   TextField,
   Autocomplete,
 } from '@mui/material';
+import { closeBackdrop, openBackdrop } from 'app/backdropSlice';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { Chart, PieSeries } from '@devexpress/dx-react-chart-material-ui';
 import {
   getStatisticByMonthInYear,
   getStatisticByMoviesInDate,
@@ -20,20 +22,27 @@ import {
 } from './slice';
 
 export default function Statistic() {
+  const dispatch = useDispatch();
   const [statisticOption, setStatisticOption] = useState(statisticOptions[0]);
   const [date, setDate] = useState(new Date());
   const [data, setData] = useState([]);
 
   useEffect(() => {
+    dispatch(openBackdrop());
+
     const _loadData = async () => {
-      const _date = date.toISOString().split('-');
-      const _year = _date[0];
-      const _month = _date[1];
-      const _day = _date[2].split('T')[0];
+      const action = getStatisticByMoviesInDate({ date });
+      const response = await dispatch(action);
+      if (response.payload.success) {
+        setData(response.payload.result);
+      } else {
+        setData([]);
+      }
     };
-  }, []);
+    _loadData();
 
-
+    dispatch(closeBackdrop());
+  }, [date]);
 
   return (
     <>
@@ -78,10 +87,16 @@ export default function Statistic() {
                 </LocalizationProvider>
               </>
             ) : (
-              <Typography variant="h4">{statisticOptions[1]}</Typography>
+              <Typography variant="h4">Alooo part 1</Typography>
             )}
-            {}
           </Stack>
+          {statisticOption === statisticOptions[0] ? (
+            <Chart data={data}>
+              <PieSeries valueField="income" argumentField="movie" />
+            </Chart>
+          ) : (
+            <Typography variant="h4">Aloooo part 2</Typography>
+          )}
         </Paper>
       </Box>
     </>

@@ -1,6 +1,6 @@
 import axiosClient from './axiosClient';
 
-export const StatisticApi = {
+export const statisticApi = {
   getStatisticByMonthsInYears(data) {
     const url = '/statistic/by-months-in-year';
     return axiosClient.get(url, data);
@@ -23,6 +23,6 @@ export const StatisticApi = {
 
   getStatisticByMoviesInDate(data) {
     const url = '/statistic/by-movies-in-date';
-    return axiosClient.get(url, data);
+    return axiosClient.post(url, data);
   },
 };
