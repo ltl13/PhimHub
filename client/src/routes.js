@@ -13,6 +13,7 @@ const Customer = React.lazy(() => import('features/Customer'));
 const Movie = React.lazy(() => import('features/Movie'));
 const RoomType = React.lazy(() => import('features/RoomType'));
 const Room = React.lazy(() => import('features/Room'));
+const Statistic = React.lazy(() => import('features/Statistic'));
 
 const Router = () => {
   return useRoutes([
@@ -49,7 +50,7 @@ const Router = () => {
           path: 'statistic',
           element: (
             <PrivateRoute funcId={Function.Statistic.id}>
-              <Typography variant="h3">Statistic</Typography>
+              <Statistic />
             </PrivateRoute>
           ),
         },
