@@ -161,6 +161,41 @@ const getStatisticByMoviesInMonth = async (req, res) => {
   }
 };
 
+const getStatisticByMoviesInDate = async (req, res) => {
+  try {
+    const { date } = req.body;
+    const _date = date.toISOString();
+    const _year = _date[0];
+    const _month = _date[1];
+    const _day = _date[2].split("T")[0];
+    const payments = await Payment.find();
+
+    const result = await _calculateIncomeByMoviesInDate(
+      payments,
+      _day,
+      _month,
+      _year
+    );
+
+    if (result.lenth == 0)
+      return res.status(406).json({
+        success: false,
+        message: "Data not found",
+      });
+
+    return res.status(200).json({
+      success: true,
+      result: result,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
 const _calculateIncomeByMonth = (payments, month, year) => {
   let income = 0;
 
@@ -214,15 +249,15 @@ const _calculateIncomeByMoviesInMonth = async (payments, month, year) => {
   }
 };
 
-const _calculateIncomeByMoviesInDate = async (payments, date, month, year) => {
+const _calculateIncomeByMoviesInDate = async (payments, day, month, year) => {
   try {
     let result = {};
     for (const payment of payments) {
       const _paytime = payment.paytime.toISOString();
       const _year = _paytime[0];
       const _month = _paytime[1];
-      const _date = _paytime[2].split("T")[0];
-      if (_year == year && _month == month && _date == date) {
+      const _day = _paytime[2].split("T")[0];
+      if (_year == year && _month == month && _day == day) {
         const _ticket = await Ticket.findById(payment.ticket);
         const _movie = await Movie.findById(_ticket.movie);
         result[_movie.name] += payment.value;
@@ -247,4 +282,5 @@ module.exports = {
   getStatisticByYears,
   getStatisticByQuartersInYear,
   getStatisticByMoviesInMonth,
+  getStatisticByMoviesInDate,
 };

@@ -12,6 +12,12 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import {
+  getStatisticByMonthInYear,
+  getStatisticByMoviesInDate,
+  getStatisticByMoviesInMonth,
+  getStatisticByYears,
+} from './slice';
 
 export default function Statistic() {
   const [statisticOption, setStatisticOption] = useState(statisticOptions[0]);
@@ -27,11 +33,7 @@ export default function Statistic() {
     };
   }, []);
 
-  const getStatistic = (type, time) => {
-    switch (type) {
-      case statisticOptions[0]:
-    }
-  };
+
 
   return (
     <>
