@@ -11,7 +11,11 @@ const RoomSchema = new Schema({
     type: Date,
     default: null,
   },
-
+  status: {
+    type: Boolean,
+    required: true,
+    default: true,
+  },
   roomType: {
     type: Schema.Types.ObjectId,
     ref: 'room_types',

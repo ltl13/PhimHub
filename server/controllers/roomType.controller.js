@@ -1,28 +1,28 @@
-const RoomType = require('../models/RoomType');
-const Room = require('../models/Room');
-const SeatType = require('../models/SeatType');
-const { confirmAccess, standardName } = require('../shared/functions');
+const RoomType = require("../models/RoomType");
+const Room = require("../models/Room");
+const SeatType = require("../models/SeatType");
+const { confirmAccess, standardName } = require("../shared/functions");
 
-const { getInfoSeatType } = require('./seatType.controller');
+const { getInfoSeatType } = require("./seatType.controller");
 
 const getAllRoomTypes = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'CinemaRoomManagement',
+    func: "CinemaRoomManagement",
   });
 
   if (!confirm)
     return res.status(400).json({
       success: false,
-      message: 'Not has access',
+      message: "Not has access",
     });
 
   // Passed
   try {
     const allRoomTypes = await RoomType.find({ deletedAt: null }).populate({
-      path: 'seats',
-      select: 'typeName',
+      path: "seats",
+      select: "typeName",
     });
     return res.status(200).json({
       success: true,
@@ -32,7 +32,7 @@ const getAllRoomTypes = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: 'Internal server error',
+      message: "Internal server error",
     });
   }
 };
@@ -41,13 +41,13 @@ const getRoomTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'CinemaRoomManagement',
+    func: "CinemaRoomManagement",
   });
 
   if (!confirm)
     return res.status(400).json({
       success: false,
-      message: 'Not has access',
+      message: "Not has access",
     });
 
   // Passed
@@ -56,7 +56,7 @@ const getRoomTypeById = async (req, res) => {
     if (!roomType || !!roomType.deleteAt)
       return res.status(406).json({
         success: false,
-        message: 'Room type not found',
+        message: "Room type not found",
       });
 
     // const newSeats = await getInfoSeatType(roomType.seats);
@@ -68,7 +68,7 @@ const getRoomTypeById = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: 'Internal server error',
+      message: "Internal server error",
     });
   }
 };
@@ -77,13 +77,13 @@ const createRoomType = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'CinemaRoomManagement',
+    func: "CinemaRoomManagement",
   });
 
   if (!confirm)
     return res.status(400).json({
       success: false,
-      message: 'Not has access',
+      message: "Not has access",
     });
 
   // Passed
@@ -97,8 +97,8 @@ const createRoomType = async (req, res) => {
     if (checker)
       return res.status(409).json({
         success: false,
-        invalid: 'typeName',
-        message: 'This type has existed',
+        invalid: "typeName",
+        message: "This type has existed",
       });
 
     // Add new type
@@ -109,14 +109,14 @@ const createRoomType = async (req, res) => {
     await newRoomType.save();
     return res.status(201).json({
       success: true,
-      message: 'New room type was added successfully',
+      message: "New room type was added successfully",
       newRoomType,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: 'Internal server error',
+      message: "Internal server error",
     });
   }
 };
@@ -124,13 +124,13 @@ const createRoomType = async (req, res) => {
 const updateRoomTypeById = async (req, res) => {
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'CinemaRoomManagement',
+    func: "CinemaRoomManagement",
   });
 
   if (!confirm)
     return res.status(400).json({
       success: false,
-      message: 'Not has access',
+      message: "Not has access",
     });
 
   try {
@@ -142,7 +142,7 @@ const updateRoomTypeById = async (req, res) => {
     if (!roomType) {
       return res.status(406).json({
         success: false,
-        message: 'Room type not found',
+        message: "Room type not found",
       });
     }
 
@@ -153,8 +153,8 @@ const updateRoomTypeById = async (req, res) => {
     if (checker && roomType.typeName !== standardizedName) {
       return res.status(400).json({
         success: false,
-        invalid: 'typeName',
-        message: 'This room type has existed',
+        invalid: "typeName",
+        message: "This room type has existed",
       });
     }
 
@@ -171,13 +171,13 @@ const updateRoomTypeById = async (req, res) => {
     // Updated successfully
     return res.status(200).json({
       success: true,
-      message: 'Room type has been updated',
+      message: "Room type has been updated",
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: 'Internal server error',
+      message: "Internal server error",
     });
   }
 };
@@ -186,13 +186,13 @@ const deleteRoomTypeById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'CinemaRoomManagement',
+    func: "CinemaRoomManagement",
   });
 
   if (!confirm)
     return res.status(400).json({
       success: false,
-      message: 'Not has access',
+      message: "Not has access",
     });
 
   // Passed
@@ -205,7 +205,7 @@ const deleteRoomTypeById = async (req, res) => {
     if (roomChecker) {
       return res.status(406).json({
         success: false,
-        message: 'Can not delete because there are still rooms of this type',
+        message: "Can not delete because there are still rooms of this type",
       });
     }
 
@@ -214,18 +214,18 @@ const deleteRoomTypeById = async (req, res) => {
     if (!deleteRoomType) {
       return res.status(406).json({
         success: false,
-        message: 'Room type not found',
+        message: "Room type not found",
       });
     }
     return res.status(200).json({
       success: true,
-      message: 'Delete room type successfully',
+      message: "Delete room type successfully",
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: 'Internal server error',
+      message: "Internal server error",
     });
   }
 };

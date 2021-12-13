@@ -1,25 +1,25 @@
-const argon2 = require('argon2');
-const { confirmAccess, standardName } = require('../shared/functions');
+const argon2 = require("argon2");
+const { confirmAccess, standardName } = require("../shared/functions");
 
-const Room = require('../models/Room');
+const Room = require("../models/Room");
 
 const getAllRooms = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'CinemaRoomManagement',
+    func: "CinemaRoomManagement",
   });
 
   if (!confirm)
     return res.status(400).json({
       success: false,
-      message: 'Not has access',
+      message: "Not has access",
     });
 
   try {
     const allRooms = await Room.find({ deletedAt: null }).populate({
-      path: 'roomType',
-      select: 'typeName',
+      path: "roomType",
+      select: "typeName",
     });
     return res.status(200).json({
       success: true,
@@ -29,7 +29,7 @@ const getAllRooms = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: 'Internal server error',
+      message: "Internal server error",
     });
   }
 };
@@ -37,13 +37,13 @@ const getAllRooms = async (req, res) => {
 const getRoomById = async (req, res) => {
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'CinemaRoomManagement',
+    func: "CinemaRoomManagement",
   });
 
   if (!confirm)
     return res.status(400).json({
       success: false,
-      message: 'Not has access',
+      message: "Not has access",
     });
 
   try {
@@ -51,14 +51,14 @@ const getRoomById = async (req, res) => {
       _id: req.params.id,
       deletedAt: null,
     }).populate({
-      path: 'roomType',
-      select: 'typeName',
+      path: "roomType",
+      select: "typeName",
     });
 
     if (!room) {
       return res.status(406).json({
         success: false,
-        message: 'Room not found',
+        message: "Room not found",
       });
     }
 
@@ -70,7 +70,7 @@ const getRoomById = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: 'Internal server error',
+      message: "Internal server error",
     });
   }
 };
@@ -78,13 +78,13 @@ const getRoomById = async (req, res) => {
 const createRoom = async (req, res) => {
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'CinemaRoomManagement',
+    func: "CinemaRoomManagement",
   });
 
   if (!confirm)
     return res.status(400).json({
       success: false,
-      message: 'Not has access',
+      message: "Not has access",
     });
 
   try {
@@ -99,8 +99,8 @@ const createRoom = async (req, res) => {
     if (checker) {
       return res.status(400).json({
         success: false,
-        invalid: 'name',
-        message: 'This room type has existed',
+        invalid: "name",
+        message: "This room type has existed",
       });
     }
 
@@ -112,14 +112,14 @@ const createRoom = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: 'New room was created successfully',
+      message: "New room was created successfully",
       newRoom,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: 'internal server error',
+      message: "internal server error",
     });
   }
 };
@@ -127,13 +127,13 @@ const createRoom = async (req, res) => {
 const updateRoomById = async (req, res) => {
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'CinemaRoomManagement',
+    func: "CinemaRoomManagement",
   });
 
   if (!confirm)
     return res.status(400).json({
       success: false,
-      message: 'Not has access',
+      message: "Not has access",
     });
 
   try {
@@ -143,35 +143,37 @@ const updateRoomById = async (req, res) => {
     const room = await Room.findOne({
       _id: req.params.id,
       deletedAt: null,
+      status: true,
     });
 
     if (!room) {
       return res.status(406).json({
         status: false,
-        message: 'Room not found',
+        message: "Room not found",
       });
     }
 
     const checker = await Room.findOne({
       name: standardizedName,
     });
-    if (checker && room.name !== standardizedName) {
+    if (checker && checker.id != room.id) {
+      // room.name !== standardizedName) {
       return res.status(400).json({
         success: false,
-        invalid: 'name',
-        message: 'This room type has existed',
+        invalid: "name",
+        message: "This room type has existed",
       });
     }
 
     await Room.findOneAndUpdate(
       { _id: req.params.id },
       {
-        standardizedName,
+        name: standardizedName,
         roomType,
       },
       { new: true }
-    ).then((result) => result.save());
-
+    ).then(async (result) => await result.save());
+    // await result.save();
     return res.status(200).json({
       success: true,
       message: "Room's information has been updated successfully",
@@ -180,7 +182,7 @@ const updateRoomById = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: 'Internal server error',
+      message: "Internal server error",
     });
   }
 };
@@ -188,13 +190,13 @@ const updateRoomById = async (req, res) => {
 const deleteRoomById = async (req, res) => {
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'CinemaRoomManagement',
+    func: "CinemaRoomManagement",
   });
 
   if (!confirm)
     return res.status(400).json({
       success: false,
-      message: 'Not has access',
+      message: "Not has access",
     });
 
   try {
@@ -206,19 +208,19 @@ const deleteRoomById = async (req, res) => {
     if (!delRoom) {
       return res.status(406).json({
         success: false,
-        message: 'Room not found',
+        message: "Room not found",
       });
     }
     delRoom.save();
     return res.status(200).json({
       success: true,
-      message: 'Delete room successfully',
+      message: "Delete room successfully",
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: 'Internal server error',
+      message: "Internal server error",
     });
   }
 };

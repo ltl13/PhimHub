@@ -1,27 +1,27 @@
-const SpecialOffer = require('../models/SpecialOffer');
-const Payment = require('../models/Payment');
-const Ticket = require('../models/Ticket');
-const { createTicket } = require('./ticket.controller');
-const { confirmAccess } = require('../shared/functions');
+const SpecialOffer = require("../models/SpecialOffer");
+const Payment = require("../models/Payment");
+const Ticket = require("../models/Ticket");
+const { createTicket } = require("./ticket.controller");
+const { confirmAccess } = require("../shared/functions");
 
 const getAllPayments = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'getAllPayments',
+    func: "getAllPayments",
   });
-  if (!confirm) return res.redirect('back');
+  if (!confirm) return res.redirect("back");
 
   // Passed
   try {
     const allPayments = await Payment.find()
       .populate({
-        path: 'specialOffer',
-        select: 'value',
+        path: "specialOffer",
+        select: "value",
       })
       .populate({
-        path: 'staff',
-        select: 'name',
+        path: "staff",
+        select: "name",
       });
 
     return res.status(200).json({
@@ -32,7 +32,7 @@ const getAllPayments = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: 'Internal server error',
+      message: "Internal server error",
     });
   }
 };
@@ -41,26 +41,26 @@ const getPaymentById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'getPaymentById',
+    func: "getPaymentById",
   });
-  if (!confirm) return res.redirect('back');
+  if (!confirm) return res.redirect("back");
 
   // Passed
   try {
     const payment = await Payment.findById(req.params.id)
       .populate({
-        path: 'specialOffer',
-        select: 'value',
+        path: "specialOffer",
+        select: "value",
       })
       .populate({
-        path: 'staff',
-        select: 'name',
+        path: "staff",
+        select: "name",
       });
 
     if (!payment)
       return res.status(406).json({
         success: false,
-        message: 'Payment not found',
+        message: "Payment not found",
       });
     return res.status(200).json({
       success: true,
@@ -70,7 +70,7 @@ const getPaymentById = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: 'Internal server error',
+      message: "Internal server error",
     });
   }
 };
@@ -95,19 +95,25 @@ const createPayment = async (req, res) => {
       code: specialOffer,
       status: true,
     });
-    if (!applySpecialOffer)
+    if (!applySpecialOffer && specialOffer != null)
       return res.status(406).json({
         success: false,
-        invalid: 'specialOffer',
-        message: 'Invalid special offer code',
+        invalid: "specialOffer",
+        message: "Invalid special offer code",
       });
 
     // Create new payment
-    const newPayment = new Payment({
-      specialOffer: applySpecialOffer,
-      staff,
-      value,
-    });
+    const newPayment =
+      specialOffer != null
+        ? new Payment({
+            specialOffer: applySpecialOffer,
+            staff,
+            value,
+          })
+        : new Payment({
+            staff,
+            value,
+          });
 
     // Create new ticket
     const newTicket = await createTicket({
@@ -122,15 +128,15 @@ const createPayment = async (req, res) => {
     if (!newTicket.success)
       return res.status(406).json({
         success: false,
-        invalid: 'ticket',
-        message: 'Can not create new ticket, please check the input',
+        invalid: "ticket",
+        message: "Can not create new ticket, please check the input",
       });
     newPayment.ticket = newTicket.ticket._id;
     await newPayment.save();
 
     return res.status(201).json({
       success: true,
-      message: 'New payment was created successfully',
+      message: "New payment was created successfully",
       payment: newPayment,
       ticket: newTicket.ticket,
     });
@@ -138,7 +144,7 @@ const createPayment = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: 'Internal server error',
+      message: "Internal server error",
     });
   }
 };
@@ -150,7 +156,7 @@ const refundPaymentByTicketId = async (req, res) => {
     if (!ticket)
       return res.status(406).json({
         success: false,
-        message: 'Ticket not found',
+        message: "Ticket not found",
       });
 
     // Get payment's information
@@ -179,14 +185,14 @@ const refundPaymentByTicketId = async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      message: 'Refund was made successfully',
+      message: "Refund was made successfully",
       refund,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: 'Internal server error',
+      message: "Internal server error",
     });
   }
 };
