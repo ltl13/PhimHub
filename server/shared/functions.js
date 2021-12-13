@@ -35,4 +35,51 @@ function standardName(str) {
   return result.join(' ');
 }
 
-module.exports = { confirmAccess, removeAccents, standardName };
+function createRowColumnPreview(seats, idEmptySeatType) {
+  let previewRowCount = -1;
+  const tempRowPreview = [];
+
+  const emptySeatPerColCount = [];
+  let previewColumnCount = -1;
+
+  seats.forEach((row) => {
+    let isHaveNonEmptySeat = false;
+
+    row.forEach((item, index) => {
+      emptySeatPerColCount[index] =
+        (!!emptySeatPerColCount[index] ? emptySeatPerColCount[index] : 0) +
+        (item === idEmptySeatType ? 0 : 1);
+
+      isHaveNonEmptySeat = item !== idEmptySeatType || isHaveNonEmptySeat;
+    });
+
+    tempRowPreview.push(isHaveNonEmptySeat ? ++previewRowCount : -1);
+  });
+
+  return {
+    rowPreview: tempRowPreview,
+    columnPreview: emptySeatPerColCount.map((item) =>
+      item === 0 ? -1 : ++previewColumnCount
+    ),
+  };
+}
+
+function numToAlphabet(num) {
+  let s = '';
+  let t;
+
+  while (num > 0) {
+    t = (num - 1) % 26;
+    s = String.fromCharCode(65 + t) + s;
+    num = ((num - t) / 26) | 0;
+  }
+  return s || undefined;
+}
+
+module.exports = {
+  confirmAccess,
+  removeAccents,
+  standardName,
+  createRowColumnPreview,
+  numToAlphabet,
+};

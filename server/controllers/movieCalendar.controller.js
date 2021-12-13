@@ -1,8 +1,14 @@
 const argon2 = require('argon2');
 const MovieCalendar = require('../models/MovieCalendar');
 
-const movieCalendar = require('../models/MovieCalendar');
-//const { confirmAccess } = require("../shared/functions");
+const SeatType = require('../models/SeatType');
+const Room = require('../models/Room');
+const Seat = require('../models/Seat');
+const {
+  confirmAccess,
+  createRowColumnPreview,
+  numToAlphabet,
+} = require('../shared/functions');
 
 const getAllMovieCalendars = async (req, res) => {
   try {
@@ -60,15 +66,48 @@ const getMovieCalendarById = async (req, res) => {
 
 const createMovieCalendar = async (req, res) => {
   try {
-    const { dateTimeStart, price, room, movie } = req.body;
+    const { dateTimeStart, room, movie } = req.body;
 
-    const newMovieCalendar = new MovieCalendar({
-      dateTimeStart,
-      price,
-      room,
-      movie,
+    const seats = [];
+
+    const roomInfo = await Room.findById(room).populate({
+      path: 'roomType',
+      select: 'seats',
     });
-    await newMovieCalendar.save();
+
+    const emptySeatType = await SeatType.findOne({ typeName: '#' });
+    const roomInfoRowLength = roomInfo.roomType.seats.length;
+    const { rowPreview, columnPreview } = createRowColumnPreview(
+      roomInfo.roomType.seats,
+      emptySeatType._id
+    );
+
+    if (roomInfoRowLength > 0) {
+      for (let i = 0; i < roomInfoRowLength; i++) {
+        const rowLength = roomInfo.roomType.seats[i];
+        const tempRow = [];
+
+        if (rowLength > 0) {
+          for (let j = 0; j < rowLength; j++) {
+            if (emptySeatType._id === roomInfo.roomType.seats[i][j]) {
+              tempRow.push(null);
+            } else {
+              const newSeat = new Seat({});
+            }
+          }
+        }
+      }
+    }
+
+    console.log(roomInfo.roomType.seats);
+
+    // const newMovieCalendar = new MovieCalendar({
+    //   dateTimeStart,
+    //   seats,
+    //   room,
+    //   movie,
+    // });
+    // await newMovieCalendar.save();
 
     return res.status(201).json({
       success: true,

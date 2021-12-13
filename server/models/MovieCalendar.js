@@ -7,10 +7,11 @@ const MovieCalendarSchema = new Schema({
     required: true,
   },
 
-  price: {
-    type: Number,
-    required: true,
-  },
+  seats: [[{ type: Schema.Types.ObjectId, ref: 'seat', default: null }]],
+
+  columnPreview: [{ type: Number }],
+
+  rowPreview: [{ type: Number }],
 
   room: {
     type: Schema.Types.ObjectId,

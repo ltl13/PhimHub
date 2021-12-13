@@ -2,7 +2,8 @@ const argon2 = require('argon2');
 const jsonwebtoken = require('jsonwebtoken');
 
 const Staff = require('../models/Staff');
-const { confirmAccess, standardName  } = require('../shared/functions');
+const { confirmAccess, standardName } = require('../shared/functions');
+
 
 const getAllStaffs = async (req, res) => {
   // Check if user can access this route
