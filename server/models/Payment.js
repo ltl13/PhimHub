@@ -1,23 +1,23 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const PaymentSchema = new Schema({
   ticket: {
     type: Schema.Types.ObjectId,
-    ref: "tickets",
+    ref: 'tickets',
   },
 
   specialOffer: {
     type: Schema.Types.ObjectId,
-    ref: "special_offers",
+    ref: 'special_offers',
   },
 
   staff: {
     type: Schema.Types.ObjectId,
-    ref: "staffs",
+    ref: 'staffs',
   },
 
-  paytime: {
+  payTime: {
     type: Date,
     default: Date.now(),
     required: true,
@@ -29,4 +29,4 @@ const PaymentSchema = new Schema({
   },
 });
 
-module.export = mongoose.model("payments", PaymentSchema);
+module.export = mongoose.model('payments', PaymentSchema);

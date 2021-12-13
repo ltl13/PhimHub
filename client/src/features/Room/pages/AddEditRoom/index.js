@@ -112,7 +112,7 @@ function AddEditRoom(props) {
         setIsSubmitSuccess(true);
 
         setRows(prev => [
-          ...prev,
+          ...prev.filter(x => x.id !== room.id),
           {
             id: room.id,
             roomType: { _id: data.roomType, typeName: data.roomType.label },

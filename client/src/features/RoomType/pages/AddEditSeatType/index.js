@@ -127,8 +127,8 @@ function AddEditSeatType(props) {
               label="Số chổ"
               form={form}
               options={[
-                { id: 0, label: '1' },
-                { id: 1, label: '2' },
+                { id: 1, label: '1' },
+                { id: 2, label: '2' },
               ]}
             />
           </Grid>

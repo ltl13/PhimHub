@@ -92,7 +92,13 @@ const createMovieCalendar = async (req, res) => {
             if (emptySeatType._id === roomInfo.roomType.seats[i][j]) {
               tempRow.push(null);
             } else {
-              const newSeat = new Seat({});
+              const newSeat = new Seat({
+                code: `${numToAlphabet(i + 1)} + ${j + 1}`,
+                status: 1,
+                seatType: roomInfo.roomType.seats[i][j],
+                room: room,
+                ticket: null,
+              });
             }
           }
         }
