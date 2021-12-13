@@ -83,7 +83,7 @@ const createPayment = async (req, res) => {
       staff,
       value,
       price,
-      dateTimeStart,
+      movieCalendar,
       movie,
       ticketType,
       seats,
@@ -119,7 +119,7 @@ const createPayment = async (req, res) => {
     const newTicket = await createTicket({
       payment: newPayment._id,
       price,
-      dateTimeStart,
+      movieCalendar,
       movie,
       ticketType,
       seats,

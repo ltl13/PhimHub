@@ -1,31 +1,31 @@
-const Ticket = require('../models/Ticket');
-const TicketType = require('../models/TicketType');
-const { confirmAccess } = require('../shared/functions');
+const Ticket = require("../models/Ticket");
+const TicketType = require("../models/TicketType");
+const { confirmAccess } = require("../shared/functions");
 
 const getAllTickets = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'getAllTickets',
+    func: "getAllTickets",
   });
-  if (!confirm) return res.redirect('back');
+  if (!confirm) return res.redirect("back");
 
   // Passed
   try {
     const allTickets = await Ticket.find()
       .populate({
-        path: 'ticketType',
-        select: 'typeName',
+        path: "ticketType",
+        select: "typeName",
       })
       .populate({
-        path: 'customer',
-        select: 'phoneNumber',
+        path: "customer",
+        select: "phoneNumber",
       })
       .populate({
-        path: 'payment',
-        select: 'paytime',
+        path: "payment",
+        select: "paytime",
       })
-      .select('-seats');
+      .select("-seats");
     return res.status(200).json({
       success: true,
       allTickets,
@@ -34,7 +34,7 @@ const getAllTickets = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: 'Internal server error',
+      message: "Internal server error",
     });
   }
 };
@@ -43,30 +43,30 @@ const getTicketById = async (req, res) => {
   // Check if user can access this route
   const confirm = await confirmAccess({
     staffType: req.body.staffTypeJwt,
-    func: 'getTicketById',
+    func: "getTicketById",
   });
-  if (!confirm) return res.redirect('back');
+  if (!confirm) return res.redirect("back");
 
   // Passed
   try {
     const ticket = await Ticket.findById(req.params.id)
       .populate({
-        path: 'ticketType',
-        select: 'typeName',
+        path: "ticketType",
+        select: "typeName",
       })
       .populate({
-        path: 'customer',
-        select: 'phoneNumber',
+        path: "customer",
+        select: "phoneNumber",
       })
       .populate({
-        path: 'payment',
-        select: 'paytime',
+        path: "payment",
+        select: "paytime",
       })
-      .select('-seats');
+      .select("-seats");
     if (!ticket)
       return res.status(406).json({
         success: false,
-        message: 'Ticket not found',
+        message: "Ticket not found",
       });
     return res.status(200).json({
       success: true,
@@ -76,15 +76,14 @@ const getTicketById = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: 'Internal server error',
+      message: "Internal server error",
     });
   }
 };
 
 const createTicket = async ({
   price,
-  dateTimeStart,
-  movie,
+  movieCalendar,
   ticketType,
   payment,
   seats,
@@ -94,8 +93,7 @@ const createTicket = async ({
     // Create a new ticket
     const newTicket = new Ticket({
       price,
-      dateTimeStart: new Date(dateTimeStart),
-      movie,
+      movieCalendar,
       ticketType,
       payment,
       seats,

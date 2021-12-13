@@ -10,5 +10,6 @@ const verifyToken = require("../middlewares/auth.middleware");
 
 router.get("/get-all", verifyToken, getAllTickets);
 router.get("/get/:id", verifyToken, getTicketById);
+router.post("/create", verifyToken, createTicket);
 
 module.exports = router;
