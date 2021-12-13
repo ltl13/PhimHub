@@ -103,7 +103,6 @@ const getStatisticByYears = async (req, res) => {
         income: _result,
       });
     }
-    console.log(result);
     return res.status(200).json({
       success: true,
       result,
@@ -195,32 +194,28 @@ const _calculateIncomeByYear = (payments, year) => {
 };
 
 const _calculateIncomeByMoviesInMonth = async (payments, month, year) => {
-  try {
-    let result = {};
-    for (const payment of payments) {
-      const _month = payment.paytime.getMonth();
-      const _year = payment.paytime.getFullYear();
-      if (_year == year && _month == month) {
-        const _ticket = await Ticket.findById(payment.ticket);
-        const _movie = await Movie.findById(_ticket.movie);
-        if (!(_movie.name in result)) {
-          result[_movie.name] = 0;
-        }
-        result[_movie.name] += payment.value;
+  let result = {};
+  for (const payment of payments) {
+    const _month = payment.paytime.getMonth();
+    const _year = payment.paytime.getFullYear();
+    if (_year == year && _month == month) {
+      const _ticket = await Ticket.findById(payment.ticket);
+      const _movie = await Movie.findById(_ticket.movie);
+      if (!(_movie.name in result)) {
+        result[_movie.name] = 0;
       }
+      result[_movie.name] += payment.value;
     }
-    let finalResult = [];
-    for (const key in result) {
-      finalResult.push({
-        movie: key,
-        income: result[key],
-      });
-    }
-
-    return finalResult;
-  } catch (error) {
-    return [];
   }
+
+  let finalResult = [];
+  for (const key in result) {
+    finalResult.push({
+      movie: key,
+      income: result[key],
+    });
+  }
+  return finalResult;
 };
 
 const _calculateIncomeByMoviesInDate = async (payments, date, month, year) => {

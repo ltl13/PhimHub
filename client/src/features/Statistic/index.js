@@ -110,7 +110,7 @@ export default function Statistic() {
               <>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DatePicker
-                    label="Basic example"
+                    label="Chọn ngày"
                     value={date}
                     onChange={value => setDate(value)}
                     renderInput={params => <TextField {...params} />}
