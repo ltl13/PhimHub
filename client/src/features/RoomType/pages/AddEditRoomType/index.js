@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { closeBackdrop, openBackdrop } from 'app/backdropSlice';
 import InputField from 'custom-fields/InputField';
-import SeatTypeList from 'features/RoomType/components/SeatList';
+import SeatList from 'features/RoomType/components/SeatList';
 import { createRoomType, updateRoomTypeById } from 'features/RoomType/slice';
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -95,7 +95,7 @@ function AddEditRoomType(props) {
         setIsSubmitSuccess(true);
         setRoomTypes(prev => [
           ...prev.filter(x => x._id !== roomType._id),
-          { id: roomType.id, typeName: data.typeName, seats: data.seats },
+          { _id: roomType._id, typeName: data.typeName, seats: data.seats },
         ]);
       } else {
         setError('roomType', {
@@ -187,7 +187,7 @@ function AddEditRoomType(props) {
               control={form.control}
               name="seats"
               render={({ field: { onChange, value } }) => (
-                <SeatTypeList
+                <SeatList
                   onChange={value => onChange(value)}
                   seats={!!roomType && roomType.seats}
                   seatType={props.seatTypes}

@@ -206,7 +206,7 @@ function AddEditRoom(props) {
                 </Button>
               ) : (
                 <Button variant="contained" color="secondary" type="submit">
-                  Thêm loại ghế
+                  Thêm phòng chiếu
                 </Button>
               )}
             </Box>

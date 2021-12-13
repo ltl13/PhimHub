@@ -13,6 +13,7 @@ const Customer = React.lazy(() => import('features/Customer'));
 const Movie = React.lazy(() => import('features/Movie'));
 const RoomType = React.lazy(() => import('features/RoomType'));
 const Room = React.lazy(() => import('features/Room'));
+const ShowTime = React.lazy(() => import('features/ShowTime'));
 
 const Router = () => {
   return useRoutes([
@@ -80,7 +81,7 @@ const Router = () => {
               path: 'showtime',
               element: (
                 <PrivateRoute funcId={Function.ShowtimeManagement.id}>
-                  <Typography variant="h3">Showtime</Typography>
+                  <ShowTime />
                 </PrivateRoute>
               ),
             },

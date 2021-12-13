@@ -1,9 +1,9 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const SeatSchema = new Schema({
   code: {
-    type: String,
+    type: Object,
     required: true,
   },
 
@@ -14,20 +14,18 @@ const SeatSchema = new Schema({
 
   seatType: {
     type: Schema.Types.ObjectId,
-    ref: "seat_types",
+    ref: 'seat_types',
   },
 
   room: {
     type: Schema.Types.ObjectId,
-    ref: "rooms",
+    ref: 'rooms',
   },
 
-  tickets: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "tickets",
-    },
-  ],
+  ticket: {
+    type: Schema.Types.ObjectId,
+    ref: 'tickets',
+  },
 });
 
-module.exports = mongoose.model("seats", SeatSchema);
+module.exports = mongoose.model('seats', SeatSchema);

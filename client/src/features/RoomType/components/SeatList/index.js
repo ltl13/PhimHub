@@ -40,7 +40,7 @@ function SeatList(props) {
         setSeatType(newSeatType);
       }
       if (!!props.seats && !!props.seats[0] && !!props.seats[0][0]) {
-        setSeats(props.seats);
+        setSeats([...props.seats]);
       } else {
         setSeats([['61b1c0d8e15673926a17b3ef']]);
       }
@@ -49,14 +49,15 @@ function SeatList(props) {
   }, [props.seats]);
 
   useEffect(() => {
-    if (props.onChange) props.onChange(seats);
+    if (props.onChange) props.onChange([...seats]);
   }, [seats]);
 
   const handleDeleteRow = () => {
     if (seats.length > 1) {
       setSeats(prev => {
-        prev.splice(selectedRow, 1);
-        return [...prev];
+        const temp = [...prev];
+        temp.splice(selectedRow, 1);
+        return [...temp];
       });
     }
   };
@@ -66,8 +67,9 @@ function SeatList(props) {
       const newRow = [];
       for (let i = 0; i < seats[0].length; i++) newRow.push(idEmptySeatType);
 
-      prev.splice(selectedRow, 0, newRow);
-      return [...prev];
+      const temp = [...prev];
+      temp.splice(selectedRow, 0, newRow);
+      return [...temp];
     });
   };
 
@@ -78,8 +80,9 @@ function SeatList(props) {
 
       if (selectedRow === prev.length - 1) return prev.concat([newRow]);
 
-      prev.splice(selectedRow + 1, 0, newRow);
-      return [...prev];
+      const temp = [...prev];
+      temp.splice(selectedRow + 1, 0, newRow);
+      return [...temp];
     });
   };
 
@@ -95,8 +98,9 @@ function SeatList(props) {
 
       if (length < seats[0].length) newRow.push(idEmptySeatType);
 
-      prev.splice(selectedRowForSetSeatType, 1, newRow);
-      return [...prev];
+      const temp = [...prev];
+      temp.splice(selectedRowForSetSeatType, 1, newRow);
+      return [...temp];
     });
   };
 
@@ -124,16 +128,19 @@ function SeatList(props) {
         }
 
       setSeats(prev => {
-        return prev.map(row => {
+        const temp = [...prev];
+        return temp.map(row => {
+          const temp = [...row];
+
           if (!isExistColHasSize2SeatAfterSelCol) {
-            row.splice(selectedColumn, 1);
+            temp.splice(selectedColumn, 1);
           } else {
-            row.splice(
+            temp.splice(
               selectedColumn % 2 === 0 ? selectedColumn : selectedColumn - 1,
               2,
             );
           }
-          return row;
+          return temp;
         });
       });
     } else {
@@ -145,23 +152,30 @@ function SeatList(props) {
           checkColumnHasSize2Type(selectedColumn + 1))
       ) {
         setSeats(prev => {
-          return prev.map(row => {
-            row.splice(selectedColumn, 1);
+          const temp = [...prev];
 
-            if (seatType[row[row.length - 1]].size === 2)
-              row[row.length - 1] = idEmptySeatType;
+          return temp.map(row => {
+            const temp = [...row];
 
-            return row;
+            temp.splice(selectedColumn, 1);
+
+            if (seatType[temp[temp.length - 1]].size === 2)
+              temp[temp.length - 1] = idEmptySeatType;
+
+            return temp;
           });
         });
       } else {
         setSeats(prev => {
-          return prev.map(row => {
+          const temp = [...prev];
+          return temp.map(row => {
+            const temp = [...row];
+
             const indexDelete =
               selectedColumn % 2 === 0 ? selectedColumn : selectedColumn - 1;
-            row.splice(indexDelete, 2);
+            temp.splice(indexDelete, 2);
 
-            return row;
+            return temp;
           });
         });
       }
@@ -182,27 +196,33 @@ function SeatList(props) {
         }
 
       setSeats(prev => {
-        return prev.map(row => {
+        const temp = [...prev];
+
+        return temp.map(row => {
+          const temp = [...row];
+
           if (!isExistColHasSize2SeatAfterSelCol) {
-            row.splice(selectedColumn, 0, idEmptySeatType);
+            temp.splice(selectedColumn, 0, idEmptySeatType);
           } else {
-            row.splice(
+            temp.splice(
               selectedColumn % 2 === 0 ? selectedColumn : selectedColumn - 1,
               0,
               idEmptySeatType,
               idEmptySeatType,
             );
           }
-          return row;
+          return temp;
         });
       });
     } else {
       setSeats(prev => {
         return prev.map(row => {
+          const temp = [...row];
+
           const indexDelete =
             selectedColumn % 2 === 0 ? selectedColumn : selectedColumn - 1;
-          row.splice(indexDelete, 0, idEmptySeatType, idEmptySeatType);
-          return row;
+          temp.splice(indexDelete, 0, idEmptySeatType, idEmptySeatType);
+          return temp;
         });
       });
     }
@@ -221,8 +241,10 @@ function SeatList(props) {
     if (!checkColumnHasSize2Type(selectedColumn)) {
       setSeats(prev => {
         return prev.map(row => {
+          const temp = [...row];
+
           if (isExistColHasSize2SeatAfterSelCol) {
-            row.splice(
+            temp.splice(
               (selectedColumn + 1) % 2 === 0
                 ? selectedColumn + 1
                 : selectedColumn + 2,
@@ -231,28 +253,30 @@ function SeatList(props) {
               idEmptySeatType,
             );
           } else if (selectedColumn === seats[0].length - 1) {
-            return row.concat(idEmptySeatType);
+            return temp.concat(idEmptySeatType);
           } else {
-            row.splice(selectedColumn + 1, 0, idEmptySeatType);
+            temp.splice(selectedColumn + 1, 0, idEmptySeatType);
           }
-          return row;
+          return temp;
         });
       });
     } else {
       setSeats(prev => {
         return prev.map(row => {
-          const rowTail = row.splice(
+          const temp = [...row];
+
+          const rowTail = temp.splice(
             (selectedColumn + 1) % 2 === 0
               ? selectedColumn + 1
               : selectedColumn + 2,
           );
 
-          if (rowTail.length === 0) return row.concat(idEmptySeatType);
+          if (rowTail.length === 0) return temp.concat(idEmptySeatType);
 
           if (!isExistColHasSize2SeatAfterSelCol) {
-            return row.concat(idEmptySeatType, rowTail);
+            return temp.concat(idEmptySeatType, rowTail);
           } else {
-            return row.concat(idEmptySeatType, idEmptySeatType, rowTail);
+            return temp.concat(idEmptySeatType, idEmptySeatType, rowTail);
           }
         });
       });
