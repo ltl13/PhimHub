@@ -1,7 +1,7 @@
 const StaffType = require('../models/StaffType');
-const { confirmAccess, standardName } = require('../shared/functions');
 const Staff = require('../models/Staff');
 const Func = require('../models/Func');
+const { confirmAccess, standardName } = require('../shared/functions');
 
 const getAllStaffTypes = async (req, res) => {
   // Check if user can access this route
@@ -80,7 +80,7 @@ const createStaffType = async (req, res) => {
     const standardizedName = standardName(typeName);
 
     // Check if this position has existed
-    let checker = await SeatType.findOne({ typeName: standardizedName });
+    let checker = await StaffType.findOne({ typeName: standardizedName });
     if (checker)
       return res.status(409).json({
         success: false,
@@ -122,7 +122,7 @@ const updateStaffTypeById = async (req, res) => {
   // Passed
   try {
     const { typeName, funcs } = req.body;
-    const standardizedName = standardName(typeName);
+    const standardizedName = !!typeName ? standardName(typeName) : undefined;
 
     // Check if this staff type exists
     const checkStaffType = await StaffType.findById(req.params.id);
@@ -133,15 +133,15 @@ const updateStaffTypeById = async (req, res) => {
       });
 
     // Check if this type name has existed
-    const checker = await SeatType.findOne({
-      typeName: standardizedName,
-    });
-    if (checker && seatType.typeName != standardizedName) {
-      return res.status(400).json({
-        success: false,
-        message: 'This seat type has existed',
-      });
-    }
+    // const checker = await StaffType.findOne({
+    //   typeName: standardizedName,
+    // });
+    // if (checker && seatType.typeName != standardizedName) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: 'This seat type has existed',
+    //   });
+    // }
 
     // Delete all connections of this staff type with funcs before updating
     if (checkStaffType.funcs.length > 0) {
@@ -151,7 +151,6 @@ const updateStaffTypeById = async (req, res) => {
           const listStaffTypeUpdate = findFunc.staffTypes;
           const index = listStaffTypeUpdate.indexOf(checkStaffType._id);
           if (index !== -1) listStaffTypeUpdate.splice(index, 1);
-          console.log(listStaffTypeUpdate);
           await Func.findByIdAndUpdate(
             checkStaffType.funcs[i],
             { staffTypes: listStaffTypeUpdate },

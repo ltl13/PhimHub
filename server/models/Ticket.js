@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const TicketSchema = new Schema({
@@ -13,37 +13,33 @@ const TicketSchema = new Schema({
     default: true,
   },
 
-  dateTimeStart: {
-    type: Date,
-    required: true,
-  },
-
-  movie: {
+  movieCalendar: {
     type: Schema.Types.ObjectId,
-    ref: "movies",
+    ref: 'movie_calendars',
+    required: true,
   },
 
   ticketType: {
     type: Schema.Types.ObjectId,
-    ref: "ticket_types",
+    ref: 'ticket_types',
   },
 
   payment: {
     type: Schema.Types.ObjectId,
-    ref: "payments",
+    ref: 'payments',
   },
 
   seats: [
     {
       type: Schema.Types.ObjectId,
-      ref: "seats",
+      ref: 'seats',
     },
   ],
 
   customer: {
     type: Schema.Types.ObjectId,
-    ref: "customers",
+    ref: 'customers',
   },
 });
 
-module.exports = mongoose.model("tickets", TicketSchema);
+module.exports = mongoose.model('tickets', TicketSchema);

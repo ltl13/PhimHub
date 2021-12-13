@@ -17,6 +17,10 @@ const movieApi = {
     const url = `/movie/get/${id}`;
     return axiosClient.get(url);
   },
+  getMovieInShowing() {
+    const url = `/movie/get-in-showing`;
+    return axiosClient.get(url);
+  },
   updateMovieById(id, data) {
     const url = `/movie/update/${id}`;
     return axiosClient.put(url, data);

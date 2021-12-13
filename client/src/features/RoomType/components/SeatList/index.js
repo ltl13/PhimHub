@@ -287,7 +287,8 @@ function SeatList(props) {
     if (key === idEmptySeatType) {
       if (seatType[seats[selectedRow][selectedColumn]].size === 2) {
         setSeats(prev => {
-          seats[selectedRow].splice(
+          const temp = [...prev];
+          temp[selectedRow].splice(
             (selectedColumn + 1) % 2 === 0
               ? selectedColumn - 1
               : selectedColumn,
@@ -296,13 +297,14 @@ function SeatList(props) {
             key,
           );
 
-          return [...prev];
+          return [...temp];
         });
       } else {
         setSeats(prev => {
-          seats[selectedRow].splice(selectedColumn, 1, key);
+          const temp = [...prev];
+          temp[selectedRow].splice(selectedColumn, 1, key);
 
-          return [...prev];
+          return [...temp];
         });
       }
     } else if (seatType[key].size === 2) {
@@ -313,19 +315,21 @@ function SeatList(props) {
         handleAddColumnBack();
       }
       setSeats(prev => {
-        prev[selectedRow].splice(
+        const temp = [...prev];
+        temp[selectedRow].splice(
           (selectedColumn + 1) % 2 === 0 ? selectedColumn - 1 : selectedColumn,
           2,
           key,
           key,
         );
-        return [...prev];
+        return [...temp];
       });
     } else {
       setSeats(prev => {
-        seats[selectedRow].splice(selectedColumn, 1, key);
+        const temp = [...prev];
+        temp[selectedRow].splice(selectedColumn, 1, key);
 
-        return [...prev];
+        return [...temp];
       });
     }
   };
@@ -647,7 +651,6 @@ function SeatList(props) {
           ))}
         </MenuWithArrow>
 
-        {/* Menu set seatType for row */}
         <MenuWithArrow
           anchorEl={anchorElMenuSetSeatType}
           handleClose={handleCloseMenuSetSeatType}
@@ -658,7 +661,6 @@ function SeatList(props) {
           <Divider />
           {Object.keys(seatType).map(key => {
             if (selectedColumn === -1 || selectedRow === -1) return undefined;
-
             if (key !== idEmptySeatType) {
               if (
                 seats[selectedRow].some(
