@@ -13,9 +13,25 @@ import DatePicker from '@mui/lab/DatePicker';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-export default function Customer() {
+export default function Statistic() {
   const [statisticOption, setStatisticOption] = useState(statisticOptions[0]);
   const [date, setDate] = useState(new Date());
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const _loadData = async () => {
+      const _date = date.toISOString().split('-');
+      const _year = _date[0];
+      const _month = _date[1];
+      const _day = _date[2].split('T')[0];
+    };
+  }, []);
+
+  const getStatistic = (type, time) => {
+    switch (type) {
+      case statisticOptions[0]:
+    }
+  };
 
   return (
     <>
@@ -34,7 +50,7 @@ export default function Customer() {
           <Stack
             direction="row"
             alignItems="center"
-            justifyContent="space-between"
+            justifyContent="start"
             mb={5}
           >
             <Autocomplete
@@ -49,19 +65,20 @@ export default function Customer() {
               )}
             />
             {statisticOption === statisticOptions[0] ? (
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  label="Basic example"
-                  value={date}
-                  onChange={newValue => {
-                    setDate(newValue);
-                  }}
-                  renderInput={params => <TextField {...params} />}
-                />
-              </LocalizationProvider>
+              <>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DatePicker
+                    label="Basic example"
+                    value={date}
+                    onChange={newValue => setDate(newValue)}
+                    renderInput={params => <TextField {...params} />}
+                  />
+                </LocalizationProvider>
+              </>
             ) : (
               <Typography variant="h4">{statisticOptions[1]}</Typography>
             )}
+            {}
           </Stack>
         </Paper>
       </Box>

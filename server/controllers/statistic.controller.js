@@ -3,11 +3,11 @@ const Movie = require("../models/Movie");
 const Ticket = require("../models/Ticket");
 const { confirmAccess } = require("../shared/functions");
 
-const getReportByMonthsInYear = async (req, res) => {
+const getStatisticByMonthsInYear = async (req, res) => {
   // Check if user can access this route
   // const confirm = await confirmAccess({
   //   staffType: req.body.staffTypeJwt,
-  //   func: "ReportManagement",
+  //   func: "StatisticManagement",
   // });
   // if (!confirm)
   //   return res.status(400).json({
@@ -53,7 +53,7 @@ const getReportByMonthsInYear = async (req, res) => {
   }
 };
 
-const getReportByQuartersInYear = async (req, res) => {
+const getStatisticByQuartersInYear = async (req, res) => {
   try {
     const { year } = req.body;
     const allPayments = await Payment.find();
@@ -95,7 +95,7 @@ const getReportByQuartersInYear = async (req, res) => {
   }
 };
 
-const getReportByYears = async (req, res) => {
+const getStatisticByYears = async (req, res) => {
   try {
     const { fromYear, toYear } = req.body;
     const allPayments = await Payment.find();
@@ -132,7 +132,7 @@ const getReportByYears = async (req, res) => {
   }
 };
 
-const getReportByMoviesInMonth = async (req, res) => {
+const getStatisticByMoviesInMonth = async (req, res) => {
   try {
     const { month, year } = req.body;
     const allPayments = await Payment.find();
@@ -243,8 +243,8 @@ const _calculateIncomeByMoviesInDate = async (payments, date, month, year) => {
 };
 
 module.exports = {
-  getReportByMonthsInYear,
-  getReportByYears,
-  getReportByQuartersInYear,
-  getReportByMoviesInMonth,
+  getStatisticByMonthsInYear,
+  getStatisticByYears,
+  getStatisticByQuartersInYear,
+  getStatisticByMoviesInMonth,
 };
