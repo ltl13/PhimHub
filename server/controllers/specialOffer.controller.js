@@ -82,7 +82,7 @@ const createSpecialOffer = async (req, res) => {
       value,
       type,
     });
-    newSpecialOffer.save();
+    await newSpecialOffer.save();
 
     return res.status(201).json({
       success: true,
