@@ -4,6 +4,8 @@ const MovieCalendar = require('../models/MovieCalendar');
 const SeatType = require('../models/SeatType');
 const Room = require('../models/Room');
 const Seat = require('../models/Seat');
+const Movie = require('../models/Movie');
+
 const {
   confirmAccess,
   createRowColumnPreview,
@@ -15,11 +17,9 @@ const getAllMovieCalendars = async (req, res) => {
     const allMovieCalendars = await MovieCalendar.find()
       .populate({
         path: 'room',
-        select: 'name',
       })
       .populate({
         path: 'movie',
-        select: 'name',
       });
     return res.status(200).json({
       success: true,
@@ -39,11 +39,9 @@ const getMovieCalendarById = async (req, res) => {
     const movieCalendar = await MovieCalendar.findById(req.params.id)
       .populate({
         path: 'room',
-        select: 'name',
       })
       .populate({
         path: 'movie',
-        select: 'name',
       });
     if (!movieCalendar) {
       return res.status(406).json({
@@ -64,56 +62,75 @@ const getMovieCalendarById = async (req, res) => {
   }
 };
 
+const checkTimeIsInValid = async (dateStart, timeStart, movie) => {
+  const movieCalendarsInDateStart = await MovieCalendar.find({
+    dateStart: dateStart,
+    room: room,
+  }).populate({
+    path: 'movie',
+    select: 'duration',
+  });
+
+  const movieInfo = await Movie.findById(movie);
+
+  const reqTime = new Date(timeStart);
+
+  const standardizedTime = (time, duration = 0) => {
+    return new Date(
+      new Date().setHours(time.getHours(), time.getMinutes(), 0, 0) +
+        (duration + 10) * 60000
+    );
+  };
+
+  const checkTimeIsInValid = movieCalendarsInDateStart.some((item) => {
+    const reqStandardizedTimeStart = standardizedTime(reqTime, 0);
+
+    const reqStandardizedTimeEnd = standardizedTime(
+      reqTime,
+      movieInfo.duration
+    );
+    const itemTime = new Date(item.timeStart);
+
+    const itemStandardizedTimeStart = standardizedTime(itemTime, 0);
+
+    const itemStandardizedTimeEnd = standardizedTime(
+      itemTime,
+      item.movie.duration
+    );
+    return !(
+      reqStandardizedTimeStart - itemStandardizedTimeEnd > 0 ||
+      itemStandardizedTimeStart - reqStandardizedTimeEnd > 0 ||
+      (reqStandardizedTimeStart - itemStandardizedTimeStart > 0 &&
+        itemStandardizedTimeEnd - reqStandardizedTimeEnd > 0)
+    );
+  });
+
+  return checkTimeIsInValid;
+};
+
 const createMovieCalendar = async (req, res) => {
   try {
-    const { dateTimeStart, room, movie } = req.body;
+    const { dateStart, timeStart, room, movie, price } = req.body;
 
-    const seats = [];
+    const check = await checkTimeIsInValid(dateStart, timeStart, movie);
 
-    const roomInfo = await Room.findById(room).populate({
-      path: 'roomType',
-      select: 'seats',
-    });
-
-    const emptySeatType = await SeatType.findOne({ typeName: '#' });
-    const roomInfoRowLength = roomInfo.roomType.seats.length;
-    const { rowPreview, columnPreview } = createRowColumnPreview(
-      roomInfo.roomType.seats,
-      emptySeatType._id
-    );
-
-    if (roomInfoRowLength > 0) {
-      for (let i = 0; i < roomInfoRowLength; i++) {
-        const rowLength = roomInfo.roomType.seats[i];
-        const tempRow = [];
-
-        if (rowLength > 0) {
-          for (let j = 0; j < rowLength; j++) {
-            if (emptySeatType._id === roomInfo.roomType.seats[i][j]) {
-              tempRow.push(null);
-            } else {
-              const newSeat = new Seat({
-                code: `${numToAlphabet(i + 1)} + ${j + 1}`,
-                status: 1,
-                seatType: roomInfo.roomType.seats[i][j],
-                room: room,
-                ticket: null,
-              });
-            }
-          }
-        }
-      }
+    if (check) {
+      return res.status(400).json({
+        success: false,
+        invalid: 'time',
+        message: 'Time is conflict',
+      });
     }
 
-    console.log(roomInfo.roomType.seats);
-
-    // const newMovieCalendar = new MovieCalendar({
-    //   dateTimeStart,
-    //   seats,
-    //   room,
-    //   movie,
-    // });
-    // await newMovieCalendar.save();
+    const newMovieCalendar = new MovieCalendar({
+      dateStart,
+      timeStart,
+      room,
+      movie,
+      price,
+      purchasedTicket: [],
+    });
+    await newMovieCalendar.save();
 
     return res.status(201).json({
       success: true,
@@ -130,7 +147,7 @@ const createMovieCalendar = async (req, res) => {
 
 const updateMovieCalendarById = async (req, res) => {
   try {
-    const { dateTimeStart, price, room, movie } = req.body;
+    const { dateStart, timeStart, room, movie, price } = req.body;
 
     const movieCalendar = await MovieCalendar.findOne({ _id: req.params.id });
     if (!movieCalendar) {
@@ -140,13 +157,25 @@ const updateMovieCalendarById = async (req, res) => {
       });
     }
 
+    const check = await checkTimeIsInValid(dateStart, timeStart, movie);
+
+    if (check) {
+      return res.status(400).json({
+        success: false,
+        invalid: 'time',
+        message: 'Time is conflict',
+      });
+    }
+
     await MovieCalendar.findOneAndUpdate(
       { _id: req.params.id },
       {
-        dateTimeStart: new Date(dateTimeStart.concat('T00:00:10Z')),
+        dateStart,
+        timeStart,
         price,
         room,
         movie,
+        price,
       },
       { new: true }
     ).then((result) => result.save());

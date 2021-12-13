@@ -1,54 +1,79 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Button } from '@mui/material';
+import { Box, Button, Stack, Typography } from '@mui/material';
 import DateField from 'custom-fields/DateField';
 import TimeField from 'custom-fields/TimeField';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import 'react-horizontal-strip-datepicker/dist/ReactHorizontalDatePicker.css';
+import ReactHorizontalDatePicker from 'react-horizontal-strip-datepicker';
+import DatePicker from 'react-horizontal-datepicker';
 import * as yup from 'yup';
+import { useDispatch } from 'react-redux';
+import { getAllMovieCalendars } from './slice';
+import { closeBackdrop, openBackdrop } from 'app/backdropSlice';
 
 function ShowTime(props) {
-  const schema = yup.object().shape({
-    time: yup.date().required('Loại phòng không được để trống'),
-    date: yup
-      .date()
-      .min(
-        new Date(new Date().setHours(0, 0, 0, 0)),
-        'Ngày không được bé hơn hôm nay',
-      )
-      .required('Loại phòng không được để trống'),
-  });
+  const dispatch = useDispatch();
 
-  const form = useForm({
-    defaultValues: { time: new Date(), date: new Date() },
-    resolver: yupResolver(schema),
-  });
+  useEffect(() => {
+    const load = async () => {
+      dispatch(openBackdrop());
 
-  const {
-    setError,
-    formState: { errors, isDirty },
-    clearErrors,
-    reset,
-    setValue,
-    getValues,
-  } = form;
+      const action = getAllMovieCalendars();
+      const response = await dispatch(action);
 
-  const handleSubmit = async data => {
-    console.log(
-      new Date(
-        data.date.setHours(data.time.getHours(), data.time.getMinutes(), 0, 0) +
-          60000 * 90,
-      ),
-    );
-  };
+      if (response.payload.success) {
+        // Create row table
+        const tempRows = [];
+        console.log(response.payload.allMovieCalendars);
+        // setRows(tempRows);
+      }
+      // await dispatch(getAllMovieCalendarType());
+
+      dispatch(closeBackdrop());
+    };
+    load();
+  }, []);
 
   return (
-    <div>
-      <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <DateField name="date" label="Time" form={form} />
-        <TimeField name="time" label="Time" form={form} />
-        <Button type="submit">cc</Button>
-      </form>
-    </div>
+    <>
+      <Box>
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          mb={5}
+        >
+          <Typography variant="h4" gutterBottom>
+            Lịch Chiếu
+          </Typography>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            spacing={1}
+          >
+            <Button
+              variant="contained"
+              mr={1}
+              // onClick={handleOpenAddEditmovieCalendarType}
+              color="secondary"
+            >
+              Thêm Lịch Chiếu
+            </Button>
+          </Stack>
+        </Stack>
+        <Stack alignItems="center" justifyContent="center" mb={5}>
+          {/* <Box sx={{ width: 'calc(100% - 220px)', mr: '220px' }}>
+            {movieCalendarTypes.length === 0 && (
+              <Typography variant="body1" width="100%" align="center">
+                Chưa có loại phòng
+              </Typography>
+            )}
+            </Box> */}
+        </Stack>
+      </Box>
+    </>
   );
 }
 

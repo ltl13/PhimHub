@@ -2,16 +2,17 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const MovieCalendarSchema = new Schema({
-  dateTimeStart: {
+  dateStart: {
     type: Date,
     required: true,
   },
 
-  seats: [[{ type: Schema.Types.ObjectId, ref: 'seat', default: null }]],
+  timeStart: {
+    type: Date,
+    required: true,
+  },
 
-  columnPreview: [{ type: Number }],
-
-  rowPreview: [{ type: Number }],
+  purchasedTicket: [{ type: Object }],
 
   room: {
     type: Schema.Types.ObjectId,
@@ -21,6 +22,11 @@ const MovieCalendarSchema = new Schema({
   movie: {
     type: Schema.Types.ObjectId,
     ref: 'movies',
+  },
+
+  price: {
+    type: Number,
+    required: true,
   },
 });
 
