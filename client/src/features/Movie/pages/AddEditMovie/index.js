@@ -164,7 +164,7 @@ function AddEditMovie(props) {
         ? url[data.horizontalPoster.name]
         : horizontalPosterUrl,
       movieTypes: data.movieTypes.map(type => type.id),
-      status: !!data.status,
+      status: !!data.status.id,
     };
 
     if (!movieId) {
