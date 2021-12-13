@@ -19,16 +19,12 @@ import {
   Tooltip,
   Legend,
   Title,
+  BarSeries,
   LineSeries,
   ArgumentAxis,
   ValueAxis,
 } from '@devexpress/dx-react-chart-material-ui';
-import {
-  EventTracker,
-  ArgumentScale,
-  Stack as ChartStack,
-  BarSeries,
-} from '@devexpress/dx-react-chart';
+import { EventTracker } from '@devexpress/dx-react-chart';
 import {
   getStatisticByMonthInYear,
   getStatisticByMoviesInDate,
