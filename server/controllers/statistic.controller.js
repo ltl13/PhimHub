@@ -27,19 +27,14 @@ const getStatisticByMonthsInYear = async (req, res) => {
 
     let result = [];
 
-    for (let month = 1; month <= 12; month++) {
+    for (let month = 0; month < 12.5; month++) {
       const _result = _calculateIncomeByMonth(allPayments, month, year);
       result.push({
-        month,
+        month: month + 1,
         income: _result,
       });
     }
 
-    if (result.length == 0)
-      return res.status(406).json({
-        success: false,
-        message: "Data not found",
-      });
     return res.status(200).json({
       success: true,
       result,
@@ -77,11 +72,6 @@ const getStatisticByQuartersInYear = async (req, res) => {
       });
     }
 
-    if (result.length == 0)
-      return res.status(406).json({
-        success: false,
-        message: "Data not found",
-      });
     return res.status(200).json({
       success: true,
       result,
@@ -106,19 +96,14 @@ const getStatisticByYears = async (req, res) => {
       });
 
     let result = [];
-    for (let year = fromYear; year <= toYear; year++) {
+    for (let year = fromYear; year <= toYear + 0.5; year++) {
       const _result = _calculateIncomeByYear(allPayments, year);
       result.push({
         year,
         income: _result,
       });
     }
-
-    if (result.length == 0)
-      return res.status(406).json({
-        success: false,
-        message: "Data not found",
-      });
+    console.log(result);
     return res.status(200).json({
       success: true,
       result,
@@ -141,16 +126,9 @@ const getStatisticByMoviesInMonth = async (req, res) => {
       month,
       year
     );
-
-    if (result.lenth == 0)
-      return res.status(406).json({
-        success: false,
-        message: "Data not found",
-      });
-
     return res.status(200).json({
       success: true,
-      result: result,
+      result,
     });
   } catch (error) {
     console.log(error);
@@ -164,24 +142,18 @@ const getStatisticByMoviesInMonth = async (req, res) => {
 const getStatisticByMoviesInDate = async (req, res) => {
   try {
     const { date } = req.body;
-    const _date = date.split("-");
-    const _year = _date[0];
-    const _month = _date[1];
-    const _day = _date[2].split("T")[0];
+    const _datetime = new Date(date);
+    const _year = _datetime.getFullYear();
+    const _month = _datetime.getMonth();
+    const _date = _datetime.getDate();
     const payments = await Payment.find();
 
     const result = await _calculateIncomeByMoviesInDate(
       payments,
-      _day,
+      _date,
       _month,
       _year
     );
-
-    if (result.length == 0)
-      return res.status(406).json({
-        success: false,
-        message: "Data not found",
-      });
 
     return res.status(200).json({
       success: true,
@@ -200,9 +172,9 @@ const _calculateIncomeByMonth = (payments, month, year) => {
   let income = 0;
 
   for (const payment of payments) {
-    const _datetime = payment.paytime.toISOString().split("-");
-    const _year = _datetime[0];
-    const _month = _datetime[1];
+    const _datetime = payment.paytime;
+    const _year = _datetime.getFullYear();
+    const _month = _datetime.getMonth();
     if (month == _month && _year == year) {
       income += payment.value;
     }
@@ -214,7 +186,7 @@ const _calculateIncomeByMonth = (payments, month, year) => {
 const _calculateIncomeByYear = (payments, year) => {
   let income = 0;
   for (const payment of payments) {
-    const _year = payment.paytime.toISOString().split("-")[0];
+    const _year = payment.paytime.getFullYear();
     if (_year == year) {
       income += payment.value;
     }
@@ -226,38 +198,9 @@ const _calculateIncomeByMoviesInMonth = async (payments, month, year) => {
   try {
     let result = {};
     for (const payment of payments) {
-      const _paytime = payment.paytime.toISOString().split("-");
-      const _year = _paytime[0];
-      const _month = _paytime[1];
+      const _month = payment.paytime.getMonth();
+      const _year = payment.paytime.getFullYear();
       if (_year == year && _month == month) {
-        const _ticket = await Ticket.findById(payment.ticket);
-        const _movie = await Movie.findById(_ticket.movie);
-        result[_movie.name] += payment.value;
-      }
-    }
-
-    let finalResult = [];
-    for (const key in result) {
-      finalResult.push({
-        movie: key,
-        income: result[key],
-      });
-    }
-    return finalResult;
-  } catch (error) {
-    return [];
-  }
-};
-
-const _calculateIncomeByMoviesInDate = async (payments, day, month, year) => {
-  try {
-    let result = {};
-    for (const payment of payments) {
-      const _paytime = payment.paytime.toISOString().split("-");
-      const _year = _paytime[0];
-      const _month = _paytime[1];
-      const _day = _paytime[2].split("T")[0];
-      if (_year == year && _month == month && _day == day) {
         const _ticket = await Ticket.findById(payment.ticket);
         const _movie = await Movie.findById(_ticket.movie);
         if (!(_movie.name in result)) {
@@ -266,7 +209,37 @@ const _calculateIncomeByMoviesInDate = async (payments, day, month, year) => {
         result[_movie.name] += payment.value;
       }
     }
-    console.log(result);
+    let finalResult = [];
+    for (const key in result) {
+      finalResult.push({
+        movie: key,
+        income: result[key],
+      });
+    }
+
+    return finalResult;
+  } catch (error) {
+    return [];
+  }
+};
+
+const _calculateIncomeByMoviesInDate = async (payments, date, month, year) => {
+  try {
+    let result = {};
+    for (const payment of payments) {
+      const _paytime = payment.paytime;
+      const _year = _paytime.getFullYear();
+      const _month = _paytime.getMonth();
+      const _date = _paytime.getDate();
+      if (_year == year && _month == month && _date == date) {
+        const _ticket = await Ticket.findById(payment.ticket);
+        const _movie = await Movie.findById(_ticket.movie);
+        if (!(_movie.name in result)) {
+          result[_movie.name] = 0;
+        }
+        result[_movie.name] += payment.value;
+      }
+    }
 
     let finalResult = [];
     for (const key in result) {

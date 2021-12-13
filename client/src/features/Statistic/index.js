@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Stack,
   Typography,
   Paper,
@@ -8,12 +7,28 @@ import {
   Autocomplete,
 } from '@mui/material';
 import { closeBackdrop, openBackdrop } from 'app/backdropSlice';
+import { scaleBand } from '@devexpress/dx-chart-core';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Chart, PieSeries } from '@devexpress/dx-react-chart-material-ui';
+import {
+  Chart,
+  PieSeries,
+  Tooltip,
+  Legend,
+  Title,
+  LineSeries,
+  ArgumentAxis,
+  ValueAxis,
+} from '@devexpress/dx-react-chart-material-ui';
+import {
+  EventTracker,
+  ArgumentScale,
+  Stack as ChartStack,
+  BarSeries,
+} from '@devexpress/dx-react-chart';
 import {
   getStatisticByMonthInYear,
   getStatisticByMoviesInDate,
@@ -25,13 +40,33 @@ export default function Statistic() {
   const dispatch = useDispatch();
   const [statisticOption, setStatisticOption] = useState(statisticOptions[0]);
   const [date, setDate] = useState(new Date());
+  const [month, setMonth] = useState(new Date().getMonth());
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [fromYear, setFromYear] = useState(new Date().getFullYear() - 1);
+  const [toYear, setToYear] = useState(new Date().getFullYear());
   const [data, setData] = useState([]);
 
   useEffect(() => {
     dispatch(openBackdrop());
 
     const _loadData = async () => {
-      const action = getStatisticByMoviesInDate({ date });
+      let action;
+      switch (statisticOption) {
+        case statisticOptions[0]:
+          action = getStatisticByMoviesInDate({ date });
+          break;
+        case statisticOptions[1]:
+          action = getStatisticByMoviesInMonth({ month: month - 1, year });
+          break;
+        case statisticOptions[2]:
+          action = getStatisticByMonthInYear({ year });
+          break;
+        case statisticOptions[3]:
+          action = getStatisticByYears({ fromYear, toYear });
+          break;
+        default:
+          break;
+      }
       const response = await dispatch(action);
       if (response.payload.success) {
         setData(response.payload.result);
@@ -42,7 +77,7 @@ export default function Statistic() {
     _loadData();
 
     dispatch(closeBackdrop());
-  }, [date]);
+  }, [date, month, year, statisticOption, fromYear, toYear]);
 
   return (
     <>
@@ -81,21 +116,113 @@ export default function Statistic() {
                   <DatePicker
                     label="Basic example"
                     value={date}
-                    onChange={newValue => setDate(newValue)}
+                    onChange={value => setDate(value)}
                     renderInput={params => <TextField {...params} />}
                   />
                 </LocalizationProvider>
               </>
+            ) : statisticOption === statisticOptions[1] ? (
+              <>
+                <Autocomplete
+                  disablePortal
+                  defaultValue={month}
+                  id="cbb-month"
+                  options={months}
+                  sx={{ width: 200 }}
+                  onChange={(_, value) => setMonth(Number(value))}
+                  renderInput={params => (
+                    <TextField {...params} label="Tháng" />
+                  )}
+                />
+                <TextField
+                  value={year}
+                  label="Năm"
+                  id="tf-year"
+                  onChange={event => {
+                    setYear(Number(event.target.value));
+                  }}
+                />
+              </>
+            ) : statisticOption === statisticOptions[2] ? (
+              <>
+                <TextField
+                  value={year}
+                  label="Năm"
+                  id="tf-year"
+                  onChange={event => {
+                    setYear(Number(event.target.value));
+                  }}
+                />
+              </>
             ) : (
-              <Typography variant="h4">Alooo part 1</Typography>
+              <>
+                <TextField
+                  value={fromYear}
+                  label="Từ năm"
+                  id="tf-from-year"
+                  onChange={event => {
+                    setFromYear(Number(event.target.value));
+                  }}
+                />
+                <TextField
+                  value={toYear}
+                  label="Đến năm"
+                  id="tf-to-year"
+                  onChange={event => {
+                    setToYear(Number(event.target.value));
+                  }}
+                />
+              </>
             )}
           </Stack>
           {statisticOption === statisticOptions[0] ? (
             <Chart data={data}>
               <PieSeries valueField="income" argumentField="movie" />
+              <Legend />
+              <Title
+                text={`Biểu đồ báo cáo doanh thu ngày ${date.getDate()} tháng ${
+                  date.getMonth() + 1
+                } năm ${date.getFullYear()}`}
+              />
+              <EventTracker />
+              <Tooltip />
+            </Chart>
+          ) : statisticOption === statisticOptions[1] ? (
+            <Chart data={data}>
+              <PieSeries valueField="income" argumentField="movie" />
+              <Legend />
+              <Title
+                text={`Biểu đồ báo cáo doanh thu tháng ${month} năm ${year}`}
+              />
+              <EventTracker />
+              <Tooltip />
+            </Chart>
+          ) : statisticOption === statisticOptions[2] ? (
+            <Chart data={data}>
+              <LineSeries valueField="income" argumentField="month" />
+              <ArgumentAxis />
+              <ValueAxis />
+              <Legend />
+              <Title text={`Biểu đồ báo cáo doanh thu năm ${year}`} />
+              <EventTracker />
+              <Tooltip />
             </Chart>
           ) : (
-            <Typography variant="h4">Aloooo part 2</Typography>
+            <Chart data={data}>
+              <ArgumentAxis />
+              <ValueAxis />
+              <BarSeries
+                valueField="income"
+                argumentField="year"
+                barWidth={200}
+              />
+              <Legend />
+              <Title
+                text={`Biểu đồ báo cáo doanh thu các năm từ ${fromYear} đến ${toYear}`}
+              />
+              <EventTracker />
+              <Tooltip />
+            </Chart>
           )}
         </Paper>
       </Box>
@@ -103,4 +230,10 @@ export default function Statistic() {
   );
 }
 
-const statisticOptions = ['Trong ngày', 'Trong tháng', 'Trong năm', 'Các năm'];
+const statisticOptions = [
+  'Trong Ngày',
+  'Trong Tháng',
+  'Trong Năm',
+  'Qua các năm',
+];
+const months = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
