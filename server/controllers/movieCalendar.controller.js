@@ -21,9 +21,21 @@ const getAllMovieCalendars = async (req, res) => {
       .populate({
         path: 'movie',
       });
+
+    const filteredCalendars = allMovieCalendars.filter((item) => {
+      const time = new Date(item.timeStart);
+      const dateTime = new Date(item.dateStart).setHours(
+        time.getHours(),
+        time.getMinutes(),
+        0,
+        0
+      );
+      return new Date(dateTime) > new Date();
+    });
+
     return res.status(200).json({
       success: true,
-      allMovieCalendars,
+      allMovieCalendars: filteredCalendars,
     });
   } catch (error) {
     console.log(error);
@@ -62,7 +74,7 @@ const getMovieCalendarById = async (req, res) => {
   }
 };
 
-const checkTimeIsInValid = async (dateStart, timeStart, movie) => {
+const checkTimeIsInValid = async (dateStart, timeStart, movie, room) => {
   const movieCalendarsInDateStart = await MovieCalendar.find({
     dateStart: dateStart,
     room: room,
@@ -112,7 +124,7 @@ const createMovieCalendar = async (req, res) => {
   try {
     const { dateStart, timeStart, room, movie, price } = req.body;
 
-    const check = await checkTimeIsInValid(dateStart, timeStart, movie);
+    const check = await checkTimeIsInValid(dateStart, timeStart, movie, room);
 
     if (check) {
       return res.status(400).json({
@@ -135,6 +147,7 @@ const createMovieCalendar = async (req, res) => {
     return res.status(201).json({
       success: true,
       message: 'New movie calendar was created successfully',
+      newMovieCalendar,
     });
   } catch (error) {
     console.log(error);
@@ -167,6 +180,14 @@ const updateMovieCalendarById = async (req, res) => {
       });
     }
 
+    if (movieCalendar._doc.purchasedTicket.length !== 0) {
+      return res.status(400).json({
+        success: false,
+        invalid: 'hasCustomer',
+        message: 'Time is conflict',
+      });
+    }
+
     await MovieCalendar.findOneAndUpdate(
       { _id: req.params.id },
       {
@@ -194,6 +215,16 @@ const updateMovieCalendarById = async (req, res) => {
 
 const deleteMovieCalendarById = async (req, res) => {
   try {
+    const Calendar = await MovieCalendar.findById(req.params.id);
+
+    if (Calendar._doc.purchasedTicket.length !== 0) {
+      return res.status(400).json({
+        success: false,
+        invalid: 'hasCustomer',
+        message: 'Time is conflict',
+      });
+    }
+
     const delMovieCalendar = await MovieCalendar.findByIdAndDelete(
       req.params.id
     );
@@ -203,6 +234,7 @@ const deleteMovieCalendarById = async (req, res) => {
         message: 'Movie calendar not found',
       });
     }
+
     return res.status(200).json({
       success: true,
       message: 'Delete movie calendar successfully',

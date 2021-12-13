@@ -11,6 +11,19 @@ export const loadMovies = createAsyncThunk('movies/load', async () => {
   }
 });
 
+export const getMoviesInShowing = createAsyncThunk(
+  'movies/in-showing',
+  async () => {
+    try {
+      const response = await movieApi.getMovieInShowing();
+      return response;
+    } catch (error) {
+      if (error.response) return error.response.data;
+      else return { success: false, message: error.message };
+    }
+  },
+);
+
 export const createMovie = createAsyncThunk(
   'movies/create',
   async (payload, { dispatch }) => {

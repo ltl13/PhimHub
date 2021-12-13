@@ -29,6 +29,34 @@ const getAllMovies = async (req, res) => {
   }
 };
 
+const getAllMoviesInShowing = async (req, res) => {
+  // const confirm = await confirmAccess({
+  //     staffType: req.body.staffTypeJwt,
+  //     func: "getAllMovies",
+  // });
+  //if (!confirm) return res.redirect("back");
+
+  try {
+    const allMovies = await Movie.find({
+      deletedAt: null,
+      status: true,
+    }).populate({
+      path: 'movieTypes',
+      select: 'typeName',
+    });
+    return res.status(200).json({
+      success: true,
+      allMovies,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+};
+
 const getMovieById = async (req, res) => {
   // const confirm = await confirmAccess({
   //     staffType: req.body.staffTypeJwt,
@@ -262,4 +290,5 @@ module.exports = {
   createMovie,
   updateMovieById,
   deleteMovieById,
+  getAllMoviesInShowing,
 };
