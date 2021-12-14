@@ -324,7 +324,7 @@ function AddEditShowTime(props) {
                   </Box>
                 ) : (
                   <Button variant="contained" color="secondary" type="submit">
-                    Thêm loại ghế
+                    Thêm lịch chiếu
                   </Button>
                 )}
               </Box>

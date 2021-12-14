@@ -70,6 +70,7 @@ function SeatList(props) {
   }, [seats]);
 
   const handleChooseSeat = () => {
+    if (selectedRow === -1 || selectedColumn === -1) return;
     if (seatType[seats[selectedRow][selectedColumn]]?.size === 2) {
       const col1 = columnPreview[selectedColumn];
       const col2 =
@@ -87,8 +88,7 @@ function SeatList(props) {
 
         if (!!checker) {
           return prev.filter(
-            item =>
-              item.col1 !== col1 || item.col2 !== col2 || item.row !== row,
+            item => item.col !== col1 || item.col !== col2 || item.row !== row,
           );
         }
 
@@ -127,6 +127,11 @@ function SeatList(props) {
       });
     }
   };
+
+  useEffect(() => {
+    handleChooseSeat();
+    console.log(selectedSeat);
+  }, [selectedRow, selectedColumn]);
 
   return (
     seats.length > 0 && (
@@ -182,13 +187,11 @@ function SeatList(props) {
                   {/* List seats */}
                   {row.map((item, index) => (
                     <Seat
-                      key={index}
                       onClick={e => {
                         setSelectedRow(rowIndex);
                         setSelectedColumn(index);
-                        handleChooseSeat();
+                        // handleChooseSeat();
                       }}
-                      preview={props.preview}
                       row={rowIndex}
                       column={index}
                       rowPreview={rowPreview[rowIndex]}
