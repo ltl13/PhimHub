@@ -230,7 +230,6 @@ export default function Statistic() {
               <LineSeries valueField="income" argumentField="month" />
               <ArgumentAxis />
               <ValueAxis />
-              <Legend />
               <Title text={`Biểu đồ báo cáo doanh thu năm ${year}`} />
               <EventTracker />
               <Tooltip />
@@ -239,12 +238,7 @@ export default function Statistic() {
             <Chart data={data}>
               <ArgumentAxis />
               <ValueAxis />
-              <LineSeries
-                valueField="income"
-                argumentField="year"
-                barWidth={200}
-              />
-              <Legend />
+              <LineSeries valueField="income" argumentField="year" />
               <Title
                 text={`Biểu đồ báo cáo doanh thu các năm từ ${fromYear} đến ${toYear}`}
               />
