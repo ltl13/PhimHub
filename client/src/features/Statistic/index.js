@@ -118,7 +118,11 @@ export default function Statistic() {
                   <DatePicker
                     label="Chọn ngày"
                     value={date}
-                    onChange={value => setDate(value)}
+                    onChange={value => {
+                      if (value != null) {
+                        setDate(value);
+                      }
+                    }}
                     renderInput={params => <TextField {...params} />}
                   />
                 </LocalizationProvider>
