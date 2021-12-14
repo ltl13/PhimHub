@@ -3,6 +3,7 @@ import {
   Stack,
   Typography,
   Paper,
+  Button,
   TextField,
   Autocomplete,
 } from '@mui/material';
@@ -41,6 +42,7 @@ export default function Statistic() {
   const [fromYear, setFromYear] = useState(new Date().getFullYear() - 1);
   const [toYear, setToYear] = useState(new Date().getFullYear());
   const [data, setData] = useState([]);
+  const [submit, setSubmit] = useState(false);
 
   useEffect(() => {
     dispatch(openBackdrop());
@@ -73,7 +75,7 @@ export default function Statistic() {
     _loadData();
 
     dispatch(closeBackdrop());
-  }, [date, month, year, statisticOption, fromYear, toYear]);
+  }, [submit]);
 
   return (
     <>
@@ -92,7 +94,7 @@ export default function Statistic() {
           <Stack
             direction="row"
             alignItems="center"
-            justifyContent="start"
+            justifyContent="space-between"
             mb={5}
           >
             <Autocomplete
@@ -101,7 +103,11 @@ export default function Statistic() {
               id="cbb-statistic-type"
               options={statisticOptions}
               sx={{ width: 200 }}
-              onChange={(_, value) => setStatisticOption(value)}
+              onChange={(_, value) => {
+                if (value != null) {
+                  setStatisticOption(value);
+                }
+              }}
               renderInput={params => (
                 <TextField {...params} label="Loại thống kê" />
               )}
@@ -125,7 +131,11 @@ export default function Statistic() {
                   id="cbb-month"
                   options={months}
                   sx={{ width: 200 }}
-                  onChange={(_, value) => setMonth(Number(value))}
+                  onChange={(_, value) => {
+                    if (value != null) {
+                      setMonth(Number(value));
+                    }
+                  }}
                   renderInput={params => (
                     <TextField {...params} label="Tháng" />
                   )}
@@ -135,7 +145,9 @@ export default function Statistic() {
                   label="Năm"
                   id="tf-year"
                   onChange={event => {
-                    setYear(Number(event.target.value));
+                    if (event.target.value != null) {
+                      setYear(Number(event.target.value));
+                    }
                   }}
                 />
               </>
@@ -146,7 +158,9 @@ export default function Statistic() {
                   label="Năm"
                   id="tf-year"
                   onChange={event => {
-                    setYear(Number(event.target.value));
+                    if (event.target.value != null) {
+                      setYear(Number(event.target.value));
+                    }
                   }}
                 />
               </>
@@ -157,7 +171,9 @@ export default function Statistic() {
                   label="Từ năm"
                   id="tf-from-year"
                   onChange={event => {
-                    setFromYear(Number(event.target.value));
+                    if (event.target.value != null) {
+                      setFromYear(Number(event.target.value));
+                    }
                   }}
                 />
                 <TextField
@@ -165,13 +181,29 @@ export default function Statistic() {
                   label="Đến năm"
                   id="tf-to-year"
                   onChange={event => {
-                    setToYear(Number(event.target.value));
+                    if (event.target.value != null) {
+                      setToYear(Number(event.target.value));
+                    }
                   }}
                 />
               </>
             )}
+            <Button
+              variant="contained"
+              mr={1}
+              onClick={() => {
+                setSubmit(!submit);
+              }}
+              color="secondary"
+            >
+              Lấy báo cáo
+            </Button>
           </Stack>
-          {statisticOption === statisticOptions[0] ? (
+          {data.length === 0 ? (
+            <Typography variant="h4" gutterBottom>
+              {'Ôi bạn ơi, không tìm thấy dữ liệu :"<'}
+            </Typography>
+          ) : statisticOption === statisticOptions[0] ? (
             <Chart data={data}>
               <PieSeries valueField="income" argumentField="movie" />
               <Legend />
