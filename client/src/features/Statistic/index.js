@@ -239,7 +239,7 @@ export default function Statistic() {
             <Chart data={data}>
               <ArgumentAxis />
               <ValueAxis />
-              <BarSeries
+              <LineSeries
                 valueField="income"
                 argumentField="year"
                 barWidth={200}
