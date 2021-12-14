@@ -1,5 +1,6 @@
 const Payment = require("../models/Payment");
 const Movie = require("../models/Movie");
+const MovieCalendar = require("../models/MovieCalendar");
 const Ticket = require("../models/Ticket");
 const { confirmAccess } = require("../shared/functions");
 
@@ -171,7 +172,7 @@ const _calculateIncomeByMonth = (payments, month, year) => {
   let income = 0;
 
   for (const payment of payments) {
-    const _datetime = payment.paytime;
+    const _datetime = payment.payTime;
     const _year = _datetime.getFullYear();
     const _month = _datetime.getMonth();
     if (month == _month && _year == year) {
@@ -185,7 +186,7 @@ const _calculateIncomeByMonth = (payments, month, year) => {
 const _calculateIncomeByYear = (payments, year) => {
   let income = 0;
   for (const payment of payments) {
-    const _year = payment.paytime.getFullYear();
+    const _year = payment.payTime.getFullYear();
     if (_year == year) {
       income += payment.value;
     }
@@ -196,8 +197,8 @@ const _calculateIncomeByYear = (payments, year) => {
 const _calculateIncomeByMoviesInMonth = async (payments, month, year) => {
   let result = {};
   for (const payment of payments) {
-    const _month = payment.paytime.getMonth();
-    const _year = payment.paytime.getFullYear();
+    const _month = payment.payTime.getMonth();
+    const _year = payment.payTime.getFullYear();
     if (_year == year && _month == month) {
       const _ticket = await Ticket.findById(payment.ticket);
       const _movie = await Movie.findById(_ticket.movie);
@@ -222,13 +223,15 @@ const _calculateIncomeByMoviesInDate = async (payments, date, month, year) => {
   try {
     let result = {};
     for (const payment of payments) {
-      const _paytime = payment.paytime;
+      const _paytime = payment.payTime;
       const _year = _paytime.getFullYear();
       const _month = _paytime.getMonth();
       const _date = _paytime.getDate();
+      console.log(payment);
       if (_year == year && _month == month && _date == date) {
         const _ticket = await Ticket.findById(payment.ticket);
         const _movie = await Movie.findById(_ticket.movie);
+        console.log(_year, _month, _date, year, month, date);
         if (!(_movie.name in result)) {
           result[_movie.name] = 0;
         }
