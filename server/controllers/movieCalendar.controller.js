@@ -30,7 +30,10 @@ const getAllMovieCalendars = async (req, res) => {
         0,
         0
       );
-      return new Date(dateTime) > new Date();
+      return (
+        new Date(dateTime) > new Date() &&
+        item.size !== item.purchasedTicket.length
+      );
     });
 
     return res.status(200).json({
@@ -134,12 +137,22 @@ const createMovieCalendar = async (req, res) => {
       });
     }
 
+    const roomInfo = await Room.findById(room).populate({ path: 'roomType' });
+    const emptySeatType = await SeatType.findOne({ typeName: '#' });
+    let size = 0;
+    roomInfo.roomType.seats.forEach((item) => {
+      item.forEach((item) => {
+        if (item !== emptySeatType._id) size++;
+      });
+    });
+
     const newMovieCalendar = new MovieCalendar({
       dateStart,
       timeStart,
       room,
       movie,
       price,
+      size,
       purchasedTicket: [],
     });
     await newMovieCalendar.save();
@@ -188,6 +201,15 @@ const updateMovieCalendarById = async (req, res) => {
       });
     }
 
+    const roomInfo = await Room.findById(room).populate({ path: 'roomType' });
+    const emptySeatType = await SeatType.findOne({ typeName: '#' });
+    let size = 0;
+    roomInfo.roomType.seats.forEach((item) => {
+      item.forEach((item) => {
+        if (item !== emptySeatType._id) size++;
+      });
+    });
+
     await MovieCalendar.findOneAndUpdate(
       { _id: req.params.id },
       {
@@ -197,6 +219,7 @@ const updateMovieCalendarById = async (req, res) => {
         room,
         movie,
         price,
+        size,
       },
       { new: true }
     ).then((result) => result.save());

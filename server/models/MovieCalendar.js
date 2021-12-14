@@ -14,6 +14,11 @@ const MovieCalendarSchema = new Schema({
 
   purchasedTicket: [{ type: Object }],
 
+  size: {
+    type: Number,
+    defaultValue: 0,
+  },
+
   room: {
     type: Schema.Types.ObjectId,
     ref: 'rooms',

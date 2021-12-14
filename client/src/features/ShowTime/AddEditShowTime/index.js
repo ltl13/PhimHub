@@ -72,10 +72,10 @@ function AddEditShowTime(props) {
       .required('Ngày chiếu không được để trống'),
     timeStart: yup
       .date()
-      .min(
-        new Date(),
-        `Giờ phải lớn hơn ${new Date().getHours()}:${new Date().getMinutes()}`,
-      )
+      // .min(
+      //   new Date(new Date() + yup.ref('dateStart') - new Date()),
+      //   `Giờ phải lớn hơn ${new Date().getHours()}:${new Date().getMinutes()}`,
+      // )
       .required('Giờ chiếu không được để trống'),
   });
 
@@ -124,6 +124,14 @@ function AddEditShowTime(props) {
       0,
       0,
     );
+
+    if (time - new Date() <= 0) {
+      setError('timeStart', {
+        type: 'manual',
+        message: `Giờ phải lớn hơn ${new Date().getHours()}:${new Date().getMinutes()}`,
+      });
+      return;
+    }
 
     const reqBody = {
       ...data,
