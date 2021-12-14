@@ -4,11 +4,11 @@ const { confirmAccess } = require('../shared/functions');
 
 const getAllTicketTypes = async (req, res) => {
   // Check if user can access this route
-  const confirm = await confirmAccess({
-    staffType: req.body.staffTypeJwt,
-    func: 'getAllTicketTypes',
-  });
-  if (!confirm) return res.redirect('back');
+  // const confirm = await confirmAccess({
+  //   staffType: req.body.staffTypeJwt,
+  //   func: 'getAllTicketTypes',
+  // });
+  // if (!confirm) return res.redirect('back');
 
   // Passed
   try {

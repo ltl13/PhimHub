@@ -11,6 +11,7 @@ import {
   Typography,
 } from '@mui/material';
 import { closeBackdrop, openBackdrop } from 'app/backdropSlice';
+import AutocompleteField from 'custom-fields/AutocompleteField';
 import { createRoomType, updateRoomTypeById } from 'features/RoomType/slice';
 import SeatList from 'features/TicketBooking/components/SeatList';
 import React, { useEffect, useState } from 'react';
@@ -31,8 +32,14 @@ const getErrorMessage = type => {
 
 function BookingForm(props) {
   const dispatch = useDispatch();
-  const { onClose, open, seatTypes, calendar, movies, rooms } = props;
+  const { onClose, open, seatTypes, calendar, movies, rooms, ticketType } =
+    props;
   const [isSubmitSuccess, setIsSubmitSuccess] = useState(false);
+
+  const ticketTypeOption = ticketType?.map(item => ({
+    id: item._id,
+    label: item.typeName,
+  }));
 
   const schema = yup.object().shape({
     // typeName: yup.string().required('Loại phòng không được để trống'),
@@ -124,7 +131,35 @@ function BookingForm(props) {
               </IconButton>
             </Box>
           </Grid>
-          <Grid item xs={9}>
+          <Grid item xs={12}>
+            <Controller
+              control={form.control}
+              name="seats"
+              render={({ field: { onChange, value } }) => (
+                <SeatList
+                  onChange={value => onChange(value)}
+                  seats={
+                    rooms.find(item => item._id === calendar?.room._id)
+                      ?.roomType.seats
+                  }
+                  calendar={calendar}
+                  seatType={seatTypes}
+                />
+              )}
+            />
+          </Grid>
+
+          <Grid item xs={4}>
+            <AutocompleteField
+              name="ticketType"
+              options={ticketTypeOption}
+              form={form}
+              label="Loại khách hàng"
+            />
+          </Grid>
+          <Grid item xs={8}></Grid>
+
+          <Grid item xs={12}>
             <Box
               sx={{
                 display: 'flex',
@@ -156,23 +191,6 @@ function BookingForm(props) {
             </Box>
           </Grid>
 
-          <Grid item xs={12}>
-            <Controller
-              control={form.control}
-              name="seats"
-              render={({ field: { onChange, value } }) => (
-                <SeatList
-                  onChange={value => onChange(value)}
-                  seats={
-                    rooms.find(item => item._id === calendar?.room._id)
-                      ?.roomType.seats
-                  }
-                  calendar={calendar}
-                  seatType={seatTypes}
-                />
-              )}
-            />
-          </Grid>
           {/* <Grid item xs={12}>
             <SeatTypeList
               onChange={value => setValue('seats', value)}

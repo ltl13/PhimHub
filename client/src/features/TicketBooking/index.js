@@ -12,6 +12,7 @@ import { useDispatch } from 'react-redux';
 import 'simplebar/dist/simplebar.min.css';
 import { getAllMovieCalendars } from './../ShowTime/slice';
 import BookingForm from './pages/Booking/index';
+import { getAllTicketType } from './ticketTypeSlice';
 
 const compareCalendar = (a, b) => {
   const dateA = new Date().setHours(
@@ -48,6 +49,7 @@ function TicketBooking(props) {
   const [movies, setMovies] = useState([]);
   const [rooms, setRooms] = useState([]);
   const [seatType, setSeatType] = useState([]);
+  const [ticketType, setTicketType] = useState([]);
 
   useEffect(() => {
     const load = async () => {
@@ -76,6 +78,12 @@ function TicketBooking(props) {
 
       if (responseSeatTypes.payload.success) {
         setSeatType(responseSeatTypes.payload.allSeatTypes);
+      }
+
+      const responseTicketTypes = await dispatch(getAllTicketType());
+
+      if (responseTicketTypes.payload.success) {
+        setTicketType(responseTicketTypes.payload.allTicketTypes);
       }
 
       dispatch(closeBackdrop());
@@ -222,6 +230,7 @@ function TicketBooking(props) {
         movies={movies}
         rooms={rooms}
         seatTypes={seatType}
+        ticketType={ticketType}
       />
     </>
   );
