@@ -3,6 +3,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import {
+  Box,
   Button,
   FormHelperText,
   LinearProgress,
@@ -60,38 +61,47 @@ function LoginForm(props) {
   return (
     <div>
       {isSubmitting && <LinearProgress color="primary" />}
-      <Typography variant="h2">Sign In</Typography>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <Stack spacing={2.3}>
-          <InputField
-            name="username"
-            label="Tên đăng nhập"
-            form={form}
-            inputRef={input => input && input.focus()}
-          />
-          <PasswordField name="password" label="Mật khẩu" form={form} />
-          {!!errors.login && (
-            <FormHelperText error={errors.login}>
-              {errors.login.message}
-            </FormHelperText>
-          )}
-          {!!errors.serverError && (
-            <FormHelperText error={errors.serverError}>
-              {errors.serverError.message}
-            </FormHelperText>
-          )}
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            size="large"
-            type="submit"
-            disabled={isSubmitting}
-            sx={{ height: '56px' }}
-          >
-            Đăng nhập
-          </Button>
-          {/* <LoadingButton
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            height: '100%',
+          }}
+        >
+          <Stack spacing={2.3} sx={{ height: '400px', width: '400px' }}>
+            <Typography variant="h3">Sign In</Typography>
+            <InputField
+              name="username"
+              label="Tên đăng nhập"
+              form={form}
+              inputRef={input => input && input.focus()}
+            />
+            <PasswordField name="password" label="Mật khẩu" form={form} />
+            {!!errors.login && (
+              <FormHelperText error={errors.login}>
+                {errors.login.message}
+              </FormHelperText>
+            )}
+            {!!errors.serverError && (
+              <FormHelperText error={errors.serverError}>
+                {errors.serverError.message}
+              </FormHelperText>
+            )}
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              size="large"
+              type="submit"
+              disabled={isSubmitting}
+              sx={{ height: '56px' }}
+            >
+              Đăng nhập
+            </Button>
+            {/* <LoadingButton
             loading
             loadingPosition="start"
             // startIcon={<SaveIcon />}
@@ -99,7 +109,8 @@ function LoginForm(props) {
           >
             Save
           </LoadingButton> */}
-        </Stack>
+          </Stack>
+        </Box>
       </form>
     </div>
   );
