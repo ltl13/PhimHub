@@ -11,9 +11,8 @@ import {
   Typography,
 } from '@mui/material';
 import { closeBackdrop, openBackdrop } from 'app/backdropSlice';
-import InputField from 'custom-fields/InputField';
-import SeatList from 'features/RoomType/components/SeatList';
 import { createRoomType, updateRoomTypeById } from 'features/RoomType/slice';
+import SeatList from 'features/TicketBooking/components/SeatList';
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
@@ -30,13 +29,13 @@ const getErrorMessage = type => {
   }
 };
 
-function AddEditRoomType(props) {
+function BookingForm(props) {
   const dispatch = useDispatch();
-  const { onClose, open, seatType, setRoomTypes, roomType } = props;
+  const { onClose, open, seatTypes, calendar, movies, rooms } = props;
   const [isSubmitSuccess, setIsSubmitSuccess] = useState(false);
 
   const schema = yup.object().shape({
-    typeName: yup.string().required('Loại phòng không được để trống'),
+    // typeName: yup.string().required('Loại phòng không được để trống'),
   });
 
   const emptyInitialValue = {
@@ -58,53 +57,45 @@ function AddEditRoomType(props) {
     getValues,
   } = form;
 
-  useEffect(() => {
-    if (roomType) {
-      reset({
-        typeName: roomType.typeName,
-        seats: roomType.seats,
-      });
-    }
-  }, [roomType]);
-
   const { isSubmitting } = form.formState;
 
   const handleSubmit = async data => {
     dispatch(openBackdrop());
     setIsSubmitSuccess(false);
+    console.log(data);
 
-    if (!roomType) {
-      const actions = createRoomType(data);
-      const response = await dispatch(actions);
-      if (response.payload.success) {
-        setIsSubmitSuccess(true);
-        setRoomTypes(prev => [...prev, response.payload.newRoomType]);
-      } else {
-        setError('roomType', {
-          type: 'manual',
-          message:
-            !!response.payload.invalid &&
-            getErrorMessage(response.payload.invalid),
-        });
-      }
-    } else {
-      const actions = updateRoomTypeById({ id: roomType._id, data });
-      const response = await dispatch(actions);
-      if (response.payload.success) {
-        setIsSubmitSuccess(true);
-        setRoomTypes(prev => [
-          ...prev.filter(x => x._id !== roomType._id),
-          { _id: roomType._id, typeName: data.typeName, seats: data.seats },
-        ]);
-      } else {
-        setError('roomType', {
-          type: 'manual',
-          message:
-            !!response.payload.invalid &&
-            getErrorMessage(response.payload.invalid),
-        });
-      }
-    }
+    // if (!roomType) {
+    //   const actions = createRoomType(data);
+    //   const response = await dispatch(actions);
+    //   if (response.payload.success) {
+    //     setIsSubmitSuccess(true);
+    //     setRoomTypes(prev => [...prev, response.payload.newRoomType]);
+    //   } else {
+    //     setError('roomType', {
+    //       type: 'manual',
+    //       message:
+    //         !!response.payload.invalid &&
+    //         getErrorMessage(response.payload.invalid),
+    //     });
+    //   }
+    // } else {
+    //   const actions = updateRoomTypeById({ id: roomType._id, data });
+    //   const response = await dispatch(actions);
+    //   if (response.payload.success) {
+    //     setIsSubmitSuccess(true);
+    //     setRoomTypes(prev => [
+    //       ...prev.filter(x => x._id !== roomType._id),
+    //       { _id: roomType._id, typeName: data.typeName, seats: data.seats },
+    //     ]);
+    //   } else {
+    //     setError('roomType', {
+    //       type: 'manual',
+    //       message:
+    //         !!response.payload.invalid &&
+    //         getErrorMessage(response.payload.invalid),
+    //     });
+    //   }
+    // }
     dispatch(closeBackdrop());
   };
 
@@ -127,17 +118,12 @@ function AddEditRoomType(props) {
                 alignItem: 'center',
               }}
             >
-              <Typography variant="h4">Thông tin loại phòng chiếu</Typography>
+              <Typography variant="h4">Chọn ghế và thanh toán</Typography>
               <IconButton onClick={handleClose} sx={{ height: '40px' }}>
                 <CloseRoundedIcon />
               </IconButton>
             </Box>
           </Grid>
-
-          <Grid item xs={3}>
-            <InputField name="typeName" label="Tên loại phòng" form={form} />
-          </Grid>
-
           <Grid item xs={9}>
             <Box
               sx={{
@@ -156,28 +142,17 @@ function AddEditRoomType(props) {
               )}
               {!!isSubmitSuccess && (
                 <FormHelperText sx={{ color: 'text.success' }}>
-                  {!!roomType ? 'Sửa thành công' : 'Thêm thành công'}
+                  {'Đặt vé thành công'}
                 </FormHelperText>
               )}
-              {!!roomType ? (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  type="submit"
-                  sx={{ ml: 3 }}
-                >
-                  Lưu chỉnh sửa
-                </Button>
-              ) : (
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  type="submit"
-                  sx={{ ml: 3 }}
-                >
-                  Thêm loại phòng
-                </Button>
-              )}
+              <Button
+                variant="contained"
+                color="secondary"
+                type="submit"
+                sx={{ ml: 3 }}
+              >
+                Đặt vé
+              </Button>
             </Box>
           </Grid>
 
@@ -188,8 +163,12 @@ function AddEditRoomType(props) {
               render={({ field: { onChange, value } }) => (
                 <SeatList
                   onChange={value => onChange(value)}
-                  seats={!!roomType && roomType.seats}
-                  seatType={props.seatTypes}
+                  seats={
+                    rooms.find(item => item._id === calendar?.room._id)
+                      ?.roomType.seats
+                  }
+                  calendar={calendar}
+                  seatType={seatTypes}
                 />
               )}
             />
@@ -208,4 +187,4 @@ function AddEditRoomType(props) {
   );
 }
 
-export default AddEditRoomType;
+export default BookingForm;

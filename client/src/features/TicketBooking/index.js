@@ -6,11 +6,12 @@ import TextField from '@mui/material/TextField';
 import { closeBackdrop, openBackdrop } from 'app/backdropSlice';
 import { getMoviesInShowing } from 'features/Movie/slice';
 import { getAllRooms } from 'features/Room/slice';
+import { getAllSeatType } from 'features/RoomType/seatTypeSlice';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import 'simplebar/dist/simplebar.min.css';
-import AddEditShowTime from './AddEditShowTime';
-import { getAllMovieCalendars } from './slice';
+import { getAllMovieCalendars } from './../ShowTime/slice';
+import BookingForm from './pages/Booking/index';
 
 const compareCalendar = (a, b) => {
   const dateA = new Date().setHours(
@@ -35,15 +36,14 @@ const compareCalendar = (a, b) => {
   return 0;
 };
 
-function ShowTime(props) {
+function TicketBooking(props) {
   const dispatch = useDispatch();
   const [dateStart, setDateStart] = React.useState(
     new Date().setHours(0, 0, 0, 0),
   );
   const [allMovieCalendars, setAllMovieCalendars] = useState([]);
   const [calendarByMovie, setCalendarByMovie] = useState({});
-  const [openAddEditMovieCalendar, setOpenAddEditMovieCalendar] =
-    useState(false);
+  const [openBookingForm, setOpenBookingForm] = useState(false);
   const [selectedMovieCalendar, setSelectedMovieCalendar] = useState(null);
   const [movies, setMovies] = useState([]);
   const [rooms, setRooms] = useState([]);
@@ -70,6 +70,12 @@ function ShowTime(props) {
 
       if (responseRooms.payload.success) {
         setRooms(responseRooms.payload.allRooms);
+      }
+
+      const responseSeatTypes = await dispatch(getAllSeatType());
+
+      if (responseSeatTypes.payload.success) {
+        setSeatType(responseSeatTypes.payload.allSeatTypes);
       }
 
       dispatch(closeBackdrop());
@@ -99,12 +105,12 @@ function ShowTime(props) {
     setCalendarByMovie(tempRows);
   }, [dateStart, allMovieCalendars]);
 
-  const handleOpenAddEditMovieCalendar = () => {
-    setOpenAddEditMovieCalendar(true);
+  const handleOpenBookingForm = () => {
+    setOpenBookingForm(true);
   };
 
-  const handleCloseAddEditMovieCalendar = () => {
-    setOpenAddEditMovieCalendar(false);
+  const handleCloseBookingForm = () => {
+    setOpenBookingForm(false);
     setSelectedMovieCalendar(null);
   };
 
@@ -118,7 +124,7 @@ function ShowTime(props) {
           mb={5}
         >
           <Typography variant="h4" gutterBottom>
-            Lịch Chiếu
+            Đặt Vé
           </Typography>
           <Stack
             direction="row"
@@ -128,7 +134,7 @@ function ShowTime(props) {
           >
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
-                label="Basic example"
+                label="Ngày đặt vé"
                 value={dateStart}
                 inputFormat="dd/MM/yyyy"
                 onChange={newValue => {
@@ -142,14 +148,6 @@ function ShowTime(props) {
                 renderInput={params => <TextField {...params} />}
               />
             </LocalizationProvider>
-            <Button
-              variant="contained"
-              mr={1}
-              onClick={handleOpenAddEditMovieCalendar}
-              color="secondary"
-            >
-              Thêm Lịch Chiếu
-            </Button>
           </Stack>
         </Stack>
         <Stack alignItems="center" justifyContent="center" mb={5}>
@@ -191,7 +189,7 @@ function ShowTime(props) {
                       <Button
                         onClick={() => {
                           setSelectedMovieCalendar(item);
-                          handleOpenAddEditMovieCalendar();
+                          handleOpenBookingForm();
                         }}
                         variant="outlined"
                         sx={{ height: '80px', width: '100px', ml: 2 }}
@@ -217,16 +215,16 @@ function ShowTime(props) {
           </Box>
         </Stack>
       </Box>
-      <AddEditShowTime
-        open={openAddEditMovieCalendar}
-        onClose={handleCloseAddEditMovieCalendar}
+      <BookingForm
+        open={openBookingForm}
+        onClose={handleCloseBookingForm}
+        calendar={selectedMovieCalendar}
         movies={movies}
         rooms={rooms}
-        setCalendar={setAllMovieCalendars}
-        calendar={selectedMovieCalendar}
+        seatTypes={seatType}
       />
     </>
   );
 }
 
-export default ShowTime;
+export default TicketBooking;

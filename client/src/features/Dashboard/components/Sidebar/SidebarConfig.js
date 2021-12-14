@@ -12,12 +12,12 @@ const sidebarConfig = [
     func: Function.TicketBooking,
     icon: <AddToPhotosRoundedIcon />,
   },
-  {
-    title: 'Vé đợi',
-    path: '/dashboard/waiting-ticket',
-    func: Function.UnpaidTicket,
-    icon: <ConfirmationNumberRoundedIcon />,
-  },
+  // {
+  //   title: 'Vé đợi',
+  //   path: '/dashboard/waiting-ticket',
+  //   func: Function.UnpaidTicket,
+  //   icon: <ConfirmationNumberRoundedIcon />,
+  // },
   {
     title: 'Thống kê',
     path: '/dashboard/statistic',
@@ -66,21 +66,21 @@ const sidebarConfig = [
         path: '/dashboard/setting/authorization',
         func: Function.AuthorizationSetting,
       },
-      {
-        title: 'Khuyến mãi',
-        path: '/dashboard/setting/promotion',
-        func: Function.PromotionSetting,
-      },
-      {
-        title: 'Giá vé',
-        path: '/dashboard/setting/type-of-price',
-        func: Function.TypeOfPriceSetting,
-      },
-      {
-        title: 'Thanh toán',
-        path: '/dashboard/setting/type-of-payment',
-        func: Function.TypeOfPaymentSetting,
-      },
+      // {
+      //   title: 'Khuyến mãi',
+      //   path: '/dashboard/setting/promotion',
+      //   func: Function.PromotionSetting,
+      // },
+      // {
+      //   title: 'Giá vé',
+      //   path: '/dashboard/setting/type-of-price',
+      //   func: Function.TypeOfPriceSetting,
+      // },
+      // {
+      //   title: 'Thanh toán',
+      //   path: '/dashboard/setting/type-of-payment',
+      //   func: Function.TypeOfPaymentSetting,
+      // },
       {
         title: 'Loại phòng chiếu',
         path: '/dashboard/setting/type-of-room',

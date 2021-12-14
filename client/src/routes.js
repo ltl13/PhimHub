@@ -15,6 +15,7 @@ const RoomType = React.lazy(() => import('features/RoomType'));
 const Room = React.lazy(() => import('features/Room'));
 const ShowTime = React.lazy(() => import('features/ShowTime'));
 const Statistic = React.lazy(() => import('features/Statistic'));
+const TicketBooking = React.lazy(() => import('features/TicketBooking'));
 
 const Router = () => {
   return useRoutes([
@@ -35,7 +36,7 @@ const Router = () => {
           path: 'booking',
           element: (
             <PrivateRoute funcId={Function.TicketBooking.id}>
-              <Typography variant="h3">Booking</Typography>
+              <TicketBooking />
             </PrivateRoute>
           ),
         },
