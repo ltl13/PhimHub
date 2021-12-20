@@ -84,6 +84,7 @@ const getTicketById = async (req, res) => {
 const createTicket = async ({
   price,
   movieCalendar,
+  movie,
   ticketType,
   payment,
   seats,
@@ -94,6 +95,7 @@ const createTicket = async ({
     const newTicket = new Ticket({
       price,
       movieCalendar,
+      movie,
       ticketType,
       payment,
       seats,
