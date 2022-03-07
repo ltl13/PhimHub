@@ -8,7 +8,9 @@ A Website For Cinema Management
 - Regulation changing
 ## Tech Stack
 **Front-end:** ReactJS
+
 **Back-end:** NodeJS
+
 **Database:** MongoDB
 ## Installation
 - Clone the project
